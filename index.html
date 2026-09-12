@@ -30,7 +30,6 @@
     header h1 { font-size: 1.65rem; color: #0f172a; }
     header p { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
 
-    /* Estilos do Menu Principal / Hub */
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -79,7 +78,6 @@
       margin-top: 6px;
     }
 
-    /* Views / Telas */
     .view { display: none; }
     .view.active { display: block; }
 
@@ -140,7 +138,6 @@
       overflow-x: auto;
     }
 
-    /* Teclados Virtuais */
     .keyboard-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -241,7 +238,7 @@
       <div class="topic-card" onclick="abrirModulo('notaveis')">
         <div class="icon">✨</div>
         <h3>Produtos Notáveis</h3>
-        <p>Quadrado da soma, diferença e produto da soma pela diferença</p>
+        <p>Quadrados e cubos da soma e da diferença, produto notável</p>
       </div>
 
       <div class="topic-card disabled">
@@ -411,17 +408,18 @@
 
       <div class="form-group">
         <label for="input-notaveis">Expressão:</label>
-        <input type="text" id="input-notaveis" value="(2x + 3)^2" placeholder="Ex: (x + 5)^2 ou (2x - 3)^2 ou (x + 4)(x - 4)">
+        <input type="text" id="input-notaveis" value="(x + 2)^3" placeholder="Ex: (x + 2)^3 ou (2x - 1)^3 ou (2x + 3)^2">
         <label style="margin-top: 8px;">Visualização Matemática:</label>
         <div class="preview-math-box" id="prev-math-notaveis"></div>
       </div>
 
+      <!-- Teclado com botões de expoente 2 e 3 -->
       <div class="keyboard-grid" id="kb-notaveis">
         <button class="key-btn key-var" data-val="x">x</button>
         <button class="key-btn key-var" data-val="^2">²</button>
+        <button class="key-btn key-var" data-val="^3" style="background: #fef08a; border-color: #facc15; font-weight: 800;">³</button>
         <button class="key-btn key-op" data-val="(">(</button>
         <button class="key-btn key-op" data-val=")">)</button>
-        <button class="key-btn key-op" data-val="*">×</button>
         <button class="key-btn key-action" data-action="backspace">⌫</button>
 
         <button class="key-btn" data-val="7">7</button>
@@ -438,8 +436,9 @@
         <button class="key-btn" data-val="2">2</button>
         <button class="key-btn" data-val="3">3</button>
 
-        <button class="key-btn" data-val="0" style="grid-column: span 3;">0</button>
-        <button class="key-btn key-op" data-val="x^2" style="grid-column: span 3;">x²</button>
+        <button class="key-btn" data-val="0" style="grid-column: span 2;">0</button>
+        <button class="key-btn key-op" data-val="x^2" style="grid-column: span 2;">x²</button>
+        <button class="key-btn key-op" data-val="x^3" style="grid-column: span 2;">x³</button>
       </div>
 
       <div class="btn-group">
@@ -507,6 +506,7 @@
   function converterParaLatex(str) {
     if (!str || !str.trim()) return "\\text{Nenhuma expressão digitada}";
     let latex = str.replace(/\s+/g, '');
+    latex = latex.replace(/x\^3/g, 'x^3');
     latex = latex.replace(/x\^2/g, 'x^2');
     latex = latex.replace(/\(([^)]+)\)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
     latex = latex.replace(/([a-zA-Z0-9^]+)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
@@ -845,7 +845,7 @@
   }
 
   // ==========================================
-  // MÓDULO 3: PRODUTOS NOTÁVEIS
+  // MÓDULO 3: PRODUTOS NOTÁVEIS (COM CUBO)
   // ==========================================
   const inputNotaveis = document.getElementById('input-notaveis');
   const prevMathNotaveis = document.getElementById('prev-math-notaveis');
@@ -856,7 +856,6 @@
   }
   inputNotaveis.addEventListener('input', atualizarPreviewNotaveis);
 
-  // Parser para binômios na forma ax + b ou ax - b
   function parseBinomio(str) {
     let s = str.replace(/\s+/g, '').replace(/-/g, '+-');
     const tokens = s.split('+').filter(t => t !== '');
@@ -877,7 +876,81 @@
     const passos = [];
     let s = exprStr.replace(/\s+/g, '');
 
-    // Caso 1 e 2: Quadrado da Soma ou Quadrado da Diferença -> (ax ± b)^2
+    // Caso 1: Cubo da Soma ou Cubo da Diferença -> (ax ± b)^3
+    const regexCubo = /^\(([^)]+)\)\^3$/;
+    const matchCubo = s.match(regexCubo);
+
+    if (matchCubo) {
+      const conteudo = matchCubo[1];
+      const binomio = parseBinomio(conteudo);
+      const a = binomio.coefX;
+      const b = binomio.constant;
+
+      if (a === 0 || b === 0) {
+        throw new Error("Informe um binômio completo, por exemplo: (x + 2)^3 ou (2x - 1)^3.");
+      }
+
+      const termoA = a === 1 ? "x" : (a === -1 ? "-x" : `${a}x`);
+      const absB = Math.abs(b);
+      const ehSoma = b > 0;
+
+      passos.push({
+        descricao: "Expressão inicial identificada:",
+        latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^3`
+      });
+
+      if (ehSoma) {
+        passos.push({
+          descricao: "Identificamos o Cubo da Soma de dois termos:",
+          latex: `(A + B)^3 = A^3 + 3 \\cdot A^2 \\cdot B + 3 \\cdot A \\cdot B^2 + B^3`
+        });
+      } else {
+        passos.push({
+          descricao: "Identificamos o Cubo da Diferença de dois termos:",
+          latex: `(A - B)^3 = A^3 - 3 \\cdot A^2 \\cdot B + 3 \\cdot A \\cdot B^2 - B^3`
+        });
+      }
+
+      passos.push({
+        descricao: "Identificando os termos A e B:",
+        latex: `A = ${termoA}, \\quad B = ${absB}`
+      });
+
+      const aCuboStr = (a === 1) ? `x^3` : `(${termoA})^3`;
+      const aQuadStr = (a === 1) ? `x^2` : `(${termoA})^2`;
+      const sinal1 = ehSoma ? '+' : '-';
+      const sinal2 = '+';
+      const sinal3 = ehSoma ? '+' : '-';
+
+      passos.push({
+        descricao: "Substituindo na fórmula do produto notável:",
+        latex: `${aCuboStr} ${sinal1} 3 \\cdot ${aQuadStr} \\cdot (${absB}) ${sinal2} 3 \\cdot (${termoA}) \\cdot (${absB})^2 ${sinal3} (${absB})^3`
+      });
+
+      // Cálculos dos coeficientes
+      const t1 = a * a * a; // termo x^3
+      const t2 = 3 * (a * a) * absB; // termo x^2
+      const t3 = 3 * Math.abs(a) * (absB * absB); // termo x
+      const t4 = absB * absB * absB; // constante
+
+      const t1Str = t1 === 1 ? "x^3" : (t1 === -1 ? "-x^3" : `${t1}x^3`);
+      const t2Str = `${t2}x^2`;
+      const t3Str = `${t3}x`;
+
+      passos.push({
+        descricao: "Efetuando as potências e multiplicações numéricas:",
+        latex: `${t1Str} ${sinal1} ${t2Str} ${sinal2} ${t3Str} ${sinal3} ${t4}`
+      });
+
+      passos.push({
+        descricao: "Polinômio cúbico final:",
+        latex: `\\mathbf{${t1Str} ${sinal1} ${t2Str} ${sinal2} ${t3Str} ${sinal3} ${t4}}`
+      });
+
+      return passos;
+    }
+
+    // Caso 2: Quadrado da Soma ou Quadrado da Diferença -> (ax ± b)^2
     const regexQuadrado = /^\(([^)]+)\)\^2$/;
     const matchQuad = s.match(regexQuadrado);
 
@@ -888,7 +961,7 @@
       const b = binomio.constant;
 
       if (a === 0 || b === 0) {
-        throw new Error("Informe um binômio com variável e termo constante, por exemplo: (x + 3)^2 ou (2x - 5)^2.");
+        throw new Error("Informe um binômio completo, por exemplo: (x + 3)^2 ou (2x - 5)^2.");
       }
 
       const termoA = a === 1 ? "x" : (a === -1 ? "-x" : `${a}x`);
@@ -917,7 +990,6 @@
         latex: `A = ${termoA}, \\quad B = ${absB}`
       });
 
-      // Aplicação
       const aParenteses = (a === 1) ? `x^2` : `(${termoA})^2`;
       const sinalMeio = ehSoma ? '+' : '-';
       passos.push({
@@ -925,12 +997,11 @@
         latex: `${aParenteses} ${sinalMeio} 2 \\cdot (${termoA}) \\cdot (${absB}) + (${absB})^2`
       });
 
-      // Cálculos
       const a2 = a * a;
       const meio = 2 * Math.abs(a) * absB;
       const b2 = absB * absB;
-
       const a2Str = a2 === 1 ? "x^2" : `${a2}x^2`;
+
       passos.push({
         descricao: "Efetuando as potências e multiplicações:",
         latex: `${a2Str} ${sinalMeio} ${meio}x + ${b2}`
@@ -944,7 +1015,7 @@
       return passos;
     }
 
-    // Caso 3: Produto da Soma pela Diferença -> (ax + b)(ax - b) ou com * no meio
+    // Caso 3: Produto da Soma pela Diferença -> (ax + b)(ax - b)
     const regexProduto = /^\(([^)]+)\)\*?\(([^)]+)\)$/;
     const matchProd = s.match(regexProduto);
 
@@ -952,7 +1023,6 @@
       const bin1 = parseBinomio(matchProd[1]);
       const bin2 = parseBinomio(matchProd[2]);
 
-      // Verifica se é da forma (A + B)(A - B)
       const a1 = bin1.coefX, b1 = bin1.constant;
       const a2 = bin2.coefX, b2 = bin2.constant;
 
@@ -993,18 +1063,17 @@
 
         return passos;
       } else {
-        // Produto de binômios genéricos via distributiva (ex: (x+2)(x+3))
         const termoA = a1 * a2;
         const termoB = (a1 * b2) + (a2 * b1);
         const termoC = b1 * b2;
 
         passos.push({
-          descricao: "Expressão inicial informada (produto de dois binômios):",
+          descricao: "Expressão inicial informada (produto de binômios):",
           latex: `(${converterParaLatex(matchProd[1])}) \\cdot (${converterParaLatex(matchProd[2])})`
         });
 
         passos.push({
-          descricao: "Aplicando a propriedade distributiva termo a termo:",
+          descricao: "Aplicando a propriedade distributiva:",
           latex: `(${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${b2}) + (${b1}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${b1}) \\cdot (${b2})`
         });
 
@@ -1015,7 +1084,7 @@
         });
 
         passos.push({
-          descricao: "Reduzindo os termos semelhantes centrais:",
+          descricao: "Reduzindo termos semelhantes:",
           latex: `\\mathbf{${aStr} ${termoB >= 0 ? '+ ' + termoB : '- ' + Math.abs(termoB)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}}`
         });
 
@@ -1023,7 +1092,7 @@
       }
     }
 
-    throw new Error("Formato não reconhecido. Exemplos válidos: (x + 3)^2, (2x - 5)^2 ou (x + 4)(x - 4).");
+    throw new Error("Formato não reconhecido. Exemplos válidos: (x + 2)^3, (2x - 1)^3, (x + 3)^2 ou (x + 4)(x - 4).");
   }
 
   function executarResolucaoNotaveis() {
