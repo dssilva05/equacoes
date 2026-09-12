@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resolvedor de Equações do 1º Grau com Foto</title>
+  
+  <!-- KaTeX para renderização de fórmulas matemáticas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body);"></script>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; }
+
+    header { text-align: center; margin-bottom: 24px; }
+    header h1 { font-size: 1.6rem; color: #0f172a; }
+    header p { color: #64748b; font-size: 0.95rem; margin-top: 4px; }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+    
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1.05rem;
+      outline: none;
+    }
+    input[type="text"]:focus, input[type="password"]:focus { border-color: var(--primary); }
+
+    .camera-box {
+      border: 2px dashed #94a3b8;
+      padding: 18px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 16px;
+      background: #f8fafc;
+    }
+
+    .btn-group { display: flex; gap: 10px; }
+    button, .btn-upload {
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    button:hover, .btn-upload:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #64748b; }
+    .btn-secondary:hover { background: #475569; }
+
+    #preview-img { max-width: 100%; max-height: 200px; border-radius: 6px; margin-top: 12px; display: none; }
+
+    .step-box {
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      border-radius: 0 8px 8px 0;
+    }
+    .step-title { font-weight: 600; font-size: 0.9rem; color: #475569; margin-bottom: 4px; }
+    .step-math { font-size: 1.15rem; }
+
+    .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem; }
+    .alert-error { background: #fee2e2; color: #991b1b; }
+    .alert-info { background: #e0f2fe; color: #075985; }
+    .alert-success { background: #dcfce7; color: #166534; }
+
+    details summary {
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+    details[open] summary { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Resolvedor de Equações do 1º Grau</h1>
+    <p>Tire uma foto da equação à mão ou digite para ver o passo a passo</p>
+  </header>
+
+  <!-- Configuração da Chave da API (Armazenada localmente no navegador) -->
+  <div class="card" style="padding: 14px 20px;">
+    <details id="api-details">
+      <summary>🔑 Configurar Chave de OCR / IA (Necessária para ler fotos)</summary>
+      <div style="margin-top: 10px;">
+        <label for="api-key-input">Chave Gemini API (Google AI Studio):</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="password" id="api-key-input" placeholder="Cole sua chave AIzaSy..." style="flex: 1; padding: 8px;">
+          <button id="btn-salvar-chave" style="padding: 8px 14px;">Salvar</button>
+        </div>
+        <p style="font-size: 0.75rem; color: #64748b; margin-top: 6px;">
+          Obtenha gratuitamente em <a href="https://aistudio.google.com/" target="_blank" rel="noopener">aistudio.google.com</a>. A chave fica salva apenas no seu dispositivo (LocalStorage).
+        </p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <!-- Entrada por Foto / Câmera -->
+    <div class="camera-box">
+      <p style="font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Fotografar caderno ou enviar imagem:</p>
+      <label class="btn-upload" for="camera-input">
+        📷 Tirar Foto / Escolher Arquivo
+      </label>
+      <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+      <br>
+      <img id="preview-img" alt="Foto da Equação">
+      <div id="ocr-status" style="margin-top: 10px; font-weight: 500; font-size: 0.9rem;"></div>
+    </div>
+
+    <!-- Entrada de Texto -->
+    <div class="form-group">
+      <label for="eq-input">Equação:</label>
+      <input type="text" id="eq-input" placeholder="Ex: 3x - 5 = 2(x + 4) ou 4x + 8 = 24" value="3x - 5 = 2(x + 4)">
+    </div>
+
+    <div class="btn-group">
+      <button id="btn-resolver" style="flex: 1;">Resolver Passo a Passo</button>
+      <button id="btn-limpar" class="btn-secondary">Limpar</button>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div id="alert-container"></div>
+  <div id="resultado-card" class="card" style="display: none;">
+    <h2 style="font-size: 1.15rem; margin-bottom: 16px;">Passo a Passo da Resolução:</h2>
+    <div id="passos-lista"></div>
+  </div>
+</div>
+
+<script>
+  // ==========================================
+  // CONFIGURAÇÃO DA CHAVE LOCAL
+  // ==========================================
+  const apiKeyInput = document.getElementById('api-key-input');
+  const btnSalvarChave = document.getElementById('btn-salvar-chave');
+  const apiDetails = document.getElementById('api-details');
+
+  let savedKey = localStorage.getItem('gemini_api_key') || '';
+  if (savedKey) {
+    apiKeyInput.value = savedKey;
+  } else {
+    apiDetails.open = true; // Abre automaticamente se não houver chave
+  }
+
+  btnSalvarChave.addEventListener('click', () => {
+    const key = apiKeyInput.value.trim();
+    if (key) {
+      localStorage.setItem('gemini_api_key', key);
+      alert('Chave salva com sucesso no navegador!');
+      apiDetails.open = false;
+    } else {
+      localStorage.removeItem('gemini_api_key');
+      alert('Chave removida.');
+    }
+  });
+
+  // ==========================================
+  // MOTOR ALGÉBRICO DO 1º GRAU PASSO A PASSO
+  // ==========================================
+  function gcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) { let t = b; b = a % b; a = t; }
+    return a;
+  }
+
+  function simplificarFracao(num, den) {
+    if (den < 0) { num = -num; den = -den; }
+    const divisor = gcd(num, den);
+    return { num: num / divisor, den: den / divisor };
+  }
+
+  function normalizarExpressao(expr) {
+    return expr
+      .replace(/\s+/g, '')
+      .replace(/(\d)([a-zA-Z(])/g, '$1*$2')
+      .replace(/([a-zA-Z])\(/g, '$1*(')
+      .replace(/\)([a-zA-Z0-9(])/g, ')*$1');
+  }
+
+  function decomporTermos(expr) {
+    expr = expr.replace(/-/g, '+-');
+    const partes = expr.split('+').filter(p => p !== '');
+    return partes.map(p => {
+      p = p.trim();
+      if (p.includes('x') || p.includes('X')) {
+        let valStr = p.replace(/x/gi, '').replace('*', '');
+        let val = 1;
+        if (valStr === '-') val = -1;
+        else if (valStr !== '') val = parseFloat(valStr);
+        return { isVar: true, coef: val };
+      } else {
+        return { isVar: false, coef: parseFloat(p) || 0 };
+      }
+    });
+  }
+
+  function avaliarMembroLinear(exprStr) {
+    exprStr = normalizarExpressao(exprStr);
+    let expandido = exprStr;
+    const regexParen = /([+-]?\d*)\*?\(([^)]+)\)/g;
+    
+    expandido = expandido.replace(regexParen, (match, fatorStr, conteudo) => {
+      let fator = 1;
+      if (fatorStr === '-' || fatorStr === '-1') fator = -1;
+      else if (fatorStr === '+' || fatorStr === '') fator = 1;
+      else fator = parseFloat(fatorStr);
+
+      const termos = decomporTermos(conteudo);
+      let res = '';
+      termos.forEach(t => {
+        const coef = t.coef * fator;
+        const sinal = (coef >= 0 && res !== '') ? '+' : '';
+        if (t.isVar) {
+          res += `${sinal}${coef === 1 ? '' : coef === -1 ? '-' : coef}x`;
+        } else {
+          res += `${sinal}${coef}`;
+        }
+      });
+      return res.startsWith('+') ? res : '+' + res;
+    });
+
+    const termos = decomporTermos(expandido);
+    let totalX = 0;
+    let totalConst = 0;
+
+    termos.forEach(t => {
+      if (t.isVar) totalX += t.coef;
+      else totalConst += t.coef;
+    });
+
+    return { coefX: totalX, constVal: totalConst, expandido: expandido };
+  }
+
+  function resolverEquacao(equacaoStr) {
+    const passos = [];
+    if (!equacaoStr.includes('=')) {
+      throw new Error("A expressão precisa conter o sinal de igualdade (=).");
+    }
+
+    const membros = equacaoStr.split('=');
+    if (membros.length !== 2) {
+      throw new Error("Apenas um sinal '=' é permitido.");
+    }
+
+    const lhsRaw = membros[0].trim();
+    const rhsRaw = membros[1].trim();
+
+    passos.push({
+      descricao: "Equação inicial identificada:",
+      latex: `${lhsRaw} = ${rhsRaw}`
+    });
+
+    const lhsAvaliado = avaliarMembroLinear(lhsRaw);
+    const rhsAvaliado = avaliarMembroLinear(rhsRaw);
+
+    if (lhsRaw.includes('(') || rhsRaw.includes('(')) {
+      passos.push({
+        descricao: "Aplicando a distributiva para eliminar parênteses:",
+        latex: `${lhsAvaliado.expandido.replace(/^\+/, '')} = ${rhsAvaliado.expandido.replace(/^\+/, '')}`
+      });
+    }
+
+    const lhsX = lhsAvaliado.coefX;
+    const lhsC = lhsAvaliado.constVal;
+    const rhsX = rhsAvaliado.coefX;
+    const rhsC = rhsAvaliado.constVal;
+
+    passos.push({
+      descricao: "Reduzindo termos em cada membro:",
+      latex: `${lhsX !== 0 ? lhsX + 'x' : ''} ${lhsC >= 0 ? '+ ' + lhsC : '- ' + Math.abs(lhsC)} = ${rhsX !== 0 ? rhsX + 'x' : ''} ${rhsC >= 0 ? '+ ' + rhsC : '- ' + Math.abs(rhsC)}`
+    });
+
+    const finalX = lhsX - rhsX;
+    const finalC = rhsC - lhsC;
+
+    passos.push({
+      descricao: "Isolando os termos com x à esquerda e constantes à direita:",
+      latex: `${lhsX}x ${rhsX >= 0 ? '- ' + rhsX : '+ ' + Math.abs(rhsX)}x = ${rhsC} ${lhsC >= 0 ? '- ' + lhsC : '+ ' + Math.abs(lhsC)}`
+    });
+
+    passos.push({
+      descricao: "Simplificando ambos os membros:",
+      latex: `${finalX}x = ${finalC}`
+    });
+
+    if (finalX === 0) {
+      if (finalC === 0) {
+        passos.push({
+          descricao: "Resultado:",
+          latex: `0x = 0 \\implies \\text{Equação indeterminada (infinitas soluções)}`
+        });
+      } else {
+        passos.push({
+          descricao: "Resultado:",
+          latex: `0x = ${finalC} \\implies \\text{Equação impossível (sem solução)}`
+        });
+      }
+      return passos;
+    }
+
+    const fracao = simplificarFracao(finalC, finalX);
+    if (fracao.den === 1) {
+      passos.push({
+        descricao: "Dividindo pelo coeficiente de x:",
+        latex: `x = \\frac{${finalC}}{${finalX}} = ${fracao.num}`
+      });
+      passos.push({
+        descricao: "Conjunto Solução:",
+        latex: `S = \\{${fracao.num}\\}`
+      });
+    } else {
+      passos.push({
+        descricao: "Isolando a incógnita x e simplificando a fração:",
+        latex: `x = \\frac{${finalC}}{${finalX}} = \\frac{${fracao.num}}{${fracao.den}}`
+      });
+      passos.push({
+        descricao: "Conjunto Solução:",
+        latex: `S = \\left\\{ \\frac{${fracao.num}}{${fracao.den}} \\right\\}`
+      });
+    }
+
+    return passos;
+  }
+
+  // ==========================================
+  // OCR VIA GEMINI VISION API
+  // ==========================================
+  async function extrairEquacaoDaImagem(base64Data, mimeType, apiKey) {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+    const prompt = "Você é um leitor de expressões matemáticas. Identifique a equação do primeiro grau escrita na imagem (mesmo que a lápis ou manuscrita). " +
+                   "Responda ESTRITAMENTE e APENAS a equação em formato de texto legível (exemplo: 2x + 5 = 15 ou 3(x-2)=9). " +
+                   "Não use markdown, não use LaTeX delimitado por $, não use explicações, apenas a equação.";
+
+    const body = {
+      contents: [{
+        parts: [
+          { text: prompt },
+          {
+            inline_data: {
+              mime_type: mimeType,
+              data: base64Data
+            }
+          }
+        ]
+      }]
+    };
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || "Erro de comunicação com a API");
+    }
+
+    const data = await response.json();
+    let texto = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    return texto.trim().replace(/`/g, '').replace(/\$/g, '');
+  }
+
+  // ==========================================
+  // ELEMENTOS E EVENTOS DA TELA
+  // ==========================================
+  const btnResolver = document.getElementById('btn-resolver');
+  const btnLimpar = document.getElementById('btn-limpar');
+  const eqInput = document.getElementById('eq-input');
+  const cameraInput = document.getElementById('camera-input');
+  const previewImg = document.getElementById('preview-img');
+  const ocrStatus = document.getElementById('ocr-status');
+  const resultadoCard = document.getElementById('resultado-card');
+  const passosLista = document.getElementById('passos-lista');
+  const alertContainer = document.getElementById('alert-container');
+
+  function renderPassos(passos) {
+    passosLista.innerHTML = '';
+    passos.forEach((p, idx) => {
+      const stepDiv = document.createElement('div');
+      stepDiv.className = 'step-box';
+      stepDiv.innerHTML = `
+        <div class="step-title">Passo ${idx + 1}: ${p.descricao}</div>
+        <div class="step-math">$$${p.latex}$$</div>
+      `;
+      passosLista.appendChild(stepDiv);
+    });
+    resultadoCard.style.display = 'block';
+    
+    if (window.renderMathInElement) {
+      renderMathInElement(passosLista, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ]
+      });
+    }
+  }
+
+  function dispararResolucao() {
+    alertContainer.innerHTML = '';
+    const formula = eqInput.value.trim();
+    if (!formula) {
+      alertContainer.innerHTML = `<div class="alert alert-error">Digite ou fotografe uma equação primeiro.</div>`;
+      return;
+    }
+
+    try {
+      const passos = resolverEquacao(formula);
+      renderPassos(passos);
+    } catch (err) {
+      alertContainer.innerHTML = `<div class="alert alert-error">Erro ao resolver: ${err.message}</div>`;
+      resultadoCard.style.display = 'none';
+    }
+  }
+
+  btnResolver.addEventListener('click', dispararResolucao);
+
+  btnLimpar.addEventListener('click', () => {
+    eqInput.value = '';
+    previewImg.style.display = 'none';
+    previewImg.src = '';
+    resultadoCard.style.display = 'none';
+    alertContainer.innerHTML = '';
+    ocrStatus.innerHTML = '';
+  });
+
+  // Handler de Imagem com Leitura Real
+  cameraInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    alertContainer.innerHTML = '';
+    const currentKey = localStorage.getItem('gemini_api_key');
+    if (!currentKey) {
+      alertContainer.innerHTML = `<div class="alert alert-error">Por favor, configure sua chave de API na aba superior para permitir a leitura da imagem.</div>`;
+      apiDetails.open = true;
+      return;
+    }
+
+    // Exibe preview da foto
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64Url = ev.target.result;
+      previewImg.src = base64Url;
+      previewImg.style.display = 'block';
+
+      // Separa o MIME e os dados puros em Base64
+      const mimeType = file.type || "image/jpeg";
+      const base64Data = base64Url.split(',')[1];
+
+      ocrStatus.style.color = '#2563eb';
+      ocrStatus.innerHTML = "⏳ Lendo a escrita a lápis via Inteligência Artificial...";
+
+      try {
+        const equacaoLida = await extrairEquacaoDaImagem(base64Data, mimeType, currentKey);
+        ocrStatus.style.color = '#16a34a';
+        ocrStatus.innerHTML = ` Equação reconhecida: <strong>${equacaoLida}</strong>`;
+        eqInput.value = equacaoLida;
+        
+        // Dispara o cálculo passo a passo automaticamente
+        dispararResolucao();
+      } catch (err) {
+        ocrStatus.style.color = '#dc2626';
+        ocrStatus.innerHTML = `❌ Falha ao ler a imagem: ${err.message}`;
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Resolve o exemplo inicial
+  window.addEventListener('DOMContentLoaded', dispararResolucao);
+</script>
+
+</body>
+</html>
