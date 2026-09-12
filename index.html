@@ -1582,6 +1582,9 @@
   // ==========================================
   // MÓDULO 5: OPERAÇÕES COM FRAÇÕES
   // ==========================================
+  // ==========================================
+  // MÓDULO 5: OPERAÇÕES COM FRAÇÕES (COM MMC DETALHADO)
+  // ==========================================
   const inputFracoes = document.getElementById('input-fracoes');
   const prevMathFracoes = document.getElementById('prev-math-fracoes');
 
@@ -1607,20 +1610,56 @@
     return `\\frac{${num}}{${den}}`;
   }
 
+  // Gera a tabela clássica de decomposição simultânea em fatores primos
+  function gerarTabelaDecomposicaoMMC(n1, n2) {
+    let a = Math.abs(n1);
+    let b = Math.abs(n2);
+    const linhas = [];
+    const fatores = [];
+    let primo = 2;
+
+    while (a > 1 || b > 1) {
+      if (a % primo === 0 || b % primo === 0) {
+        linhas.push({ a, b, primo });
+        fatores.push(primo);
+        if (a % primo === 0) a = a / primo;
+        if (b % primo === 0) b = b / primo;
+      } else {
+        primo++;
+      }
+    }
+    // Linha final com 1, 1
+    linhas.push({ a: 1, b: 1, primo: null });
+
+    const totalMMC = fatores.reduce((acc, cur) => acc * cur, 1);
+
+    // Monta matriz KaTeX com traço vertical (array com cc|c)
+    let latexArray = "\\begin{array}{cc|c}\n";
+    for (let i = 0; i < linhas.length - 1; i++) {
+      latexArray += `${linhas[i].a} & ${linhas[i].b} & ${linhas[i].primo} \\\\\n`;
+    }
+    latexArray += `\\hline\n 1 & 1 & \\mathbf{${totalMMC}}\n\\end{array}`;
+
+    const produtoFatores = fatores.join(' \\cdot ');
+
+    return {
+      tabelaLatex: latexArray,
+      produtoLatex: `${produtoFatores} = ${totalMMC}`,
+      mmcValor: totalMMC
+    };
+  }
+
   function resolverOperacoesFracoes(exprStr) {
     const passos = [];
     let s = exprStr.replace(/\s+/g, '').replace(/:/g, '÷');
 
-    // Detecta o operador principal entre as duas frações (+, -, *, ÷ ou /)
     let op = null;
     let indexOp = -1;
 
-    // Procura operadores fora de barras de fração
     const regexOp = /([+*÷])|(?<=\d)\-(?=\d)|(?<=\/\d+)\/(?=\d)/;
     const match = s.match(regexOp);
 
     if (!match) {
-      // Tenta detectar divisão escrita como / entre duas frações (ex: 2/3 / 4/5)
       const partesBarra = s.split('/');
       if (partesBarra.length === 4) {
         op = '÷';
@@ -1699,7 +1738,7 @@
       const denFinal = f1.den * f2.num;
 
       passos.push({
-        descricao: "Multiplicando os termos resultantes:",
+        descricao: "Multiplicando os termos:",
         latex: `\\frac{${f1.num} \\cdot ${f2.den}}{${f1.den} \\cdot ${f2.num}} = \\frac{${numFinal}}{${denFinal}}`
       });
 
@@ -1724,13 +1763,13 @@
     if (op === '+' || op === '-') {
       if (f1.den === f2.den) {
         passos.push({
-          descricao: "Denominadores iguais: conservamos o denominador comum e operamos os numeradores:",
+          descricao: "Denominadores iguais: conservamos o denominador e efetuamos a operação nos numeradores:",
           latex: `\\frac{${f1.num} ${op} ${f2.num}}{${f1.den}}`
         });
 
         const numFinal = op === '+' ? (f1.num + f2.num) : (f1.num - f2.num);
         passos.push({
-          descricao: "Resultado da soma/subtração no numerador:",
+          descricao: "Resultado no numerador:",
           latex: `\\frac{${numFinal}}{${f1.den}}`
         });
 
@@ -1745,25 +1784,28 @@
         }
         return passos;
       } else {
-        const mmcDen = lcm(f1.den, f2.den);
+        // CÁLCULO DETALHADO DO MMC
+        const decomp = gerarTabelaDecomposicaoMMC(f1.den, f2.den);
+
         passos.push({
-          descricao: `Denominadores diferentes (${f1.den} e ${f2.den}): calculamos o MMC para encontrar o denominador comum:`,
-          latex: `\\text{MMC}(${f1.den}, ${f2.den}) = ${mmcDen}`
+          descricao: `Denominadores diferentes (${f1.den} e ${f2.den}). Realizamos a decomposição simultânea em fatores primos para encontrar o MMC:`,
+          latex: `${decomp.tabelaLatex} \\quad \\implies \\text{MMC}(${f1.den}, ${f2.den}) = ${decomp.produtoLatex}`
         });
 
+        const mmcDen = decomp.mmcValor;
         const mult1 = mmcDen / f1.den;
         const mult2 = mmcDen / f2.den;
         const novoNum1 = f1.num * mult1;
         const novoNum2 = f2.num * mult2;
 
         passos.push({
-          descricao: "Obtendo as frações equivalentes (divide pelo denominador anterior e multiplica pelo numerador):",
+          descricao: "Reduzindo as frações ao mesmo denominador comum (divide pelo denominador anterior e multiplica pelo numerador):",
           latex: `\\frac{${f1.num} \\cdot ${mult1}}{${mmcDen}} ${op} \\frac{${f2.num} \\cdot ${mult2}}{${mmcDen}} = \\frac{${novoNum1}}{${mmcDen}} ${op} \\frac{${novoNum2}}{${mmcDen}}`
         });
 
         const numFinal = op === '+' ? (novoNum1 + novoNum2) : (novoNum1 - novoNum2);
         passos.push({
-          descricao: "Operando os numeradores sobre o denominador comum:",
+          descricao: "Operando os numeradores sobre o denominador comum encontrado:",
           latex: `\\frac{${novoNum1} ${op} ${novoNum2}}{${mmcDen}} = \\frac{${numFinal}}{${mmcDen}}`
         });
 
@@ -1772,12 +1814,12 @@
 
         if (dMDC > 1) {
           passos.push({
-            descricao: `Simplificando a fração resultante pelo MDC (${dMDC}):`,
+            descricao: `Simplificando pelo MDC (${dMDC}):`,
             latex: `\\frac{${numFinal} \\div ${dMDC}}{${mmcDen} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
           });
         } else {
           passos.push({
-            descricao: "Forma irredutível final:",
+            descricao: "Fração irredutível final:",
             latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
           });
         }
