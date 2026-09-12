@@ -1,14 +1,12 @@
 // api/ocr.js
 export default async function handler(req, res) {
-  // Permite que seu GitHub Pages acesse essa função (CORS)
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
   if (req.method !== 'POST') {
@@ -16,43 +14,53 @@ export default async function handler(req, res) {
   }
 
   const { base64Data, mimeType } = req.body;
-  // A chave fica salva em uma variável de ambiente protegida (ninguém vê)
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    return res.status(500).json({ error: 'Chave da API não configurada no servidor.' });
+    return res.status(500).json({ error: 'GEMINI_API_KEY não configurada nas variáveis de ambiente da Vercel.' });
   }
 
   try {
+    // Usando gemini-2.5-flash estável
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-    const prompt = "Você é um leitor de expressões matemáticas. Identifique a equação do primeiro grau escrita na imagem (mesmo que a lápis ou manuscrita). " +
-                   "Responda ESTRITAMENTE e APENAS a equação em formato de texto legível (exemplo: 2x + 5 = 15 ou 3(x-2)=9). " +
-                   "Não use markdown, não use LaTeX delimitado por $, não use explicações, apenas a equação.";
-
-    const body = {
-      contents: [{
-        parts: [
-          { text: prompt },
-          {
-            inline_data: {
-              mime_type: mimeType || "image/jpeg",
-              data: base64Data
-            }
-          }
-        ]
-      }]
-    };
+    const prompt = "Transcreva a equação de 1º grau escrita na imagem. " +
+                   "Instruções estritas: " +
+                   "1. Use barra / para frações (exemplo: x/2 + 3 = x/3 + 5). " +
+                   "2. NÃO utilize LaTeX, cifrões ($), blocos de código nem explicações. " +
+                   "3. Responda APENAS com a equação pura em uma única linha.";
 
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            { text: prompt },
+            {
+              inline_data: {
+                mime_type: mimeType || "image/jpeg",
+                data: base64Data
+              }
+            }
+          ]
+        }]
+      })
     });
 
     const data = await response.json();
-    const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const equacao = texto.trim().replace(/`/g, '').replace(/\$/g, '');
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: data.error?.message || 'Erro na API do Gemini' });
+    }
+
+    let texto = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    // Limpeza de caracteres residuais
+    const equacao = texto.replace(/[`$]/g, '').trim();
+
+    if (!equacao) {
+      return res.status(422).json({ error: 'A IA não conseguiu identificar caracteres legíveis na imagem.' });
+    }
 
     return res.status(200).json({ equacao });
   } catch (err) {
