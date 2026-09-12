@@ -280,6 +280,65 @@
       overflow-x: auto;
       text-align: center;
     }
+
+    /* Botão e Caixa de Ajuda Pedagógica */
+    .help-toggle-btn {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s;
+    }
+    .help-toggle-btn:hover { background: #dbeafe; }
+
+    .help-content-box {
+      display: none;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #f59e0b;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-top: 8px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #334155;
+    }
+    .help-content-box.active { display: block; }
+    .help-content-box strong { color: #0f172a; }
+
+    .yt-recommendation {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      flex-wrap: wrap;
+    }
+    .yt-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: background 0.15s;
+    }
+    .yt-link-btn:hover { background: #fecdd3; }
   </style>
 </head>
 <body>
@@ -372,7 +431,7 @@
         </div>
       </div>
 
-      <!-- Operações com Inteiros (NOVO) -->
+      <!-- Operações com Inteiros -->
       <div class="topic-card c-indigo" onclick="abrirModulo('inteiros')">
         <div class="card-top">
           <div class="icon-box">📏</div>
@@ -722,7 +781,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- VIEW 7: OPERAÇÕES COM INTEIROS (NOVA)      -->
+  <!-- VIEW 7: OPERAÇÕES COM INTEIROS             -->
   <!-- ========================================== -->
   <div id="view-inteiros" class="view">
     <div class="nav-bar">
@@ -834,6 +893,213 @@
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('view-menu').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ==========================================
+  // BASE DE TUTORIA EXPANDIDA
+  // ==========================================
+  const TUTORIA_BASE = {
+    // Equações do 1º Grau
+    "mmc_equacao": {
+      conceito: "Para eliminar os denominadores fracionários de uma equação, calculamos o Mínimo Múltiplo Comum (MMC) entre todos eles e multiplicamos ambos os membros por esse valor exato.",
+      dica: "Multiplicar todos os termos pelo MMC garante que todas as divisões sejam exatas, transformando frações em inteiros!",
+      ytBusca: "equacao do primeiro grau com fracao e mmc"
+    },
+    "distributiva": {
+      conceito: "A propriedade distributiva da multiplicação sobre a adição afirma que a(b + c) = ab + ac. Multiplica-se o fator externo por cada termo de dentro dos parênteses.",
+      dica: "Atenção máxima à regra de sinais: menos com menos dá mais, menos com mais dá menos!",
+      ytBusca: "propriedade distributiva matematica basica"
+    },
+    "transposicao_termos": {
+      conceito: "Aplicamos o Princípio Aditivo da igualdade: somamos ou subtraímos os mesmos termos em ambos os lados para agrupar termos com incógnita no 1º membro e constantes no 2º.",
+      dica: "Ao transpor um termo de membro, trocamos sua operação (o que está somando passa subtraindo e vice-versa).",
+      ytBusca: "equacao do primeiro grau principio aditivo"
+    },
+    "reducao_termos": {
+      conceito: "Somamos ou subtraímos apenas os coeficientes de termos semelhantes (que possuem a mesma parte literal). Exemplo: 5x - 2x = 3x.",
+      dica: "Não misture termos com incógnita com termos numéricos puros!",
+      ytBusca: "reducao de termos semelhantes algebra"
+    },
+    "isolamento_incognita": {
+      conceito: "Aplicamos o Princípio Multiplicativo: dividimos ambos os lados pelo coeficiente que acompanha x (a) para obter x = b/a.",
+      dica: "Se o coeficiente for negativo, lembre-se de dividir pelo número negativo com parênteses, alterando o sinal final.",
+      ytBusca: "como isolar o x na equacao do primeiro grau"
+    },
+    "simplificacao_fracao": {
+      conceito: "Dividimos o numerador e o denominador pelo Máximo Divisor Comum (MDC) de ambos para encontrar a fração irredutível equivalente.",
+      dica: "Se o denominador resultar em 1, a fração representa um número inteiro exato.",
+      ytBusca: "simplificacao de fracoes irredutivel"
+    },
+    "classificacao_equacao": {
+      conceito: "0x = 0 significa que qualquer valor real satisfaz a equação (identidade/infinitas soluções). Já 0x = k (com k ≠ 0) representa uma contradição lógica (equação impossível).",
+      dica: "Nenhum número multiplicado por zero pode resultar em um valor diferente de zero!",
+      ytBusca: "equacao do primeiro grau impossivel e indeterminada"
+    },
+
+    // Equações do 2º Grau
+    "coeficientes_bhaskara": {
+      conceito: "Na equação quadrática ax² + bx + c = 0, identificamos 'a' como coeficiente de x², 'b' de x e 'c' o termo independente constante.",
+      dica: "Se um termo não aparece na equação, seu coeficiente correspondente é zero!",
+      ytBusca: "identificar coeficientes equacao do segundo grau"
+    },
+    "multiplicar_menos_um": {
+      conceito: "Multiplicar ambos os membros de uma igualdade por (-1) inverte todos os sinais sem alterar as raízes da equação.",
+      dica: "Garantir a > 0 facilita os cálculos do discriminante e da divisão no denominador 2a.",
+      ytBusca: "multiplicar equacao por menos 1"
+    },
+    "bhaskara_delta": {
+      conceito: "O discriminante (Δ = b² - 4ac) determina a natureza das raízes: se Δ > 0, há 2 raízes reais distintas; se Δ = 0, há 1 raiz real dupla; se Δ < 0, não existem raízes reais.",
+      dica: "Se 'b' for negativo, envolva-o em parênteses ao calcular b²: (-b)² sempre resulta em número positivo!",
+      ytBusca: "formula de bhaskara discriminante delta passo a passo"
+    },
+    "bhaskara_raizes": {
+      conceito: "Aplicamos x = (-b ± √Δ) / 2a para calcular separadamente as raízes x' (com soma) e x'' (com subtração).",
+      dica: "Cuidado com o '-b': se b for negativo, -(-b) se torna positivo!",
+      ytBusca: "calcular raizes formula de bhaskara x uma linha x duas linhas"
+    },
+    "delta_negativo": {
+      conceito: "Como não existe raiz quadrada de número negativo no conjunto dos números reais (ℝ), o conjunto solução é vazio (S = ∅).",
+      dica: "Essa equação só possuirá solução no conjunto dos números complexos (ℂ).",
+      ytBusca: "delta negativo equacao do segundo grau conjunto vazio"
+    },
+
+    // Produtos Notáveis
+    "quadrado_soma": {
+      conceito: "O quadrado da soma de dois termos é igual ao quadrado do primeiro, mais duas vezes o primeiro pelo segundo, mais o quadrado do segundo: (A + B)² = A² + 2AB + B².",
+      dica: "Não esqueça o termo central (2·A·B)! Um erro clássico é escrever (a+b)² = a² + b².",
+      ytBusca: "quadrado da soma de dois termos produtos notaveis"
+    },
+    "quadrado_diferenca": {
+      conceito: "O quadrado da diferença de dois termos é dado por (A - B)² = A² - 2AB + B². Apenas o termo do meio recebe o sinal negativo.",
+      dica: "O último termo (+B²) é sempre positivo porque (-B)² = +B².",
+      ytBusca: "quadrado da diferenca de dois termos produtos notaveis"
+    },
+    "produto_soma_diferenca": {
+      conceito: "O produto da soma pela diferença resulta na Diferença de Dois Quadrados: (A + B)(A - B) = A² - B².",
+      dica: "Os termos centrais (+AB e -AB) se anulam mutuamente, restando apenas os quadrados das pontas.",
+      ytBusca: "produto da soma pela diferenca de dois termos"
+    },
+    "cubo_soma_diferenca": {
+      conceito: "Para cubos: (A + B)³ = A³ + 3A²B + 3AB² + B³. No cubo da diferença (A - B)³, os sinais alternam: + - + -.",
+      dica: "Lembre-se dos fatores 3 multiplicando os termos mistos!",
+      ytBusca: "cubo da soma e diferenca de dois termos"
+    },
+
+    // Fatoração
+    "soma_dif_cubos": {
+      conceito: "Fatoramos cubos perfeitos: A³ + B³ = (A + B)(A² - AB + B²) e A³ - B³ = (A - B)(A² + AB + B²).",
+      dica: "Extraia a raiz cúbica dos termos para achar A e B. O segundo parêntese parece um TQP, mas NÃO tem o fator 2 no meio!",
+      ytBusca: "fatoracao soma e diferenca de dois cubos"
+    },
+    "fator_comum": {
+      conceito: "Identificamos o MDC dos coeficientes e a menor potência das variáveis comuns a todos os termos, colocando esse monômio em evidência.",
+      dica: "Para validar a resposta, basta aplicar a propriedade distributiva de volta!",
+      ytBusca: "fatoracao por fator comum em evidencia"
+    },
+    "diferenca_quadrados": {
+      conceito: "Dois quadrados subtraídos sempre se decompõem no produto de binômios conjugados: A² - B² = (A + B)(A - B).",
+      dica: "Basta extrair a raiz quadrada de cada um dos dois termos.",
+      ytBusca: "fatoracao diferenca de dois quadrados"
+    },
+    "trinomio_quadrado_perfeito": {
+      conceito: "Um trinômio ax² + bx + c é quadrado perfeito se o termo do meio for exatamente igual a 2 · √a · √c.",
+      dica: "Se passar no teste do termo central, a fatoração será (√a ± √c)².",
+      ytBusca: "trinomio quadrado perfeito como identificar e fatorar"
+    },
+    "soma_produto": {
+      conceito: "Para x² + Sx + P, procuramos dois números x₁ e x₂ tais que a soma seja -S e o produto seja P, resultando em (x - x₁)(x - x₂).",
+      dica: "Comece testando os divisores inteiros do termo independente P.",
+      ytBusca: "fatoracao de trinomio do segundo grau soma e produto"
+    },
+
+    // Operações com Frações
+    "mmc_fracoes": {
+      conceito: "Não é possível somar ou subtrair frações de denominadores distintos diretamente. Decompomos em fatores primos para obter um denominador comum (MMC).",
+      dica: "Regra clássica: 'Divide pelo de baixo e multiplica pelo de cima' para criar frações equivalentes!",
+      ytBusca: "soma e subtracao de fracoes com denominadores diferentes mmc"
+    },
+    "fracao_mesmo_denominador": {
+      conceito: "Com denominadores iguais, os pedaços têm o mesmo tamanho: conservamos o denominador e operamos apenas os numeradores.",
+      dica: "Nunca some os denominadores! Exemplo: 1/5 + 2/5 = 3/5 (e não 3/10).",
+      ytBusca: "adicao e subtracao de fracoes com mesmo denominador"
+    },
+    "multiplicacao_fracoes": {
+      conceito: "Na multiplicação de frações, operamos diretamente: numerador vezes numerador e denominador vezes denominador: (a/b) · (c/d) = (ac)/(bd).",
+      dica: "Não se calcula MMC na multiplicação de frações!",
+      ytBusca: "multiplicacao de fracoes passo a passo"
+    },
+    "divisao_fracoes": {
+      conceito: "Dividir por uma fração equivale a multiplicar pelo inverso dela: (a/b) ÷ (c/d) = (a/b) · (d/c).",
+      dica: "Conserva a primeira fração exatamente como está e inverta a segunda!",
+      ytBusca: "divisao de fracoes regra do inverso"
+    },
+
+    // Operações com Inteiros
+    "reta_inteiros": {
+      conceito: "A reta numérica orienta a adição e subtração: somar um positivo desloca para a direita; somar um negativo (ou subtrair um positivo) desloca para a esquerda.",
+      dica: "Subtrair um número negativo equivale a somar (+), deslocando para a direita: -(-x) = +x.",
+      ytBusca: "operacoes com numeros inteiros reta numerica"
+    },
+    "jogo_de_sinais": {
+      conceito: "Na multiplicação e divisão: sinais iguais resultam sempre em positivo (+); sinais diferentes resultam em negativo (-).",
+      dica: "Tabuada de sinais: (+)·(+) = (+), (-)·(-) = (+), (+)·(-) = (-), (-)·(+) = (-).",
+      ytBusca: "regra de sinais multiplicacao e divisao inteiros"
+    },
+    "eliminacao_parenteses": {
+      conceito: "Sinais consecutivos se combinam: +(+) vira +, +(-) vira -, -(+) vira - e -(-) vira +.",
+      dica: "Elimine todos os parênteses antes de calcular a soma algébrica.",
+      ytBusca: "como eliminar parenteses com regra de sinais"
+    },
+
+    // Padrão
+    "padrao": {
+      conceito: "Esta etapa organiza os termos semelhantes e aplica as operações fundamentais da aritmética e da álgebra.",
+      dica: "Revise com calma cada sinal antes de avançar para a próxima etapa.",
+      ytBusca: "matematica basica exercicios explicados"
+    }
+  };
+
+  function toggleHelp(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active');
+  }
+
+  function gerarCardPassoHTML(indice, passo, idPrefixo) {
+    const tagAjuda = passo.tipoAjuda || "padrao";
+    const info = TUTORIA_BASE[tagAjuda] || TUTORIA_BASE["padrao"];
+    const helpId = `help-${idPrefixo}-${indice}`;
+    const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.ytBusca)}`;
+
+    let html = `
+      <div class="step-box">
+        <div class="step-title">Passo ${indice + 1}: ${passo.descricao}</div>`;
+        
+    if (passo.latex) {
+      html += `<div class="step-math">$$\\displaystyle ${passo.latex}$$</div>`;
+    }
+    if (passo.htmlExtra) {
+      html += passo.htmlExtra;
+    }
+
+    html += `
+        <div>
+          <button class="help-toggle-btn" onclick="toggleHelp('${helpId}')">
+            💡 Não entendi este passo
+          </button>
+          <div class="help-content-box" id="${helpId}">
+            <p><strong>📖 O que está acontecendo aqui?</strong><br>${info.conceito}</p>
+            <p style="margin-top: 6px;"><strong>⚡ Dica do Professor:</strong> ${info.dica}</p>
+            <div class="yt-recommendation">
+              <span>Quer aprofundar em vídeo?</span>
+              <a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="yt-link-btn">
+                ▶ Assistir aula no YouTube
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    return html;
   }
 
   // ==========================================
@@ -969,18 +1235,35 @@
     let lhs = parseMembro1Grau(membros[0]);
     let rhs = parseMembro1Grau(membros[1]);
 
-    passos.push({ descricao: "Equação inicial:", latex: `${formatarMembro1(lhs)} = ${formatarMembro1(rhs)}` });
+    passos.push({ 
+      descricao: "Equação inicial identificada:", 
+      latex: `${formatarMembro1(lhs)} = ${formatarMembro1(rhs)}`,
+      tipoAjuda: "padrao"
+    });
+
+    if (membros[0].includes('(') || membros[1].includes('(')) {
+      passos.push({
+        descricao: "Aplicando a propriedade distributiva para eliminar parênteses:",
+        latex: `${formatarMembro1(lhs)} = ${formatarMembro1(rhs)}`,
+        tipoAjuda: "distributiva"
+      });
+    }
 
     const denominadores = [...new Set([...lhs, ...rhs].map(t => t.den).filter(d => d > 1))];
     if (denominadores.length > 0) {
       const mmc = denominadores.reduce((acc, cur) => lcm(acc, cur), denominadores[0]);
       passos.push({
-        descricao: `Multiplicando todos os termos pelo MMC = ${mmc} para eliminar denominadores:`,
-        latex: `${mmc} \\cdot (${formatarMembro1(lhs)}) = ${mmc} \\cdot (${formatarMembro1(rhs)})`
+        descricao: `Identificamos frações com denominadores (${denominadores.join(', ')}). Multiplicamos todos os termos pelo MMC = ${mmc}:`,
+        latex: `${mmc} \\cdot (${formatarMembro1(lhs)}) = ${mmc} \\cdot (${formatarMembro1(rhs)})`,
+        tipoAjuda: "mmc_equacao"
       });
       lhs = lhs.map(t => ({ num: Math.round((t.num * mmc) / t.den), den: 1, isVar: t.isVar }));
       rhs = rhs.map(t => ({ num: Math.round((t.num * mmc) / t.den), den: 1, isVar: t.isVar }));
-      passos.push({ descricao: "Equação sem frações:", latex: `${formatarMembro1(lhs)} = ${formatarMembro1(rhs)}` });
+      passos.push({ 
+        descricao: "Equação livre de denominadores fracionários:", 
+        latex: `${formatarMembro1(lhs)} = ${formatarMembro1(rhs)}`,
+        tipoAjuda: "mmc_equacao"
+      });
     }
 
     let lx = lhs.filter(t => t.isVar).reduce((acc, t) => acc + t.num, 0);
@@ -994,22 +1277,30 @@
     let transR = `${rc}`;
     if (lc !== 0) transR += ` ${-lc > 0 ? '+ ' + -lc : '- ' + Math.abs(lc)}`;
 
-    passos.push({ descricao: "Isolando incógnitas à esquerda e números à direita:", latex: `${transL || '0'} = ${transR}` });
+    passos.push({ 
+      descricao: "Isolando incógnitas à esquerda e termos constantes à direita (Princípio Aditivo):", 
+      latex: `${transL || '0'} = ${transR}`,
+      tipoAjuda: "transposicao_termos"
+    });
 
     const finalX = lx - rx;
     const finalC = rc - lc;
     const xTxt = finalX === 1 ? 'x' : (finalX === -1 ? '-x' : `${finalX}x`);
-    passos.push({ descricao: "Reduzindo termos semelhantes:", latex: `${xTxt} = ${finalC}` });
+    passos.push({ 
+      descricao: "Reduzindo os termos semelhantes em cada membro:", 
+      latex: `${xTxt} = ${finalC}`,
+      tipoAjuda: "reducao_termos"
+    });
 
     if (finalX === 0) {
-      if (finalC === 0) passos.push({ descricao: "Classificação:", latex: `0x = 0 \\implies \\text{Infinitas soluções}` });
-      else passos.push({ descricao: "Classificação:", latex: `0x = ${finalC} \\implies \\text{Equação impossível (sem solução)}` });
+      if (finalC === 0) passos.push({ descricao: "Classificação:", latex: `0x = 0 \\implies \\text{Infinitas soluções (Identidade)}`, tipoAjuda: "classificacao_equacao" });
+      else passos.push({ descricao: "Classificação:", latex: `0x = ${finalC} \\implies \\text{Equação impossível (Sem solução real)}`, tipoAjuda: "classificacao_equacao" });
       return passos;
     }
 
     if (finalX === 1) {
-      passos.push({ descricao: "Solução:", latex: `x = ${finalC}` });
-      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${finalC}\\}` });
+      passos.push({ descricao: "Solução encontrada:", latex: `x = ${finalC}`, tipoAjuda: "isolamento_incognita" });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${finalC}\\}`, tipoAjuda: "padrao" });
       return passos;
     }
 
@@ -1019,12 +1310,12 @@
                      (finalX < 0 || finalC < 0) ? `-\\frac{${Math.abs(finalC)}}{${Math.abs(finalX)}}` : `\\frac{${finalC}}{${finalX}}`;
 
     if (fracao.den === 1) {
-      passos.push({ descricao: `Dividindo por ${divTxt}:`, latex: `x = ${interLatex} = ${fracao.num}` });
-      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${fracao.num}\\}` });
+      passos.push({ descricao: `Dividindo ambos os membros por ${divTxt} (Princípio Multiplicativo):`, latex: `x = ${interLatex} = ${fracao.num}`, tipoAjuda: "isolamento_incognita" });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${fracao.num}\\}`, tipoAjuda: "padrao" });
     } else {
       const s = fracao.num < 0 ? '-' : '';
-      passos.push({ descricao: `Dividindo por ${divTxt} e simplificando:`, latex: `x = ${interLatex} = ${s}\\frac{${Math.abs(fracao.num)}}{${fracao.den}}` });
-      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ ${s}\\frac{${Math.abs(fracao.num)}}{${fracao.den}} \\right\\}` });
+      passos.push({ descricao: `Dividindo por ${divTxt} e simplificando a fração pelo MDC:`, latex: `x = ${interLatex} = ${s}\\frac{${Math.abs(fracao.num)}}{${fracao.den}}`, tipoAjuda: "simplificacao_fracao" });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ ${s}\\frac{${Math.abs(fracao.num)}}{${fracao.den}} \\right\\}`, tipoAjuda: "padrao" });
     }
     return passos;
   }
@@ -1039,7 +1330,7 @@
       const passos = resolver1Grau(inputGrau1.value.trim());
       lista.innerHTML = '';
       passos.forEach((p, i) => {
-        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+        lista.innerHTML += gerarCardPassoHTML(i, p, 'grau1');
       });
       cardRes.style.display = 'block';
       renderizarKaTeX(lista);
@@ -1097,31 +1388,45 @@
     const lhs = parsePolinomio2G(membros[0]);
     const rhs = parsePolinomio2G(membros[1]);
 
-    passos.push({ descricao: "Equação informada:", latex: `${converterParaLatex(membros[0])} = ${converterParaLatex(membros[1])}` });
+    passos.push({ 
+      descricao: "Equação informada:", 
+      latex: `${converterParaLatex(membros[0])} = ${converterParaLatex(membros[1])}`,
+      tipoAjuda: "padrao"
+    });
 
     let a = lhs.a - rhs.a;
     let b = lhs.b - rhs.b;
     let c = lhs.c - rhs.c;
 
     if (a === 0) {
-      passos.push({ descricao: "Como a = 0, recai em uma equação do 1º grau:", latex: `${b}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0` });
+      passos.push({ 
+        descricao: "Como o coeficiente de x² é zero (a = 0), a equação reduz-se ao 1º grau:", 
+        latex: `${b}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0`,
+        tipoAjuda: "padrao"
+      });
       return resolver1Grau(`${b}x ${c >= 0 ? '+' + c : c} = 0`);
     }
 
     if (a < 0) {
       a = -a; b = -b; c = -c;
       passos.push({
-        descricao: "Multiplicando por (-1) para obter a > 0:",
-        latex: `${a === 1 ? '' : a}x^2 ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0`
+        descricao: "Multiplicando todos os termos por (-1) para garantir o coeficiente a positivo:",
+        latex: `${a === 1 ? '' : a}x^2 ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0`,
+        tipoAjuda: "multiplicar_menos_um"
       });
     } else {
       passos.push({
-        descricao: "Forma geral ax² + bx + c = 0:",
-        latex: `${a === 1 ? '' : a}x^2 ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0`
+        descricao: "Organizando na forma canônica geral ax² + bx + c = 0:",
+        latex: `${a === 1 ? '' : a}x^2 ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0`,
+        tipoAjuda: "coeficientes_bhaskara"
       });
     }
 
-    passos.push({ descricao: "Identificando os coeficientes:", latex: `a = ${a}, \\quad b = ${b}, \\quad c = ${c}` });
+    passos.push({ 
+      descricao: "Identificando os coeficientes numéricos:", 
+      latex: `a = ${a}, \\quad b = ${b}, \\quad c = ${c}`,
+      tipoAjuda: "coeficientes_bhaskara"
+    });
 
     const delta = (b * b) - (4 * a * c);
     const bStr = b < 0 ? `(${b})` : `${b}`;
@@ -1129,42 +1434,61 @@
 
     passos.push({
       descricao: "Calculando o discriminante (Δ = b² - 4ac):",
-      latex: `\\Delta = ${bStr}^2 - 4 \\cdot (${a}) \\cdot ${cStr} = ${b * b} - (${4 * a * c}) = ${delta}`
+      latex: `\\Delta = ${bStr}^2 - 4 \\cdot (${a}) \\cdot ${cStr} = ${b * b} - (${4 * a * c}) = ${delta}`,
+      tipoAjuda: "bhaskara_delta"
     });
 
     if (delta < 0) {
-      passos.push({ descricao: "Análise do discriminante:", latex: `\\Delta < 0 \\implies \\text{Não possui raízes reais } (x \\notin \\mathbb{R})` });
-      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\emptyset` });
+      passos.push({ 
+        descricao: "Análise do discriminante (Δ < 0):", 
+        latex: `\\Delta < 0 \\implies \\text{Não existem raízes no conjunto dos reais } (x \\notin \\mathbb{R})`,
+        tipoAjuda: "delta_negativo"
+      });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\emptyset`, tipoAjuda: "padrao" });
       return passos;
     }
 
     const sqrtDelta = Math.sqrt(delta);
     passos.push({
-      descricao: "Fórmula de Bhaskara:",
-      latex: `x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a} = \\frac{-(${b}) \\pm \\sqrt{${delta}}}{2 \\cdot (${a})}`
+      descricao: "Aplicando a fórmula resolutiva de Bhaskara:",
+      latex: `x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a} = \\frac{-(${b}) \\pm \\sqrt{${delta}}}{2 \\cdot (${a})}`,
+      tipoAjuda: "bhaskara_raizes"
     });
 
     if (Number.isInteger(sqrtDelta)) {
-      passos.push({ descricao: `Substituindo \\sqrt{${delta}} = ${sqrtDelta}:`, latex: `x = \\frac{${-b} \\pm ${sqrtDelta}}{${2 * a}}` });
+      passos.push({ 
+        descricao: `Substituindo o valor exato da raiz quadrada (\\sqrt{${delta}} = ${sqrtDelta}):`, 
+        latex: `x = \\frac{${-b} \\pm ${sqrtDelta}}{${2 * a}}`,
+        tipoAjuda: "bhaskara_raizes"
+      });
       if (delta === 0) {
         const x1 = simplificarFracao(-b, 2 * a);
         const rStr = x1.den === 1 ? `${x1.num}` : `\\frac{${x1.num}}{${x1.den}}`;
-        passos.push({ descricao: "Como Δ = 0, há uma única raiz real:", latex: `x' = x'' = ${rStr}` });
-        passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${rStr}\\}` });
+        passos.push({ 
+          descricao: "Como Δ = 0, a equação possui uma única raiz real dupla (x' = x''):", 
+          latex: `x' = x'' = ${rStr}`,
+          tipoAjuda: "bhaskara_delta"
+        });
+        passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${rStr}\\}`, tipoAjuda: "padrao" });
       } else {
         const f1 = simplificarFracao(-b + sqrtDelta, 2 * a);
         const f2 = simplificarFracao(-b - sqrtDelta, 2 * a);
         const r1 = f1.den === 1 ? `${f1.num}` : `\\frac{${f1.num}}{${f1.den}}`;
         const r2 = f2.den === 1 ? `${f2.num}` : `\\frac{${f2.num}}{${f2.den}}`;
-        passos.push({ descricao: "Calculando x' e x'':", latex: `x' = ${r1}, \\qquad x'' = ${r2}` });
-        passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ ${r1}, \\; ${r2} \\right\\}` });
+        passos.push({ 
+          descricao: "Calculando as duas raízes reais distintas (x' e x''):", 
+          latex: `x' = \\frac{${-b} + ${sqrtDelta}}{${2 * a}} = ${r1}, \\qquad x'' = \\frac{${-b} - ${sqrtDelta}}{${2 * a}} = ${r2}`,
+          tipoAjuda: "bhaskara_raizes"
+        });
+        passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ ${r1}, \\; ${r2} \\right\\}`, tipoAjuda: "padrao" });
       }
     } else {
       passos.push({
-        descricao: "Raízes na forma de radicais:",
-        latex: `x' = \\frac{${-b} + \\sqrt{${delta}}}{${2 * a}}, \\qquad x'' = \\frac{${-b} - \\sqrt{${delta}}}{${2 * a}}`
+        descricao: "Como Δ não é quadrado perfeito, deixamos as raízes indicadas com radicais:",
+        latex: `x' = \\frac{${-b} + \\sqrt{${delta}}}{${2 * a}}, \\qquad x'' = \\frac{${-b} - \\sqrt{${delta}}}{${2 * a}}`,
+        tipoAjuda: "bhaskara_raizes"
       });
-      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ \\frac{${-b} - \\sqrt{${delta}}}{${2 * a}}, \\; \\frac{${-b} + \\sqrt{${delta}}}{${2 * a}} \\right\\}` });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ \\frac{${-b} - \\sqrt{${delta}}}{${2 * a}}, \\; \\frac{${-b} + \\sqrt{${delta}}}{${2 * a}} \\right\\}`, tipoAjuda: "padrao" });
     }
     return passos;
   }
@@ -1179,7 +1503,7 @@
       const passos = resolver2Grau(inputGrau2.value.trim());
       lista.innerHTML = '';
       passos.forEach((p, i) => {
-        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+        lista.innerHTML += gerarCardPassoHTML(i, p, 'grau2');
       });
       cardRes.style.display = 'block';
       renderizarKaTeX(lista);
@@ -1245,15 +1569,15 @@
       const absB = Math.abs(b);
       const ehSoma = b > 0;
 
-      passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^3` });
+      passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^3`, tipoAjuda: "padrao" });
 
       if (ehSoma) {
-        passos.push({ descricao: "Identificamos o Cubo da Soma de dois termos:", latex: `(A + B)^3 = A^3 + 3 \\cdot A^2 \\cdot B + 3 \\cdot A \\cdot B^2 + B^3` });
+        passos.push({ descricao: "Identificamos o Cubo da Soma de dois termos:", latex: `(A + B)^3 = A^3 + 3A^2B + 3AB^2 + B^3`, tipoAjuda: "cubo_soma_diferenca" });
       } else {
-        passos.push({ descricao: "Identificamos o Cubo da Diferença de dois termos:", latex: `(A - B)^3 = A^3 - 3 \\cdot A^2 \\cdot B + 3 \\cdot A \\cdot B^2 - B^3` });
+        passos.push({ descricao: "Identificamos o Cubo da Diferença de dois termos:", latex: `(A - B)^3 = A^3 - 3A^2B + 3AB^2 - B^3`, tipoAjuda: "cubo_soma_diferenca" });
       }
 
-      passos.push({ descricao: "Identificando os termos A e B:", latex: `A = ${termoA}, \\quad B = ${absB}` });
+      passos.push({ descricao: "Identificando os termos fundamentais A e B:", latex: `A = ${termoA}, \\quad B = ${absB}`, tipoAjuda: "cubo_soma_diferenca" });
 
       const aCuboStr = (a === 1) ? `x^3` : `(${termoA})^3`;
       const aQuadStr = (a === 1) ? `x^2` : `(${termoA})^2`;
@@ -1262,8 +1586,9 @@
       const sinal3 = ehSoma ? '+' : '-';
 
       passos.push({
-        descricao: "Substituindo na fórmula do produto notável:",
-        latex: `${aCuboStr} ${sinal1} 3 \\cdot ${aQuadStr} \\cdot (${absB}) ${sinal2} 3 \\cdot (${termoA}) \\cdot (${absB})^2 ${sinal3} (${absB})^3`
+        descricao: "Substituindo ordenadamente na fórmula do produto notável:",
+        latex: `${aCuboStr} ${sinal1} 3 \\cdot ${aQuadStr} \\cdot (${absB}) ${sinal2} 3 \\cdot (${termoA}) \\cdot (${absB})^2 ${sinal3} (${absB})^3`,
+        tipoAjuda: "cubo_soma_diferenca"
       });
 
       const t1 = a * a * a;
@@ -1276,13 +1601,15 @@
       const t3Str = `${t3}x`;
 
       passos.push({
-        descricao: "Efetuando as potências e multiplicações numéricas:",
-        latex: `${t1Str} ${sinal1} ${t2Str} ${sinal2} ${t3Str} ${sinal3} ${t4}`
+        descricao: "Efetuando os cálculos de potências e produtos:",
+        latex: `${t1Str} ${sinal1} ${t2Str} ${sinal2} ${t3Str} ${sinal3} ${t4}`,
+        tipoAjuda: "padrao"
       });
 
       passos.push({
-        descricao: "Polinômio cúbico final:",
-        latex: `\\mathbf{${t1Str} ${sinal1} ${t2Str} ${sinal2} ${t3Str} ${sinal3} ${t4}}`
+        descricao: "Polinômio cúbico expandido final:",
+        latex: `\\mathbf{${t1Str} ${sinal1} ${t2Str} ${sinal2} ${t3Str} ${sinal3} ${t4}}`,
+        tipoAjuda: "padrao"
       });
 
       return passos;
@@ -1303,27 +1630,27 @@
       const absB = Math.abs(b);
       const ehSoma = b > 0;
 
-      passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^2` });
+      passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^2`, tipoAjuda: "padrao" });
 
       if (ehSoma) {
-        passos.push({ descricao: "Identificamos o Quadrado da Soma de dois termos:", latex: `(A + B)^2 = A^2 + 2 \\cdot A \\cdot B + B^2` });
+        passos.push({ descricao: "Identificamos o Quadrado da Soma de dois termos:", latex: `(A + B)^2 = A^2 + 2AB + B^2`, tipoAjuda: "quadrado_soma" });
       } else {
-        passos.push({ descricao: "Identificamos o Quadrado da Diferença de dois termos:", latex: `(A - B)^2 = A^2 - 2 \\cdot A \\cdot B + B^2` });
+        passos.push({ descricao: "Identificamos o Quadrado da Diferença de dois termos:", latex: `(A - B)^2 = A^2 - 2AB + B^2`, tipoAjuda: "quadrado_diferenca" });
       }
 
-      passos.push({ descricao: "Identificando o primeiro termo (A) e o segundo termo (B):", latex: `A = ${termoA}, \\quad B = ${absB}` });
+      passos.push({ descricao: "Identificando o primeiro termo (A) e o segundo termo (B):", latex: `A = ${termoA}, \\quad B = ${absB}`, tipoAjuda: ehSoma ? "quadrado_soma" : "quadrado_diferenca" });
 
       const aParenteses = (a === 1) ? `x^2` : `(${termoA})^2`;
       const sinalMeio = ehSoma ? '+' : '-';
-      passos.push({ descricao: "Substituindo os termos na fórmula:", latex: `${aParenteses} ${sinalMeio} 2 \\cdot (${termoA}) \\cdot (${absB}) + (${absB})^2` });
+      passos.push({ descricao: "Substituindo os termos na relação algébrica:", latex: `${aParenteses} ${sinalMeio} 2 \\cdot (${termoA}) \\cdot (${absB}) + (${absB})^2`, tipoAjuda: ehSoma ? "quadrado_soma" : "quadrado_diferenca" });
 
       const a2 = a * a;
       const meio = 2 * Math.abs(a) * absB;
       const b2 = absB * absB;
       const a2Str = a2 === 1 ? "x^2" : `${a2}x^2`;
 
-      passos.push({ descricao: "Efetuando as potências e multiplicações:", latex: `${a2Str} ${sinalMeio} ${meio}x + ${b2}` });
-      passos.push({ descricao: "Trinômio Quadrado Perfeito final:", latex: `\\mathbf{${a2Str} ${sinalMeio} ${meio}x + ${b2}}` });
+      passos.push({ descricao: "Calculando as potências e o produto central 2AB:", latex: `${a2Str} ${sinalMeio} ${meio}x + ${b2}`, tipoAjuda: "padrao" });
+      passos.push({ descricao: "Trinômio Quadrado Perfeito resultante:", latex: `\\mathbf{${a2Str} ${sinalMeio} ${meio}x + ${b2}}`, tipoAjuda: "padrao" });
       return passos;
     }
 
@@ -1341,38 +1668,41 @@
         const absB = Math.abs(b1);
         const termoA = a === 1 ? "x" : (a === -1 ? "-x" : `${a}x`);
 
-        passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} + ${absB})(${termoA} - ${absB})` });
-        passos.push({ descricao: "Identificamos o Produto da Soma pela Diferença de dois termos:", latex: `(A + B)(A - B) = A^2 - B^2` });
-        passos.push({ descricao: "Identificando os termos A e B:", latex: `A = ${termoA}, \\quad B = ${absB}` });
+        passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} + ${absB})(${termoA} - ${absB})`, tipoAjuda: "padrao" });
+        passos.push({ descricao: "Identificamos o Produto da Soma pela Diferença de dois termos:", latex: `(A + B)(A - B) = A^2 - B^2`, tipoAjuda: "produto_soma_diferenca" });
+        passos.push({ descricao: "Identificando os termos A e B:", latex: `A = ${termoA}, \\quad B = ${absB}`, tipoAjuda: "produto_soma_diferenca" });
 
         const aParenteses = (a === 1) ? `x^2` : `(${termoA})^2`;
-        passos.push({ descricao: "Aplicando a regra A² - B²:", latex: `${aParenteses} - (${absB})^2` });
+        passos.push({ descricao: "Aplicando a regra da Diferença de Quadrados (A² - B²):", latex: `${aParenteses} - (${absB})^2`, tipoAjuda: "produto_soma_diferenca" });
 
         const a2Final = a * a;
         const b2Final = absB * absB;
         const a2Str = a2Final === 1 ? "x^2" : `${a2Final}x^2`;
-        passos.push({ descricao: "Diferença de Dois Quadrados final:", latex: `\\mathbf{${a2Str} - ${b2Final}}` });
+        passos.push({ descricao: "Diferença de Dois Quadrados final:", latex: `\\mathbf{${a2Str} - ${b2Final}}`, tipoAjuda: "padrao" });
         return passos;
       } else {
         const termoA = a1 * a2;
         const termoB = (a1 * b2) + (a2 * b1);
         const termoC = b1 * b2;
 
-        passos.push({ descricao: "Expressão inicial informada (produto de binômios):", latex: `(${converterParaLatex(matchProd[1])}) \\cdot (${converterParaLatex(matchProd[2])})` });
+        passos.push({ descricao: "Produto de binômios genéricos:", latex: `(${converterParaLatex(matchProd[1])}) \\cdot (${converterParaLatex(matchProd[2])})`, tipoAjuda: "padrao" });
         passos.push({
-          descricao: "Aplicando a propriedade distributiva:",
-          latex: `(${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${b2}) + (${b1}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${b1}) \\cdot (${b2})`
+          descricao: "Aplicando a propriedade distributiva termo a termo:",
+          latex: `(${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${b2}) + (${b1}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${b1}) \\cdot (${b2})`,
+          tipoAjuda: "distributiva"
         });
 
         const aStr = termoA === 1 ? "x^2" : (termoA === -1 ? "-x^2" : `${termoA}x^2`);
         passos.push({
-          descricao: "Multiplicando os termos:",
-          latex: `${aStr} ${a1*b2 >= 0 ? '+ ' + a1*b2 : '- ' + Math.abs(a1*b2)}x ${a2*b1 >= 0 ? '+ ' + a2*b1 : '- ' + Math.abs(a2*b1)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}`
+          descricao: "Multiplicando os termos individuais:",
+          latex: `${aStr} ${a1*b2 >= 0 ? '+ ' + a1*b2 : '- ' + Math.abs(a1*b2)}x ${a2*b1 >= 0 ? '+ ' + a2*b1 : '- ' + Math.abs(a2*b1)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}`,
+          tipoAjuda: "padrao"
         });
 
         passos.push({
-          descricao: "Reduzindo termos semelhantes:",
-          latex: `\\mathbf{${aStr} ${termoB >= 0 ? '+ ' + termoB : '- ' + Math.abs(termoB)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}}`
+          descricao: "Reduzindo termos semelhantes centrais:",
+          latex: `\\mathbf{${aStr} ${termoB >= 0 ? '+ ' + termoB : '- ' + Math.abs(termoB)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}}`,
+          tipoAjuda: "reducao_termos"
         });
         return passos;
       }
@@ -1391,7 +1721,7 @@
       const passos = resolverProdutosNotaveis(inputNotaveis.value.trim());
       lista.innerHTML = '';
       passos.forEach((p, i) => {
-        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+        lista.innerHTML += gerarCardPassoHTML(i, p, 'notaveis');
       });
       cardRes.style.display = 'block';
       renderizarKaTeX(lista);
@@ -1479,9 +1809,11 @@
 
     passos.push({
       descricao: "Polinômio inicial identificado:",
-      latex: formatarPolinomio(c3, c2, c1, c0)
+      latex: formatarPolinomio(c3, c2, c1, c0),
+      tipoAjuda: "padrao"
     });
 
+    // CASO A: SOMA OU DIFERENÇA DE CUBOS
     if (c3 !== 0 && c2 === 0 && c1 === 0 && c0 !== 0) {
       const raizA = raizCubicaInteira(c3);
       const raizB = raizCubicaInteira(Math.abs(c0));
@@ -1492,13 +1824,15 @@
         const B_val = raizB;
 
         passos.push({
-          descricao: `Identificamos ${ehSoma ? 'uma Soma de dois Cubos' : 'uma Diferença de dois Cubos'} da forma A³ ${ehSoma ? '+' : '-'} B³:`,
-          latex: ehSoma ? `A^3 + B^3 = (A + B)(A^2 - A \\cdot B + B^2)` : `A^3 - B^3 = (A - B)(A^2 + A \\cdot B + B^2)`
+          descricao: `Identificamos ${ehSoma ? 'uma Soma de dois Cubos' : 'uma Diferença de dois Cubos'} (A³ ${ehSoma ? '+' : '-'} B³):`,
+          latex: ehSoma ? `A^3 + B^3 = (A + B)(A^2 - AB + B^2)` : `A^3 - B^3 = (A - B)(A^2 + AB + B^2)`,
+          tipoAjuda: "soma_dif_cubos"
         });
 
         passos.push({
           descricao: "Extraindo as raízes cúbicas dos termos A³ e B³:",
-          latex: `A = \\sqrt[3]{${c3 !== 1 ? c3 : ''}x^3} = ${A_str}, \\qquad B = \\sqrt[3]{${Math.abs(c0)}} = ${B_val}`
+          latex: `A = \\sqrt[3]{${c3 !== 1 ? c3 : ''}x^3} = ${A_str}, \\qquad B = \\sqrt[3]{${Math.abs(c0)}} = ${B_val}`,
+          tipoAjuda: "soma_dif_cubos"
         });
 
         const A2_coef = raizA * raizA;
@@ -1512,18 +1846,21 @@
 
         passos.push({
           descricao: "Substituindo os valores de A e B na fórmula fatorada:",
-          latex: `(${A_str} ${sinal1} ${B_val}) \\left( (${A_str})^2 ${sinal2} (${A_str}) \\cdot (${B_val}) + (${B_val})^2 \\right)`
+          latex: `(${A_str} ${sinal1} ${B_val}) \\left( (${A_str})^2 ${sinal2} (${A_str}) \\cdot (${B_val}) + (${B_val})^2 \\right)`,
+          tipoAjuda: "soma_dif_cubos"
         });
 
         passos.push({
           descricao: "Forma Fatorada Final:",
-          latex: `\\mathbf{(${A_str} ${sinal1} ${B_val})(${A2_str} ${sinal2} ${AB_str} + ${B2_val})}`
+          latex: `\\mathbf{(${A_str} ${sinal1} ${B_val})(${A2_str} ${sinal2} ${AB_str} + ${B2_val})}`,
+          tipoAjuda: "padrao"
         });
 
         return passos;
       }
     }
 
+    // CASO B: DIFERENÇA DE DOIS QUADRADOS
     if (c3 === 0 && c2 > 0 && c1 === 0 && c0 < 0) {
       const raizA = raizQuadradaInteira(c2);
       const raizC = raizQuadradaInteira(Math.abs(c0));
@@ -1532,20 +1869,24 @@
         const A_str = raizA === 1 ? "x" : `${raizA}x`;
         passos.push({
           descricao: "Identificamos uma Diferença de Dois Quadrados da forma A² - B²:",
-          latex: `A^2 - B^2 = (A + B)(A - B)`
+          latex: `A^2 - B^2 = (A + B)(A - B)`,
+          tipoAjuda: "diferenca_quadrados"
         });
         passos.push({
           descricao: "Extraindo as raízes quadradas dos dois termos:",
-          latex: `A = \\sqrt{${c2 !== 1 ? c2 : ''}x^2} = ${A_str}, \\qquad B = \\sqrt{${Math.abs(c0)}} = ${raizC}`
+          latex: `A = \\sqrt{${c2 !== 1 ? c2 : ''}x^2} = ${A_str}, \\qquad B = \\sqrt{${Math.abs(c0)}} = ${raizC}`,
+          tipoAjuda: "diferenca_quadrados"
         });
         passos.push({
           descricao: "Forma Fatorada Final:",
-          latex: `\\mathbf{(${A_str} + ${raizC})(${A_str} - ${raizC})}`
+          latex: `\\mathbf{(${A_str} + ${raizC})(${A_str} - ${raizC})}`,
+          tipoAjuda: "padrao"
         });
         return passos;
       }
     }
 
+    // CASO C: TRINÔMIO QUADRADO PERFEITO
     if (c3 === 0 && c2 > 0 && c1 !== 0 && c0 > 0) {
       const raizA = raizQuadradaInteira(c2);
       const raizC = raizQuadradaInteira(c0);
@@ -1557,21 +1898,25 @@
           const A_str = raizA === 1 ? "x" : `${raizA}x`;
           passos.push({
             descricao: `Identificamos um Trinômio Quadrado Perfeito (${ehSoma ? 'Quadrado da Soma' : 'Quadrado da Diferença'}):`,
-            latex: ehSoma ? `A^2 + 2AB + B^2 = (A + B)^2` : `A^2 - 2AB + B^2 = (A - B)^2`
+            latex: ehSoma ? `A^2 + 2AB + B^2 = (A + B)^2` : `A^2 - 2AB + B^2 = (A - B)^2`,
+            tipoAjuda: "trinomio_quadrado_perfeito"
           });
           passos.push({
             descricao: "Verificando as extremidades e o termo central 2·A·B:",
-            latex: `A = \\sqrt{${c2 !== 1 ? c2 : ''}x^2} = ${A_str}, \\quad B = \\sqrt{${c0}} = ${raizC} \\implies 2 \\cdot (${A_str}) \\cdot (${raizC}) = ${termoCentralEsperado}x`
+            latex: `A = \\sqrt{${c2 !== 1 ? c2 : ''}x^2} = ${A_str}, \\quad B = \\sqrt{${c0}} = ${raizC} \\implies 2 \\cdot (${A_str}) \\cdot (${raizC}) = ${termoCentralEsperado}x`,
+            tipoAjuda: "trinomio_quadrado_perfeito"
           });
           passos.push({
             descricao: "Forma Fatorada Final:",
-            latex: `\\mathbf{(${A_str} ${ehSoma ? '+' : '-'} ${raizC})^2}`
+            latex: `\\mathbf{(${A_str} ${ehSoma ? '+' : '-'} ${raizC})^2}`,
+            tipoAjuda: "padrao"
           });
           return passos;
         }
       }
     }
 
+    // CASO D: SOMA E PRODUTO
     if (c3 === 0 && c2 === 1 && c1 !== 0 && c0 !== 0) {
       const delta = (c1 * c1) - (4 * c0);
       if (delta >= 0) {
@@ -1582,12 +1927,14 @@
 
           passos.push({
             descricao: "Fatoração do trinômio da forma x² + Sx + P por raízes / Soma e Produto:",
-            latex: `x^2 + (${c1})x + (${c0}) = (x - x_1)(x - x_2)`
+            latex: `x^2 + (${c1})x + (${c0}) = (x - x_1)(x - x_2)`,
+            tipoAjuda: "soma_produto"
           });
 
           passos.push({
             descricao: `Procuramos dois números cuja soma seja ${-c1} e cujo produto seja ${c0}:`,
-            latex: `x_1 = ${x1}, \\qquad x_2 = ${x2}`
+            latex: `x_1 = ${x1}, \\qquad x_2 = ${x2}`,
+            tipoAjuda: "soma_produto"
           });
 
           const f1Str = x1 >= 0 ? `(x - ${x1})` : `(x + ${Math.abs(x1)})`;
@@ -1595,13 +1942,15 @@
 
           passos.push({
             descricao: "Forma Fatorada Final:",
-            latex: `\\mathbf{${f1Str}${f2Str}}`
+            latex: `\\mathbf{${f1Str}${f2Str}}`,
+            tipoAjuda: "padrao"
           });
           return passos;
         }
       }
     }
 
+    // CASO E: FATOR COMUM EM EVIDÊNCIA
     const coefs = [c3, c2, c1, c0].filter(c => c !== 0);
     if (c0 === 0 && (c3 !== 0 || c2 !== 0 || c1 !== 0)) {
       let menorPotX = 1;
@@ -1627,17 +1976,20 @@
 
       passos.push({
         descricao: `Identificamos um Fator Comum em Evidência (${fatorEvid}):`,
-        latex: `\\text{MDC dos coeficientes: } ${mdcCoef}, \\quad \\text{Menor potência de } x: x^{${menorPotX}}`
+        latex: `\\text{MDC dos coeficientes: } ${mdcCoef}, \\quad \\text{Menor potência de } x: x^{${menorPotX}}`,
+        tipoAjuda: "fator_comum"
       });
 
       passos.push({
         descricao: "Dividindo cada termo do polinômio pelo fator comum:",
-        latex: `${converterParaLatex(fatorEvid)} \\cdot \\left( ${converterParaLatex(dentroLatex)} \\right)`
+        latex: `${converterParaLatex(fatorEvid)} \\cdot \\left( ${converterParaLatex(dentroLatex)} \\right)`,
+        tipoAjuda: "fator_comum"
       });
 
       passos.push({
         descricao: "Forma Fatorada:",
-        latex: `\\mathbf{${converterParaLatex(fatorEvid)}(${converterParaLatex(dentroLatex)})}`
+        latex: `\\mathbf{${converterParaLatex(fatorEvid)}(${converterParaLatex(dentroLatex)})}`,
+        tipoAjuda: "padrao"
       });
       return passos;
     }
@@ -1655,7 +2007,7 @@
       const passos = resolverFatoracao(inputFatoracao.value.trim());
       lista.innerHTML = '';
       passos.forEach((p, i) => {
-        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+        lista.innerHTML += gerarCardPassoHTML(i, p, 'fatoracao');
       });
       cardRes.style.display = 'block';
       renderizarKaTeX(lista);
@@ -1779,13 +2131,15 @@
     let opLatex = op === '*' ? '\\cdot' : (op === '÷' ? '\\div' : op);
     passos.push({
       descricao: "Expressão inicial identificada:",
-      latex: `${formatarFracaoLatex(f1.num, f1.den)} ${opLatex} ${formatarFracaoLatex(f2.num, f2.den)}`
+      latex: `${formatarFracaoLatex(f1.num, f1.den)} ${opLatex} ${formatarFracaoLatex(f2.num, f2.den)}`,
+      tipoAjuda: "padrao"
     });
 
     if (op === '*') {
       passos.push({
         descricao: "Multiplicação de frações: multiplica-se numerador por numerador e denominador por denominador:",
-        latex: `\\frac{${f1.num} \\cdot ${f2.num}}{${f1.den} \\cdot ${f2.den}}`
+        latex: `\\frac{${f1.num} \\cdot ${f2.num}}{${f1.den} \\cdot ${f2.den}}`,
+        tipoAjuda: "multiplicacao_fracoes"
       });
 
       const numFinal = f1.num * f2.num;
@@ -1793,7 +2147,8 @@
 
       passos.push({
         descricao: "Resultado do produto:",
-        latex: `\\frac{${numFinal}}{${denFinal}}`
+        latex: `\\frac{${numFinal}}{${denFinal}}`,
+        tipoAjuda: "multiplicacao_fracoes"
       });
 
       const irred = simplificarFracao(numFinal, denFinal);
@@ -1802,12 +2157,14 @@
       if (dMDC > 1) {
         passos.push({
           descricao: `Simplificando pelo MDC (${dMDC}):`,
-          latex: `\\frac{${numFinal} \\div ${dMDC}}{${denFinal} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+          latex: `\\frac{${numFinal} \\div ${dMDC}}{${denFinal} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`,
+          tipoAjuda: "simplificacao_fracao"
         });
       } else {
         passos.push({
           descricao: "A fração já se encontra na forma irredutível:",
-          latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+          latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`,
+          tipoAjuda: "padrao"
         });
       }
       return passos;
@@ -1818,15 +2175,17 @@
 
       passos.push({
         descricao: "Divisão de frações: conserva-se a primeira fração e multiplica-se pelo inverso da segunda:",
-        latex: `${formatarFracaoLatex(f1.num, f1.den)} \\cdot ${formatarFracaoLatex(f2.den, f2.num)}`
+        latex: `${formatarFracaoLatex(f1.num, f1.den)} \\cdot ${formatarFracaoLatex(f2.den, f2.num)}`,
+        tipoAjuda: "divisao_fracoes"
       });
 
       const numFinal = f1.num * f2.den;
       const denFinal = f1.den * f2.num;
 
       passos.push({
-        descricao: "Multiplicando os termos:",
-        latex: `\\frac{${f1.num} \\cdot ${f2.den}}{${f1.den} \\cdot ${f2.num}} = \\frac{${numFinal}}{${denFinal}}`
+        descricao: "Multiplicando os termos resultantes:",
+        latex: `\\frac{${f1.num} \\cdot ${f2.den}}{${f1.den} \\cdot ${f2.num}} = \\frac{${numFinal}}{${denFinal}}`,
+        tipoAjuda: "multiplicacao_fracoes"
       });
 
       const irred = simplificarFracao(numFinal, denFinal);
@@ -1835,12 +2194,14 @@
       if (dMDC > 1) {
         passos.push({
           descricao: `Simplificando pelo MDC (${dMDC}):`,
-          latex: `\\frac{${numFinal} \\div ${dMDC}}{${denFinal} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+          latex: `\\frac{${numFinal} \\div ${dMDC}}{${denFinal} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`,
+          tipoAjuda: "simplificacao_fracao"
         });
       } else {
         passos.push({
           descricao: "Forma irredutível final:",
-          latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+          latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`,
+          tipoAjuda: "padrao"
         });
       }
       return passos;
@@ -1850,13 +2211,15 @@
       if (f1.den === f2.den) {
         passos.push({
           descricao: "Denominadores iguais: conservamos o denominador e efetuamos a operação nos numeradores:",
-          latex: `\\frac{${f1.num} ${op} ${f2.num}}{${f1.den}}`
+          latex: `\\frac{${f1.num} ${op} ${f2.num}}{${f1.den}}`,
+          tipoAjuda: "fracao_mesmo_denominador"
         });
 
         const numFinal = op === '+' ? (f1.num + f2.num) : (f1.num - f2.num);
         passos.push({
           descricao: "Resultado no numerador:",
-          latex: `\\frac{${numFinal}}{${f1.den}}`
+          latex: `\\frac{${numFinal}}{${f1.den}}`,
+          tipoAjuda: "fracao_mesmo_denominador"
         });
 
         const irred = simplificarFracao(numFinal, f1.den);
@@ -1865,7 +2228,8 @@
         if (dMDC > 1) {
           passos.push({
             descricao: `Simplificando pelo MDC (${dMDC}):`,
-            latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+            latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`,
+            tipoAjuda: "simplificacao_fracao"
           });
         }
         return passos;
@@ -1874,7 +2238,8 @@
 
         passos.push({
           descricao: `Denominadores diferentes (${f1.den} e ${f2.den}). Realizamos a decomposição simultânea em fatores primos para encontrar o MMC:`,
-          latex: `${decomp.tabelaLatex} \\quad \\implies \\text{MMC}(${f1.den}, ${f2.den}) = ${decomp.produtoLatex}`
+          latex: `${decomp.tabelaLatex} \\quad \\implies \\text{MMC}(${f1.den}, ${f2.den}) = ${decomp.produtoLatex}`,
+          tipoAjuda: "mmc_fracoes"
         });
 
         const mmcDen = decomp.mmcValor;
@@ -1885,13 +2250,15 @@
 
         passos.push({
           descricao: "Reduzindo as frações ao mesmo denominador comum (divide pelo denominador anterior e multiplica pelo numerador):",
-          latex: `\\frac{${f1.num} \\cdot ${mult1}}{${mmcDen}} ${op} \\frac{${f2.num} \\cdot ${mult2}}{${mmcDen}} = \\frac{${novoNum1}}{${mmcDen}} ${op} \\frac{${novoNum2}}{${mmcDen}}`
+          latex: `\\frac{${f1.num} \\cdot ${mult1}}{${mmcDen}} ${op} \\frac{${f2.num} \\cdot ${mult2}}{${mmcDen}} = \\frac{${novoNum1}}{${mmcDen}} ${op} \\frac{${novoNum2}}{${mmcDen}}`,
+          tipoAjuda: "mmc_fracoes"
         });
 
         const numFinal = op === '+' ? (novoNum1 + novoNum2) : (novoNum1 - novoNum2);
         passos.push({
           descricao: "Operando os numeradores sobre o denominador comum encontrado:",
-          latex: `\\frac{${novoNum1} ${op} ${novoNum2}}{${mmcDen}} = \\frac{${numFinal}}{${mmcDen}}`
+          latex: `\\frac{${novoNum1} ${op} ${novoNum2}}{${mmcDen}} = \\frac{${numFinal}}{${mmcDen}}`,
+          tipoAjuda: "fracao_mesmo_denominador"
         });
 
         const irred = simplificarFracao(numFinal, mmcDen);
@@ -1900,12 +2267,14 @@
         if (dMDC > 1) {
           passos.push({
             descricao: `Simplificando a fração resultante pelo MDC (${dMDC}):`,
-            latex: `\\frac{${numFinal} \\div ${dMDC}}{${mmcDen} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+            latex: `\\frac{${numFinal} \\div ${dMDC}}{${mmcDen} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`,
+            tipoAjuda: "simplificacao_fracao"
           });
         } else {
           passos.push({
             descricao: "Fração irredutível final:",
-            latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+            latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`,
+            tipoAjuda: "padrao"
           });
         }
         return passos;
@@ -1925,7 +2294,7 @@
       const passos = resolverOperacoesFracoes(inputFracoes.value.trim());
       lista.innerHTML = '';
       passos.forEach((p, i) => {
-        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+        lista.innerHTML += gerarCardPassoHTML(i, p, 'fracoes');
       });
       cardRes.style.display = 'block';
       renderizarKaTeX(lista);
@@ -1961,7 +2330,6 @@
     return parseInt(str, 10);
   }
 
-  // Gera o desenho dinâmico em SVG da Reta Numérica com setas de deslocamento
   function desenharRetaNumericaSVG(inicio, deslocamento, fim) {
     const minVal = Math.min(inicio, fim, 0) - 2;
     const maxVal = Math.max(inicio, fim, 0) + 2;
@@ -1987,12 +2355,10 @@
       </marker>
     </defs>`;
 
-    // Eixo horizontal com setas nas extremidades
     svg += `<line x1="15" y1="${yBaseline}" x2="${width - 15}" y2="${yBaseline}" stroke="#475569" stroke-width="2.5" />`;
     svg += `<polygon points="15,${yBaseline-4} 5,${yBaseline} 15,${yBaseline+4}" fill="#475569" />`;
     svg += `<polygon points="${width-15},${yBaseline-4} ${width-5},${yBaseline} ${width-15},${yBaseline+4}" fill="#475569" />`;
 
-    // Marcas de graduação inteira
     for (let v = minVal; v <= maxVal; v++) {
       const x = getX(v);
       const isZero = (v === 0);
@@ -2007,11 +2373,9 @@
     const xInicio = getX(inicio);
     const xFim = getX(fim);
 
-    // Ponto de Partida
     svg += `<circle cx="${xInicio}" cy="${yBaseline}" r="6" fill="#3b82f6" />`;
     svg += `<text x="${xInicio}" y="${yBaseline + 42}" font-size="11" font-weight="bold" fill="#2563eb" text-anchor="middle">Início (${inicio})</text>`;
 
-    // Arco de deslocamento (se houver deslocamento)
     if (deslocamento !== 0) {
       const rRaio = Math.abs(xFim - xInicio) / 2;
       const paraDireita = deslocamento > 0;
@@ -2027,7 +2391,6 @@
       svg += `<text x="${(xInicio + xFim) / 2}" y="${yArcTop + 2}" font-size="11" font-weight="bold" fill="${corArco}" text-anchor="middle">${txtSinal}</text>`;
     }
 
-    // Ponto de Chegada
     svg += `<circle cx="${xFim}" cy="${yBaseline}" r="6" fill="#16a34a" />`;
     svg += `<text x="${xFim}" y="${yBaseline - 16}" font-size="11" font-weight="bold" fill="#15803d" text-anchor="middle">Fim (${fim})</text>`;
 
@@ -2039,8 +2402,6 @@
     const passos = [];
     let s = exprStr.replace(/\s+/g, '').replace(/:/g, '÷');
 
-    // Detecta operação binária entre dois inteiros: A op B
-    // Suporta formatos: (-3) + (+5), -3 + 5, (-2) * (-4), (-12) ÷ (+3)
     const regex = /^(\(?[+-]?\d+\)?)\s*([+\-*÷])\s*(\(?[+-]?\d+\)?)$/;
     const match = s.match(regex);
 
@@ -2056,50 +2417,51 @@
     const b = parseInteiroComSinal(strB);
 
     passos.push({
-      descricao: "Operação inicial com números inteiros identificada:",
-      latex: `${strA} ${op === '*' ? '\\cdot' : (op === '÷' ? '\\div' : op)} ${strB}`
+      descricao: "Operação inicial identificada:",
+      latex: `${strA} ${op === '*' ? '\\cdot' : (op === '÷' ? '\\div' : op)} ${strB}`,
+      tipoAjuda: "padrao"
     });
 
-    // CASO 1: MULTIPLICAÇÃO OU DIVISÃO (JOGO DE SINAIS)
     if (op === '*' || op === '÷') {
       const mesmoSinal = (a >= 0 && b >= 0) || (a < 0 && b < 0);
       const sinalResultado = mesmoSinal ? "+" : "-";
       const regraSinalTexto = mesmoSinal ? "Sinais iguais (+ com + ou - com -) resultam em positivo (+)" : "Sinais diferentes (+ com - ou - com +) resultam em negativo (-)";
 
       passos.push({
-        descricao: `Aplicando a regra de sinais (${regraSinalTexto}):`,
-        latex: `\\text{Sinal do resultado: } ${sinalResultado}`
+        descricao: `Aplicando a regra de sinais para multiplicação/divisão (${regraSinalTexto}):`,
+        latex: `\\text{Sinal do resultado: } ${sinalResultado}`,
+        tipoAjuda: "jogo_de_sinais"
       });
 
       if (op === '*') {
         const prod = a * b;
         passos.push({
           descricao: `Multiplicando os valores absolutos (${Math.abs(a)} · ${Math.abs(b)}):`,
-          latex: `(${a}) \\cdot (${b}) = \\mathbf{${prod}}`
+          latex: `(${a}) \\cdot (${b}) = \\mathbf{${prod}}`,
+          tipoAjuda: "jogo_de_sinais"
         });
       } else {
         if (b === 0) throw new Error("Divisão por zero não é permitida no conjunto dos inteiros.");
         if (a % b !== 0) {
           const irred = simplificarFracao(a, b);
           passos.push({
-            descricao: "Como a divisão não é exata em ℤ, expressamos em forma de fração irredutível:",
-            latex: `(${a}) \\div (${b}) = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+            descricao: "Como a divisão não é exata em ℤ, expressamos como fração irredutível:",
+            latex: `(${a}) \\div (${b}) = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`,
+            tipoAjuda: "simplificacao_fracao"
           });
         } else {
           const quot = a / b;
           passos.push({
             descricao: `Dividindo os valores absolutos (${Math.abs(a)} ÷ ${Math.abs(b)}):`,
-            latex: `(${a}) \\div (${b}) = \\mathbf{${quot}}`
+            latex: `(${a}) \\div (${b}) = \\mathbf{${quot}}`,
+            tipoAjuda: "jogo_de_sinais"
           });
         }
       }
       return passos;
     }
 
-    // CASO 2: ADIÇÃO E SUBTRAÇÃO COM APOIO DA RETA NUMÉRICA
     if (op === '+' || op === '-') {
-      // Determina o deslocamento efetivo na reta
-      // Ex: a + (+b) -> desloca +b; a + (-b) -> desloca -b; a - (+b) -> desloca -b; a - (-b) -> desloca +b
       let deslocamentoEfetivo = 0;
       let explicacaoRegra = "";
 
@@ -2118,21 +2480,23 @@
       const resultadoFinal = a + deslocamentoEfetivo;
 
       passos.push({
-        descricao: `Eliminando parênteses com as regras de sinais:`,
-        latex: `${a} ${deslocamentoEfetivo >= 0 ? '+ ' + deslocamentoEfetivo : '- ' + Math.abs(deslocamentoEfetivo)}`
+        descricao: `Eliminando parênteses com as regras de sinais consecutivos:`,
+        latex: `${a} ${deslocamentoEfetivo >= 0 ? '+ ' + deslocamentoEfetivo : '- ' + Math.abs(deslocamentoEfetivo)}`,
+        tipoAjuda: "eliminacao_parenteses"
       });
 
       passos.push({
         descricao: `${explicacaoRegra}`,
-        latex: `\\text{Início em } ${a}, \\quad \\text{Deslocamento: } ${deslocamentoEfetivo > 0 ? '+' + deslocamentoEfetivo : deslocamentoEfetivo} \\implies \\text{Chegada em } ${resultadoFinal}`
+        latex: `\\text{Início em } ${a}, \\quad \\text{Deslocamento: } ${deslocamentoEfetivo > 0 ? '+' + deslocamentoEfetivo : deslocamentoEfetivo} \\implies \\text{Chegada em } ${resultadoFinal}`,
+        tipoAjuda: "reta_inteiros"
       });
 
-      // Insere o elemento interativo da Reta Numérica
       const svgReta = desenharRetaNumericaSVG(a, deslocamentoEfetivo, resultadoFinal);
       passos.push({
-        descricao: "Visualização na Reta Numérica:",
+        descricao: "Visualização na Reta Numérica orientada:",
         htmlExtra: `<div class="number-line-container">${svgReta}</div>`,
-        latex: `\\mathbf{${resultadoFinal}}`
+        latex: `\\mathbf{${resultadoFinal}}`,
+        tipoAjuda: "reta_inteiros"
       });
 
       return passos;
@@ -2151,11 +2515,7 @@
       const passos = resolverOperacoesInteiros(inputInteiros.value.trim());
       lista.innerHTML = '';
       passos.forEach((p, i) => {
-        let conteudo = `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div>`;
-        if (p.latex) conteudo += `<div class="step-math">$$\\displaystyle ${p.latex}$$</div>`;
-        if (p.htmlExtra) conteudo += p.htmlExtra;
-        conteudo += `</div>`;
-        lista.innerHTML += conteudo;
+        lista.innerHTML += gerarCardPassoHTML(i, p, 'inteiros');
       });
       cardRes.style.display = 'block';
       renderizarKaTeX(lista);
