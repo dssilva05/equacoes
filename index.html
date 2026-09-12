@@ -214,9 +214,7 @@
 </div>
 
 <script>
-  // ==========================================
-  // CONFIGURAÇÃO DO BACKEND SERVERLESS (OCR)
-  // ==========================================
+  // Endpoint configurado para sua Vercel
   const OCR_ENDPOINT = 'https://equacoes.vercel.app/api/ocr';
 
   async function extrairEquacaoDaImagem(base64Data, mimeType) {
@@ -227,10 +225,28 @@
     });
 
     const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || "Erro ao processar imagem no servidor");
-    }
+    if (!response.ok) throw new Error(data.error || "Erro ao processar imagem no servidor");
     return data.equacao;
+  }
+
+  // ==========================================
+  // ARITMÉTICA EXATA E MMC
+  // ==========================================
+  function gcd(a, b) {
+    a = Math.abs(Math.round(a));
+    b = Math.abs(Math.round(b));
+    while (b) { let t = b; b = a % b; a = t; }
+    return a || 1;
+  }
+
+  function lcm(a, b) {
+    return Math.abs(Math.round(a * b)) / gcd(a, b);
+  }
+
+  function simplificarFracao(num, den) {
+    if (den < 0) { num = -num; den = -den; }
+    const divisor = gcd(num, den);
+    return { num: Math.round(num / divisor), den: Math.round(den / divisor) };
   }
 
   // ==========================================
@@ -241,18 +257,10 @@
 
   function converterParaLatex(str) {
     if (!str || !str.trim()) return "\\text{Nenhuma equação digitada}";
-
     let latex = str.replace(/\s+/g, '');
-
-    // Converte frações com parênteses: (2x+1)/3 -> \frac{2x+1}{3}
     latex = latex.replace(/\(([^)]+)\)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
-    
-    // Converte frações simples: x/5 ou 3x/4 ou 7/2 -> \frac{x}{5}
     latex = latex.replace(/([a-zA-Z0-9]+)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
-    
-    // Converte multiplicação explícita
     latex = latex.replace(/\*/g, ' \\cdot ');
-
     return latex;
   }
 
@@ -268,16 +276,212 @@
   }
 
   // ==========================================
-  // TECLADO VIRTUAL
+  // PARSER E MOTOR PEDAGÓGICO DE EQUAÇÕES
+  // ==========================================
+  // Decompõe um membro em termos estruturados: { num, den, isVar }
+  function parseMembro(membroStr) {
+    let s = membroStr.replace(/\s+/g, '');
+    s = s.replace(/-/g, '+-');
+    const tokens = s.split('+').filter(t => t !== '');
+
+    const termos = [];
+    for (let t of tokens) {
+      let isVar = t.includes('x') || t.includes('X');
+      let num = 1;
+      let den = 1;
+
+      if (t.includes('/')) {
+        const partes = t.split('/');
+        den = parseInt(partes[1], 10) || 1;
+        let nStr = partes[0].replace(/x/gi, '').replace('*', '');
+        if (nStr === '-' || nStr === '-1') num = -1;
+        else if (nStr === '' || nStr === '+') num = 1;
+        else num = parseInt(nStr, 10);
+      } else {
+        if (isVar) {
+          let nStr = t.replace(/x/gi, '').replace('*', '');
+          if (nStr === '-' || nStr === '-1') num = -1;
+          else if (nStr === '' || nStr === '+') num = 1;
+          else num = parseInt(nStr, 10);
+        } else {
+          num = parseInt(t, 10);
+        }
+      }
+      termos.push({ num, den, isVar });
+    }
+    return termos;
+  }
+
+  function formatarTermoLatex(termo, primeiroDoMembro = false) {
+    const sinal = termo.num < 0 ? '-' : (primeiroDoMembro ? '' : '+');
+    const absNum = Math.abs(termo.num);
+
+    if (termo.den === 1) {
+      if (termo.isVar) {
+        const coef = absNum === 1 ? 'x' : `${absNum}x`;
+        return `${sinal} ${coef}`.trim();
+      }
+      return `${sinal} ${absNum}`.trim();
+    } else {
+      if (termo.isVar) {
+        const nStr = absNum === 1 ? 'x' : `${absNum}x`;
+        return `${sinal} \\frac{${nStr}}{${termo.den}}`.trim();
+      }
+      return `${sinal} \\frac{${absNum}}{${termo.den}}`.trim();
+    }
+  }
+
+  function formatarMembro(termos) {
+    if (termos.length === 0) return "0";
+    return termos.map((t, idx) => formatarTermoLatex(t, idx === 0)).join(' ');
+  }
+
+  function resolverEquacao(equacaoStr) {
+    const passos = [];
+    if (!equacaoStr.includes('=')) throw new Error("A expressão precisa conter o sinal de igualdade (=).");
+
+    const membros = equacaoStr.split('=');
+    if (membros.length !== 2) throw new Error("Apenas um sinal '=' é permitido.");
+
+    let lhsTermos = parseMembro(membros[0]);
+    let rhsTermos = parseMembro(membros[1]);
+
+    passos.push({
+      descricao: "Equação inicial identificada:",
+      latex: `${formatarMembro(lhsTermos)} = ${formatarMembro(rhsTermos)}`
+    });
+
+    // 1. Identificar frações e calcular MMC
+    const todosTermos = [...lhsTermos, ...rhsTermos];
+    const denominadores = [...new Set(todosTermos.map(t => t.den).filter(d => d > 1))];
+
+    if (denominadores.length > 0) {
+      const mmc = denominadores.reduce((acc, cur) => lcm(acc, cur), denominadores[0]);
+
+      // Monta a multiplicação de cada termo pelo MMC
+      const expressaoLhsMMC = lhsTermos.map((t, idx) => {
+        const sinal = t.num < 0 ? '-' : (idx === 0 ? '' : '+');
+        return `${sinal} ${mmc} \\cdot \\left(${formatarTermoLatex({ ...t, num: Math.abs(t.num) }, true)}\\right)`.trim();
+      }).join(' ');
+
+      const expressaoRhsMMC = rhsTermos.map((t, idx) => {
+        const sinal = t.num < 0 ? '-' : (idx === 0 ? '' : '+');
+        return `${sinal} ${mmc} \\cdot \\left(${formatarTermoLatex({ ...t, num: Math.abs(t.num) }, true)}\\right)`.trim();
+      }).join(' ');
+
+      passos.push({
+        descricao: `Identificando os denominadores (${denominadores.join(', ')}). Calculamos o MMC = ${mmc} e multiplicamos cada termo da equação por ele:`,
+        latex: `${expressaoLhsMMC} = ${expressaoRhsMMC}`
+      });
+
+      // Aplica o MMC termo a termo: novo_num = (num * mmc) / den
+      lhsTermos = lhsTermos.map(t => ({ num: Math.round((t.num * mmc) / t.den), den: 1, isVar: t.isVar }));
+      rhsTermos = rhsTermos.map(t => ({ num: Math.round((t.num * mmc) / t.den), den: 1, isVar: t.isVar }));
+
+      passos.push({
+        descricao: "Efetuando as divisões e multiplicações para eliminar os denominadores:",
+        latex: `${formatarMembro(lhsTermos)} = ${formatarMembro(rhsTermos)}`
+      });
+    }
+
+    // 2. Reduzir termos em cada membro antes de transpor
+    let lhsX = lhsTermos.filter(t => t.isVar).reduce((acc, t) => acc + t.num, 0);
+    let lhsC = lhsTermos.filter(t => !t.isVar).reduce((acc, t) => acc + t.num, 0);
+    let rhsX = rhsTermos.filter(t => t.isVar).reduce((acc, t) => acc + t.num, 0);
+    let rhsC = rhsTermos.filter(t => !t.isVar).reduce((acc, t) => acc + t.num, 0);
+
+    // 3. Isolar termos com x no 1º membro e constantes no 2º membro
+    const sinalRhsX = -rhsX;
+    const sinalLhsC = -lhsC;
+
+    let transporLhs = `${lhsX !== 0 ? (lhsX === 1 ? 'x' : lhsX === -1 ? '-x' : lhsX + 'x') : ''}`;
+    if (rhsX !== 0) {
+      transporLhs += ` ${sinalRhsX > 0 ? '+ ' + (sinalRhsX === 1 ? 'x' : sinalRhsX + 'x') : '- ' + (Math.abs(sinalRhsX) === 1 ? 'x' : Math.abs(sinalRhsX) + 'x')}`;
+    }
+
+    let transporRhs = `${rhsC}`;
+    if (lhsC !== 0) {
+      transporRhs += ` ${sinalLhsC > 0 ? '+ ' + sinalLhsC : '- ' + Math.abs(sinalLhsC)}`;
+    }
+
+    passos.push({
+      descricao: "Isolando os termos com a incógnita x no 1º membro e os termos numéricos no 2º membro:",
+      latex: `${transporLhs || '0'} = ${transporRhs}`
+    });
+
+    // 4. Reduzir termos semelhantes
+    const finalX = lhsX - rhsX;
+    const finalC = rhsC - lhsC;
+
+    const coefXFormatado = finalX === 1 ? 'x' : (finalX === -1 ? '-x' : `${finalX}x`);
+    passos.push({
+      descricao: "Reduzindo os termos semelhantes em ambos os lados:",
+      latex: `${coefXFormatado} = ${finalC}`
+    });
+
+    // 5. Casos especiais ou divisão final
+    if (finalX === 0) {
+      if (finalC === 0) {
+        passos.push({
+          descricao: "Classificação:",
+          latex: `0x = 0 \\implies \\text{Equação indeterminada (infinitas soluções)}`
+        });
+      } else {
+        passos.push({
+          descricao: "Classificação:",
+          latex: `0x = ${finalC} \\implies \\text{Equação impossível (não possui solução)}`
+        });
+      }
+      return passos;
+    }
+
+    if (finalX === 1) {
+      passos.push({
+        descricao: "Solução encontrada:",
+        latex: `x = ${finalC}`
+      });
+      passos.push({
+        descricao: "Conjunto Solução:",
+        latex: `S = \\{${finalC}\\}`
+      });
+      return passos;
+    }
+
+    const fracao = simplificarFracao(finalC, finalX);
+    if (fracao.den === 1) {
+      passos.push({
+        descricao: `Dividindo ambos os lados por ${finalX}:`,
+        latex: `x = \\frac{${finalC}}{${finalX}} = ${fracao.num}`
+      });
+      passos.push({
+        descricao: "Conjunto Solução:",
+        latex: `S = \\{${fracao.num}\\}`
+      });
+    } else {
+      passos.push({
+        descricao: `Dividindo por ${finalX} e simplificando a fração:`,
+        latex: `x = \\frac{${finalC}}{${finalX}} = \\frac{${fracao.num}}{${fracao.den}}`
+      });
+      passos.push({
+        descricao: "Conjunto Solução:",
+        latex: `S = \\left\\{ \\frac{${fracao.num}}{${fracao.den}} \\right\\}`
+      });
+    }
+
+    return passos;
+  }
+
+  // ==========================================
+  // TECLADO VIRTUAL E EVENTOS
   // ==========================================
   document.querySelectorAll('.key-btn[data-val]').forEach(btn => {
     btn.addEventListener('click', () => {
       const val = btn.getAttribute('data-val');
       const start = eqInput.selectionStart;
       const end = eqInput.selectionEnd;
-      const textoAtual = eqInput.value;
+      const txt = eqInput.value;
 
-      eqInput.value = textoAtual.substring(0, start) + val + textoAtual.substring(end);
+      eqInput.value = txt.substring(0, start) + val + txt.substring(end);
       eqInput.focus();
       eqInput.selectionStart = eqInput.selectionEnd = start + val.length;
       atualizarPreview();
@@ -287,13 +491,13 @@
   document.getElementById('key-backspace').addEventListener('click', () => {
     const start = eqInput.selectionStart;
     const end = eqInput.selectionEnd;
-    const textoAtual = eqInput.value;
+    const txt = eqInput.value;
 
     if (start === end && start > 0) {
-      eqInput.value = textoAtual.substring(0, start - 1) + textoAtual.substring(end);
+      eqInput.value = txt.substring(0, start - 1) + txt.substring(end);
       eqInput.selectionStart = eqInput.selectionEnd = start - 1;
     } else if (start !== end) {
-      eqInput.value = textoAtual.substring(0, start) + textoAtual.substring(end);
+      eqInput.value = txt.substring(0, start) + txt.substring(end);
       eqInput.selectionStart = eqInput.selectionEnd = start;
     }
     eqInput.focus();
@@ -308,208 +512,6 @@
 
   eqInput.addEventListener('input', atualizarPreview);
 
-  // ==========================================
-  // MOTOR ALGÉBRICO COM SUPORTE A FRAÇÕES E MMC
-  // ==========================================
-  function gcd(a, b) {
-    a = Math.abs(a);
-    b = Math.abs(b);
-    while (b) { let t = b; b = a % b; a = t; }
-    return a;
-  }
-
-  function lcm(a, b) {
-    return (Math.abs(a * b)) / gcd(a, b);
-  }
-
-  function simplificarFracao(num, den) {
-    if (den < 0) { num = -num; den = -den; }
-    const divisor = gcd(num, den);
-    return { num: num / divisor, den: den / divisor };
-  }
-
-  function extrairDenominadores(str) {
-    const regex = /\/([0-9]+)/g;
-    const dens = [];
-    let match;
-    while ((match = regex.exec(str)) !== null) {
-      dens.push(parseInt(match[1], 10));
-    }
-    return dens.filter(d => d > 1);
-  }
-
-  function avaliarMembroLinear(exprStr) {
-    // Normalização básica
-    let expr = exprStr.replace(/\s+/g, '')
-                      .replace(/(\d)([a-zA-Z(])/g, '$1*$2')
-                      .replace(/\)([a-zA-Z0-9(])/g, ')*$1');
-
-    // Expansão de parênteses simples
-    const regexParen = /([+-]?\d*)\*?\(([^)]+)\)/g;
-    expr = expr.replace(regexParen, (match, fatorStr, conteudo) => {
-      let fator = 1;
-      if (fatorStr === '-' || fatorStr === '-1') fator = -1;
-      else if (fatorStr === '+' || fatorStr === '') fator = 1;
-      else fator = parseFloat(fatorStr);
-
-      conteudo = conteudo.replace(/-/g, '+-');
-      const partes = conteudo.split('+').filter(p => p !== '');
-      let res = '';
-      partes.forEach(p => {
-        let coef = 0, isVar = false;
-        if (p.includes('x') || p.includes('X')) {
-          isVar = true;
-          let v = p.replace(/x/gi, '').replace('*', '');
-          coef = (v === '-' ? -1 : v === '' ? 1 : parseFloat(v)) * fator;
-          res += `${coef >= 0 && res ? '+' : ''}${coef}x`;
-        } else {
-          coef = parseFloat(p) * fator;
-          res += `${coef >= 0 && res ? '+' : ''}${coef}`;
-        }
-      });
-      return res.startsWith('+') ? res : '+' + res;
-    });
-
-    // Decomposição dos termos aditivos
-    expr = expr.replace(/-/g, '+-');
-    const termos = expr.split('+').filter(p => p !== '');
-    let totalX = 0;
-    let totalConst = 0;
-
-    termos.forEach(t => {
-      t = t.trim();
-      let div = 1;
-      let base = t;
-
-      if (t.includes('/')) {
-        const dPartes = t.split('/');
-        base = dPartes[0];
-        div = parseFloat(dPartes[1]) || 1;
-      }
-
-      if (base.includes('x') || base.includes('X')) {
-        let v = base.replace(/x/gi, '').replace('*', '');
-        let c = (v === '-' ? -1 : v === '' ? 1 : parseFloat(v)) / div;
-        totalX += c;
-      } else {
-        totalConst += (parseFloat(base) || 0) / div;
-      }
-    });
-
-    return { coefX: totalX, constVal: totalConst };
-  }
-
-  function resolverEquacao(equacaoStr) {
-    const passos = [];
-    if (!equacaoStr.includes('=')) {
-      throw new Error("A expressão precisa conter o sinal de igualdade (=).");
-    }
-
-    const membros = equacaoStr.split('=');
-    if (membros.length !== 2) {
-      throw new Error("Apenas um sinal '=' é permitido.");
-    }
-
-    let lhsRaw = membros[0].trim();
-    let rhsRaw = membros[1].trim();
-
-    passos.push({
-      descricao: "Equação inicial identificada:",
-      latex: `${converterParaLatex(lhsRaw)} = ${converterParaLatex(rhsRaw)}`
-    });
-
-    // Tratamento de Frações e MMC
-    const denominadores = extrairDenominadores(equacaoStr);
-    if (denominadores.length > 0) {
-      let mmc = denominadores.reduce((acc, curr) => lcm(acc, curr), denominadores[0]);
-      if (mmc > 1) {
-        passos.push({
-          descricao: `Encontrando o MMC dos denominadores (${denominadores.join(', ')}): MMC = ${mmc}. Multiplicando ambos os membros por ${mmc} para eliminar as frações:`,
-          latex: `${mmc} \\cdot \\left(${converterParaLatex(lhsRaw)}\\right) = ${mmc} \\cdot \\left(${converterParaLatex(rhsRaw)}\\right)`
-        });
-      }
-    }
-
-    // Avaliação dos membros
-    const lhs = avaliarMembroLinear(lhsRaw);
-    const rhs = avaliarMembroLinear(rhsRaw);
-
-    const lhsX = Math.round(lhs.coefX * 1000000) / 1000000;
-    const lhsC = Math.round(lhs.constVal * 1000000) / 1000000;
-    const rhsX = Math.round(rhs.coefX * 1000000) / 1000000;
-    const rhsC = Math.round(rhs.constVal * 1000000) / 1000000;
-
-    passos.push({
-      descricao: "Simplificando os termos de cada membro:",
-      latex: `${lhsX !== 0 ? lhsX + 'x' : ''} ${lhsC >= 0 ? '+ ' + lhsC : '- ' + Math.abs(lhsC)} = ${rhsX !== 0 ? rhsX + 'x' : ''} ${rhsC >= 0 ? '+ ' + rhsC : '- ' + Math.abs(rhsC)}`
-    });
-
-    const finalX = Math.round((lhsX - rhsX) * 1000000) / 1000000;
-    const finalC = Math.round((rhsC - lhsC) * 1000000) / 1000000;
-
-    passos.push({
-      descricao: "Isolando os termos com x no 1º membro e os termos numéricos no 2º membro:",
-      latex: `${lhsX}x ${rhsX >= 0 ? '- ' + rhsX : '+ ' + Math.abs(rhsX)}x = ${rhsC} ${lhsC >= 0 ? '- ' + lhsC : '+ ' + Math.abs(lhsC)}`
-    });
-
-    passos.push({
-      descricao: "Reduzindo os termos semelhantes:",
-      latex: `${finalX}x = ${finalC}`
-    });
-
-    if (finalX === 0) {
-      if (finalC === 0) {
-        passos.push({
-          descricao: "Resultado:",
-          latex: `0x = 0 \\implies \\text{Equação indeterminada (infinitas soluções)}`
-        });
-      } else {
-        passos.push({
-          descricao: "Resultado:",
-          latex: `0x = ${finalC} \\implies \\text{Equação impossível (sem solução)}`
-        });
-      }
-      return passos;
-    }
-
-    // Conversão de números decimais para inteiros para simplificar fração
-    let numerador = finalC;
-    let denominador = finalX;
-    let precisao = 1;
-    while (!Number.isInteger(numerador) || !Number.isInteger(denominador)) {
-      numerador *= 10;
-      denominador *= 10;
-      precisao *= 10;
-    }
-
-    const fracao = simplificarFracao(Math.round(numerador), Math.round(denominador));
-
-    if (fracao.den === 1) {
-      passos.push({
-        descricao: "Dividindo ambos os lados pelo coeficiente de x:",
-        latex: `x = ${fracao.num}`
-      });
-      passos.push({
-        descricao: "Conjunto Solução:",
-        latex: `S = \\{${fracao.num}\\}`
-      });
-    } else {
-      passos.push({
-        descricao: "Dividindo pelo coeficiente de x e simplificando a fração:",
-        latex: `x = \\frac{${fracao.num}}{${fracao.den}}`
-      });
-      passos.push({
-        descricao: "Conjunto Solução:",
-        latex: `S = \\left\\{ \\frac{${fracao.num}}{${fracao.den}} \\right\\}`
-      });
-    }
-
-    return passos;
-  }
-
-  // ==========================================
-  // ELEMENTOS E EVENTOS DA INTERFACE
-  // ==========================================
   const btnResolver = document.getElementById('btn-resolver');
   const btnLimpar = document.getElementById('btn-limpar');
   const cameraInput = document.getElementById('camera-input');
@@ -531,7 +533,7 @@
       passosLista.appendChild(stepDiv);
     });
     resultadoCard.style.display = 'block';
-    
+
     if (window.renderMathInElement) {
       renderMathInElement(passosLista, {
         delimiters: [
@@ -604,7 +606,6 @@
     reader.readAsDataURL(file);
   });
 
-  // Inicialização com exemplo de fração
   window.addEventListener('DOMContentLoaded', () => {
     atualizarPreview();
     dispararResolucao();
