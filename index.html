@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resolvedor de Equações do 1º Grau</title>
+  <title>Laboratório de Matemática - Passo a Passo</title>
   
   <!-- KaTeX para renderização de fórmulas matemáticas -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
-          onload="renderMathInElement(document.body);"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
   <style>
     :root {
@@ -17,17 +16,93 @@
       --primary-hover: #1d4ed8;
       --bg: #f8fafc;
       --card: #ffffff;
-      --text: #1e293b;
+      --text: #0f172a;
+      --muted: #64748b;
       --border: #e2e8f0;
+      --success: #16a34a;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 16px; display: flex; justify-content: center; }
-    .container { width: 100%; max-width: 680px; }
+    .container { width: 100%; max-width: 720px; }
 
-    header { text-align: center; margin-bottom: 20px; }
-    header h1 { font-size: 1.5rem; color: #0f172a; }
-    header p { color: #64748b; font-size: 0.9rem; margin-top: 4px; }
+    header { text-align: center; margin-bottom: 24px; }
+    header h1 { font-size: 1.65rem; color: #0f172a; }
+    header p { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+
+    /* Estilos do Menu Principal / Hub */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .topic-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+    }
+    .topic-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 14px -2px rgba(0, 0, 0, 0.08);
+      border-color: var(--primary);
+    }
+    .topic-card .icon { font-size: 2rem; margin-bottom: 8px; }
+    .topic-card h3 { font-size: 1.1rem; color: #1e293b; margin-bottom: 4px; }
+    .topic-card p { font-size: 0.8rem; color: var(--muted); }
+    .topic-card.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: #f1f5f9;
+    }
+    .topic-card.disabled:hover { transform: none; box-shadow: none; border-color: var(--border); }
+    .badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      color: #475569;
+      margin-top: 6px;
+    }
+
+    /* Views / Telas */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .btn-voltar {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: #334155;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+    .btn-voltar:hover { background: #e2e8f0; }
 
     .card {
       background: var(--card);
@@ -51,11 +126,10 @@
     }
     input[type="text"]:focus { border-color: var(--primary); }
 
-    /* Área de pré-visualização em formato matemático */
     .preview-math-box {
-      min-height: 58px;
+      min-height: 56px;
       background: #f1f5f9;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 10px;
       display: flex;
@@ -66,22 +140,21 @@
       overflow-x: auto;
     }
 
-    /* Teclado Virtual */
+    /* Teclados Virtuais */
     .keyboard-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 6px;
       margin-top: 12px;
       user-select: none;
     }
-
     .key-btn {
       background: #f8fafc;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--border);
       color: #0f172a;
       border-radius: 6px;
-      padding: 12px 6px;
-      font-size: 1.05rem;
+      padding: 12px 4px;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -92,11 +165,8 @@
     .key-btn:hover { background: #e2e8f0; }
     .key-btn:active { background: #cbd5e1; }
     .key-op { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
-    .key-op:hover { background: #c7d2fe; }
     .key-var { background: #fef3c7; color: #92400e; border-color: #fde68a; font-weight: 700; }
-    .key-var:hover { background: #fde68a; }
     .key-action { background: #fecdd3; color: #9f1239; border-color: #fca5a5; }
-    .key-action:hover { background: #fca5a5; }
 
     .camera-box {
       border: 2px dashed #94a3b8;
@@ -126,7 +196,7 @@
     .btn-secondary { background: #64748b; }
     .btn-secondary:hover { background: #475569; }
 
-    #preview-img { max-width: 100%; max-height: 180px; border-radius: 6px; margin-top: 10px; display: none; }
+    .preview-img { max-width: 100%; max-height: 160px; border-radius: 6px; margin-top: 10px; display: none; }
 
     .step-box {
       background: #f8fafc;
@@ -145,92 +215,210 @@
 <body>
 
 <div class="container">
-  <header>
-    <h1>Resolvedor de Equações do 1º Grau</h1>
-    <p>Com teclado matemático, frações e reconhecimento por foto</p>
-  </header>
 
-  <div class="card">
-    <!-- Entrada por Foto -->
-    <div class="camera-box">
-      <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 6px;">Fotografar caderno ou carregar imagem:</p>
-      <label class="btn-upload" for="camera-input">
-        📷 Tirar Foto / Carregar Imagem
-      </label>
-      <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
-      <br>
-      <img id="preview-img" alt="Foto da Equação">
-      <div id="ocr-status" style="margin-top: 8px; font-weight: 500; font-size: 0.85rem;"></div>
-    </div>
+  <!-- ========================================== -->
+  <!-- VIEW 1: MENU PRINCIPAL                     -->
+  <!-- ========================================== -->
+  <div id="view-menu" class="view active">
+    <header>
+      <h1>Laboratório de Álgebra</h1>
+      <p>Selecione um tópico para resolver exercícios passo a passo</p>
+    </header>
 
-    <!-- Entrada de Texto & Pré-visualização Matemática -->
-    <div class="form-group">
-      <label for="eq-input">Digite a equação ou use o teclado:</label>
-      <input type="text" id="eq-input" placeholder="Ex: x/2 + 3 = x/3 + 5" value="x/2 + 3 = x/3 + 5">
-      
-      <label style="margin-top: 8px;">Visualização Matemática:</label>
-      <div class="preview-math-box" id="preview-math">$$\displaystyle \frac{x}{2} + 3 = \frac{x}{3} + 5$$</div>
-    </div>
+    <div class="menu-grid">
+      <div class="topic-card" onclick="abrirModulo('grau1')">
+        <div class="icon">📐</div>
+        <h3>Equações do 1º Grau</h3>
+        <p>Frações, distributivas e equações lineares</p>
+      </div>
 
-    <!-- Teclado Virtual Matemático -->
-    <div class="keyboard-grid">
-      <button class="key-btn key-var" data-val="x">x</button>
-      <button class="key-btn key-op" data-val="/">a/b</button>
-      <button class="key-btn key-op" data-val="(">(</button>
-      <button class="key-btn key-op" data-val=")">)</button>
-      <button class="key-btn key-action" id="key-backspace">⌫</button>
+      <div class="topic-card" onclick="abrirModulo('grau2')">
+        <div class="icon">📈</div>
+        <h3>Equações do 2º Grau</h3>
+        <p>Fórmula de Bhaskara, discriminante (Δ) e raízes</p>
+      </div>
 
-      <button class="key-btn" data-val="7">7</button>
-      <button class="key-btn" data-val="8">8</button>
-      <button class="key-btn" data-val="9">9</button>
-      <button class="key-btn key-op" data-val="+">+</button>
-      <button class="key-btn key-op" data-val="-">−</button>
+      <div class="topic-card disabled">
+        <div class="icon">✨</div>
+        <h3>Produtos Notáveis</h3>
+        <p>Quadrado da soma, diferença e produto</p>
+        <span class="badge">Em breve</span>
+      </div>
 
-      <button class="key-btn" data-val="4">4</button>
-      <button class="key-btn" data-val="5">5</button>
-      <button class="key-btn" data-val="6">6</button>
-      <button class="key-btn key-op" data-val="*">×</button>
-      <button class="key-btn key-op" data-val="=">=</button>
+      <div class="topic-card disabled">
+        <div class="icon">🧩</div>
+        <h3>Fatoração</h3>
+        <p>Fator comum, agrupamento e trinômios</p>
+        <span class="badge">Em breve</span>
+      </div>
 
-      <button class="key-btn" data-val="1">1</button>
-      <button class="key-btn" data-val="2">2</button>
-      <button class="key-btn" data-val="3">3</button>
-      <button class="key-btn" data-val="0">0</button>
-      <button class="key-btn key-action" id="key-clear">C</button>
-    </div>
-
-    <div class="btn-group">
-      <button id="btn-resolver" style="flex: 1;">Resolver Passo a Passo</button>
-      <button id="btn-limpar" class="btn-secondary">Limpar Tudo</button>
+      <div class="topic-card disabled">
+        <div class="icon">➗</div>
+        <h3>Operações com Frações</h3>
+        <p>Soma, subtração, multiplicação e MMC</p>
+        <span class="badge">Em breve</span>
+      </div>
     </div>
   </div>
 
-  <!-- Resultados -->
-  <div id="alert-container"></div>
-  <div id="resultado-card" class="card" style="display: none;">
-    <h2 style="font-size: 1.15rem; margin-bottom: 16px;">Passo a Passo da Resolução:</h2>
-    <div id="passos-lista"></div>
+  <!-- ========================================== -->
+  <!-- VIEW 2: EQUAÇÃO DO 1º GRAU                -->
+  <!-- ========================================== -->
+  <div id="view-grau1" class="view">
+    <div class="nav-bar">
+      <button class="btn-voltar" onclick="voltarMenu()">← Voltar ao Menu</button>
+      <h2>Equações do 1º Grau</h2>
+    </div>
+
+    <div class="card">
+      <div class="camera-box">
+        <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 6px;">Fotografar equação manuscrita:</p>
+        <label class="btn-upload" for="cam-grau1">📷 Tirar Foto / Imagem</label>
+        <input type="file" id="cam-grau1" accept="image/*" capture="environment" style="display: none;">
+        <br>
+        <img id="prev-img-grau1" class="preview-img" alt="Foto">
+        <div id="ocr-status-grau1" style="margin-top: 8px; font-weight: 500; font-size: 0.85rem;"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="input-grau1">Equação:</label>
+        <input type="text" id="input-grau1" value="x/2 + 3 = x/3 + 5">
+        <label style="margin-top: 8px;">Visualização Matemática:</label>
+        <div class="preview-math-box" id="prev-math-grau1"></div>
+      </div>
+
+      <div class="keyboard-grid" id="kb-grau1">
+        <button class="key-btn key-var" data-val="x">x</button>
+        <button class="key-btn key-op" data-val="/">a/b</button>
+        <button class="key-btn key-op" data-val="(">(</button>
+        <button class="key-btn key-op" data-val=")">)</button>
+        <button class="key-btn key-op" data-val="*">×</button>
+        <button class="key-btn key-action" data-action="backspace">⌫</button>
+
+        <button class="key-btn" data-val="7">7</button>
+        <button class="key-btn" data-val="8">8</button>
+        <button class="key-btn" data-val="9">9</button>
+        <button class="key-btn key-op" data-val="+">+</button>
+        <button class="key-btn key-op" data-val="-">−</button>
+        <button class="key-btn key-action" data-action="clear">C</button>
+
+        <button class="key-btn" data-val="4">4</button>
+        <button class="key-btn" data-val="5">5</button>
+        <button class="key-btn" data-val="6">6</button>
+        <button class="key-btn" data-val="1">1</button>
+        <button class="key-btn" data-val="2">2</button>
+        <button class="key-btn" data-val="3">3</button>
+
+        <button class="key-btn" data-val="0" style="grid-column: span 2;">0</button>
+        <button class="key-btn key-op" data-val="=" style="grid-column: span 4;">=</button>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="executarResolucao1()" style="flex: 1;">Resolver Passo a Passo</button>
+        <button class="btn-secondary" onclick="limpar1()">Limpar</button>
+      </div>
+    </div>
+
+    <div id="alert-grau1"></div>
+    <div id="card-result-grau1" class="card" style="display: none;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo:</h3>
+      <div id="passos-grau1"></div>
+    </div>
   </div>
+
+  <!-- ========================================== -->
+  <!-- VIEW 3: EQUAÇÃO DO 2º GRAU                -->
+  <!-- ========================================== -->
+  <div id="view-grau2" class="view">
+    <div class="nav-bar">
+      <button class="btn-voltar" onclick="voltarMenu()">← Voltar ao Menu</button>
+      <h2>Equações do 2º Grau</h2>
+    </div>
+
+    <div class="card">
+      <div class="camera-box">
+        <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 6px;">Fotografar equação manuscrita:</p>
+        <label class="btn-upload" for="cam-grau2">📷 Tirar Foto / Imagem</label>
+        <input type="file" id="cam-grau2" accept="image/*" capture="environment" style="display: none;">
+        <br>
+        <img id="prev-img-grau2" class="preview-img" alt="Foto">
+        <div id="ocr-status-grau2" style="margin-top: 8px; font-weight: 500; font-size: 0.85rem;"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="input-grau2">Equação:</label>
+        <input type="text" id="input-grau2" value="x^2 - 5x + 6 = 0">
+        <label style="margin-top: 8px;">Visualização Matemática:</label>
+        <div class="preview-math-box" id="prev-math-grau2"></div>
+      </div>
+
+      <div class="keyboard-grid" id="kb-grau2">
+        <button class="key-btn key-var" data-val="x">x</button>
+        <button class="key-btn key-var" data-val="x^2">x²</button>
+        <button class="key-btn key-op" data-val="(">(</button>
+        <button class="key-btn key-op" data-val=")">)</button>
+        <button class="key-btn key-op" data-val="*">×</button>
+        <button class="key-btn key-action" data-action="backspace">⌫</button>
+
+        <button class="key-btn" data-val="7">7</button>
+        <button class="key-btn" data-val="8">8</button>
+        <button class="key-btn" data-val="9">9</button>
+        <button class="key-btn key-op" data-val="+">+</button>
+        <button class="key-btn key-op" data-val="-">−</button>
+        <button class="key-btn key-action" data-action="clear">C</button>
+
+        <button class="key-btn" data-val="4">4</button>
+        <button class="key-btn" data-val="5">5</button>
+        <button class="key-btn" data-val="6">6</button>
+        <button class="key-btn" data-val="1">1</button>
+        <button class="key-btn" data-val="2">2</button>
+        <button class="key-btn" data-val="3">3</button>
+
+        <button class="key-btn" data-val="0" style="grid-column: span 2;">0</button>
+        <button class="key-btn key-op" data-val="=" style="grid-column: span 4;">=</button>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="executarResolucao2()" style="flex: 1;">Resolver Passo a Passo</button>
+        <button class="btn-secondary" onclick="limpar2()">Limpar</button>
+      </div>
+    </div>
+
+    <div id="alert-grau2"></div>
+    <div id="card-result-grau2" class="card" style="display: none;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo:</h3>
+      <div id="passos-grau2"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-  // Endpoint configurado para sua rota serverless na Vercel
   const OCR_ENDPOINT = 'https://equacoes.vercel.app/api/ocr';
 
-  async function extrairEquacaoDaImagem(base64Data, mimeType) {
-    const response = await fetch(OCR_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ base64Data, mimeType })
-    });
+  // ==========================================
+  // NAVEGAÇÃO ENTRE TELAS / VIEWS
+  // ==========================================
+  function abrirModulo(modulo) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(`view-${modulo}`).classList.add('active');
+    
+    if (modulo === 'grau1') {
+      atualizarPreview1();
+      executarResolucao1();
+    } else if (modulo === 'grau2') {
+      atualizarPreview2();
+      executarResolucao2();
+    }
+  }
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || "Erro ao processar imagem no servidor");
-    return data.equacao;
+  function voltarMenu() {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-menu').classList.add('active');
   }
 
   // ==========================================
-  // ARITMÉTICA EXATA E MMC
+  // MATEMÁTICA AUXILIAR
   // ==========================================
   function gcd(a, b) {
     a = Math.abs(Math.round(a));
@@ -249,42 +437,41 @@
     return { num: Math.round(num / divisor), den: Math.round(den / divisor) };
   }
 
-  // ==========================================
-  // FORMATAÇÃO E PRÉ-VISUALIZAÇÃO EM LATEX
-  // ==========================================
-  const eqInput = document.getElementById('eq-input');
-  const previewMath = document.getElementById('preview-math');
-
   function converterParaLatex(str) {
     if (!str || !str.trim()) return "\\text{Nenhuma equação digitada}";
     let latex = str.replace(/\s+/g, '');
+    latex = latex.replace(/x\^2/g, 'x^2');
     latex = latex.replace(/\(([^)]+)\)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
-    latex = latex.replace(/([a-zA-Z0-9]+)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
+    latex = latex.replace(/([a-zA-Z0-9^]+)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
     latex = latex.replace(/\*/g, ' \\cdot ');
     return latex;
   }
 
-  function atualizarPreview() {
-    const val = eqInput.value;
-    const latex = converterParaLatex(val);
-    previewMath.innerHTML = `$$\\displaystyle ${latex}$$`;
+  function renderizarKaTeX(elemento) {
     if (window.renderMathInElement) {
-      renderMathInElement(previewMath, {
-        delimiters: [{ left: "$$", right: "$$", display: true }]
+      renderMathInElement(elemento, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ]
       });
     }
   }
 
   // ==========================================
-  // PARSER E MOTOR PEDAGÓGICO DE EQUAÇÕES
+  // MÓDULO 1: EQUAÇÃO DO 1º GRAU
   // ==========================================
+  const inputGrau1 = document.getElementById('input-grau1');
+  const prevMathGrau1 = document.getElementById('prev-math-grau1');
 
-  // Expande distributivas simples antes da separação de termos
+  function atualizarPreview1() {
+    prevMathGrau1.innerHTML = `$$\\displaystyle ${converterParaLatex(inputGrau1.value)}$$`;
+    renderizarKaTeX(prevMathGrau1);
+  }
+  inputGrau1.addEventListener('input', atualizarPreview1);
+
   function expandirParenteses(exprStr) {
-    let expr = exprStr.replace(/\s+/g, '')
-                      .replace(/(\d)\(/g, '$1*(')
-                      .replace(/\)([a-zA-Z0-9(])/g, ')*$1');
-
+    let expr = exprStr.replace(/\s+/g, '').replace(/(\d)\(/g, '$1*(').replace(/\)([a-zA-Z0-9(])/g, ')*$1');
     const regexParen = /([+-]?\d*)\*?\(([^)]+)\)/g;
     return expr.replace(regexParen, (match, fatorStr, conteudo) => {
       let fator = 1;
@@ -309,31 +496,23 @@
     });
   }
 
-  // Decompõe membro em termos: { num, den, isVar }
-  function parseMembro(membroStr) {
+  function parseMembro1Grau(membroStr) {
     let s = expandirParenteses(membroStr);
     s = s.replace(/-/g, '+-');
     const tokens = s.split('+').filter(t => t !== '');
-
     const termos = [];
     for (let t of tokens) {
       let isVar = t.includes('x') || t.includes('X');
-      let num = 1;
-      let den = 1;
-
+      let num = 1, den = 1;
       if (t.includes('/')) {
         const partes = t.split('/');
         den = parseInt(partes[1], 10) || 1;
         let nStr = partes[0].replace(/x/gi, '').replace('*', '');
-        if (nStr === '-' || nStr === '-1') num = -1;
-        else if (nStr === '' || nStr === '+') num = 1;
-        else num = parseInt(nStr, 10);
+        num = (nStr === '-' || nStr === '-1') ? -1 : (nStr === '' || nStr === '+') ? 1 : parseInt(nStr, 10);
       } else {
         if (isVar) {
           let nStr = t.replace(/x/gi, '').replace('*', '');
-          if (nStr === '-' || nStr === '-1') num = -1;
-          else if (nStr === '' || nStr === '+') num = 1;
-          else num = parseInt(nStr, 10);
+          num = (nStr === '-' || nStr === '-1') ? -1 : (nStr === '' || nStr === '+') ? 1 : parseInt(nStr, 10);
         } else {
           num = parseInt(t, 10);
         }
@@ -343,283 +522,305 @@
     return termos;
   }
 
-  function formatarTermoLatex(termo, primeiroDoMembro = false) {
-    const sinal = termo.num < 0 ? '-' : (primeiroDoMembro ? '' : '+');
+  function formatarTermo1(termo, primeiro = false) {
+    const sinal = termo.num < 0 ? '-' : (primeiro ? '' : '+');
     const absNum = Math.abs(termo.num);
-
     if (termo.den === 1) {
-      if (termo.isVar) {
-        const coef = absNum === 1 ? 'x' : `${absNum}x`;
-        return `${sinal} ${coef}`.trim();
-      }
+      if (termo.isVar) return `${sinal} ${absNum === 1 ? 'x' : absNum + 'x'}`.trim();
       return `${sinal} ${absNum}`.trim();
     } else {
-      if (termo.isVar) {
-        const nStr = absNum === 1 ? 'x' : `${absNum}x`;
-        return `${sinal} \\frac{${nStr}}{${termo.den}}`.trim();
-      }
+      if (termo.isVar) return `${sinal} \\frac{${absNum === 1 ? 'x' : absNum + 'x'}}{${termo.den}}`.trim();
       return `${sinal} \\frac{${absNum}}{${termo.den}}`.trim();
     }
   }
 
-  function formatarMembro(termos) {
+  function formatarMembro1(termos) {
     if (termos.length === 0) return "0";
-    return termos.map((t, idx) => formatarTermoLatex(t, idx === 0)).join(' ');
+    return termos.map((t, idx) => formatarTermo1(t, idx === 0)).join(' ');
   }
 
-  function resolverEquacao(equacaoStr) {
+  function resolver1Grau(equacaoStr) {
     const passos = [];
     if (!equacaoStr.includes('=')) throw new Error("A expressão precisa conter o sinal de igualdade (=).");
-
     const membros = equacaoStr.split('=');
     if (membros.length !== 2) throw new Error("Apenas um sinal '=' é permitido.");
 
-    let lhsTermos = parseMembro(membros[0]);
-    let rhsTermos = parseMembro(membros[1]);
+    let lhs = parseMembro1Grau(membros[0]);
+    let rhs = parseMembro1Grau(membros[1]);
 
-    passos.push({
-      descricao: "Equação inicial identificada:",
-      latex: `${formatarMembro(lhsTermos)} = ${formatarMembro(rhsTermos)}`
-    });
+    passos.push({ descricao: "Equação inicial:", latex: `${formatarMembro1(lhs)} = ${formatarMembro1(rhs)}` });
 
-    // 1. Tratamento de denominadores e MMC
-    const todosTermos = [...lhsTermos, ...rhsTermos];
-    const denominadores = [...new Set(todosTermos.map(t => t.den).filter(d => d > 1))];
-
+    const denominadores = [...new Set([...lhs, ...rhs].map(t => t.den).filter(d => d > 1))];
     if (denominadores.length > 0) {
       const mmc = denominadores.reduce((acc, cur) => lcm(acc, cur), denominadores[0]);
-
-      const expressaoLhsMMC = lhsTermos.map((t, idx) => {
-        const sinal = t.num < 0 ? '-' : (idx === 0 ? '' : '+');
-        return `${sinal} ${mmc} \\cdot \\left(${formatarTermoLatex({ ...t, num: Math.abs(t.num) }, true)}\\right)`.trim();
-      }).join(' ');
-
-      const expressaoRhsMMC = rhsTermos.map((t, idx) => {
-        const sinal = t.num < 0 ? '-' : (idx === 0 ? '' : '+');
-        return `${sinal} ${mmc} \\cdot \\left(${formatarTermoLatex({ ...t, num: Math.abs(t.num) }, true)}\\right)`.trim();
-      }).join(' ');
-
       passos.push({
-        descricao: `Identificando os denominadores (${denominadores.join(', ')}). Calculamos o MMC = ${mmc} e multiplicamos cada termo por ele:`,
-        latex: `${expressaoLhsMMC} = ${expressaoRhsMMC}`
+        descricao: `Multiplicando todos os termos pelo MMC = ${mmc} para eliminar denominadores:`,
+        latex: `${mmc} \\cdot (${formatarMembro1(lhs)}) = ${mmc} \\cdot (${formatarMembro1(rhs)})`
       });
-
-      // Aplica o MMC termo a termo: novo_num = (num * mmc) / den
-      lhsTermos = lhsTermos.map(t => ({ num: Math.round((t.num * mmc) / t.den), den: 1, isVar: t.isVar }));
-      rhsTermos = rhsTermos.map(t => ({ num: Math.round((t.num * mmc) / t.den), den: 1, isVar: t.isVar }));
-
-      passos.push({
-        descricao: "Efetuando as multiplicações e divisões para eliminar os denominadores:",
-        latex: `${formatarMembro(lhsTermos)} = ${formatarMembro(rhsTermos)}`
-      });
+      lhs = lhs.map(t => ({ num: Math.round((t.num * mmc) / t.den), den: 1, isVar: t.isVar }));
+      rhs = rhs.map(t => ({ num: Math.round((t.num * mmc) / t.den), den: 1, isVar: t.isVar }));
+      passos.push({ descricao: "Equação sem frações:", latex: `${formatarMembro1(lhs)} = ${formatarMembro1(rhs)}` });
     }
 
-    // 2. Reduzir membros antes de transpor
-    let lhsX = lhsTermos.filter(t => t.isVar).reduce((acc, t) => acc + t.num, 0);
-    let lhsC = lhsTermos.filter(t => !t.isVar).reduce((acc, t) => acc + t.num, 0);
-    let rhsX = rhsTermos.filter(t => t.isVar).reduce((acc, t) => acc + t.num, 0);
-    let rhsC = rhsTermos.filter(t => !t.isVar).reduce((acc, t) => acc + t.num, 0);
+    let lx = lhs.filter(t => t.isVar).reduce((acc, t) => acc + t.num, 0);
+    let lc = lhs.filter(t => !t.isVar).reduce((acc, t) => acc + t.num, 0);
+    let rx = rhs.filter(t => t.isVar).reduce((acc, t) => acc + t.num, 0);
+    let rc = rhs.filter(t => !t.isVar).reduce((acc, t) => acc + t.num, 0);
 
-    // 3. Isolar x no 1º membro e constantes no 2º membro
-    const sinalRhsX = -rhsX;
-    const sinalLhsC = -lhsC;
+    let transL = `${lx !== 0 ? (lx === 1 ? 'x' : lx === -1 ? '-x' : lx + 'x') : ''}`;
+    if (rx !== 0) transL += ` ${-rx > 0 ? '+ ' + (-rx === 1 ? 'x' : -rx + 'x') : '- ' + (Math.abs(rx) === 1 ? 'x' : Math.abs(rx) + 'x')}`;
 
-    let transporLhs = `${lhsX !== 0 ? (lhsX === 1 ? 'x' : lhsX === -1 ? '-x' : lhsX + 'x') : ''}`;
-    if (rhsX !== 0) {
-      transporLhs += ` ${sinalRhsX > 0 ? '+ ' + (sinalRhsX === 1 ? 'x' : sinalRhsX + 'x') : '- ' + (Math.abs(sinalRhsX) === 1 ? 'x' : Math.abs(sinalRhsX) + 'x')}`;
-    }
+    let transR = `${rc}`;
+    if (lc !== 0) transR += ` ${-lc > 0 ? '+ ' + -lc : '- ' + Math.abs(lc)}`;
 
-    let transporRhs = `${rhsC}`;
-    if (lhsC !== 0) {
-      transporRhs += ` ${sinalLhsC > 0 ? '+ ' + sinalLhsC : '- ' + Math.abs(sinalLhsC)}`;
-    }
+    passos.push({ descricao: "Isolando incógnitas à esquerda e números à direita:", latex: `${transL || '0'} = ${transR}` });
 
-    passos.push({
-      descricao: "Isolando os termos com incógnita no 1º membro e os termos numéricos no 2º membro:",
-      latex: `${transporLhs || '0'} = ${transporRhs}`
-    });
+    const finalX = lx - rx;
+    const finalC = rc - lc;
+    const xTxt = finalX === 1 ? 'x' : (finalX === -1 ? '-x' : `${finalX}x`);
+    passos.push({ descricao: "Reduzindo termos semelhantes:", latex: `${xTxt} = ${finalC}` });
 
-    // 4. Redução dos termos semelhantes
-    const finalX = lhsX - rhsX;
-    const finalC = rhsC - lhsC;
-
-    const coefXFormatado = finalX === 1 ? 'x' : (finalX === -1 ? '-x' : `${finalX}x`);
-    passos.push({
-      descricao: "Reduzindo os termos semelhantes em ambos os membros:",
-      latex: `${coefXFormatado} = ${finalC}`
-    });
-
-    // 5. Casos de impossibilidade ou identidade
     if (finalX === 0) {
-      if (finalC === 0) {
-        passos.push({
-          descricao: "Classificação:",
-          latex: `0x = 0 \\implies \\text{Equação indeterminada (infinitas soluções)}`
-        });
-      } else {
-        passos.push({
-          descricao: "Classificação:",
-          latex: `0x = ${finalC} \\implies \\text{Equação impossível (não possui solução)}`
-        });
-      }
+      if (finalC === 0) passos.push({ descricao: "Classificação:", latex: `0x = 0 \\implies \\text{Infinitas soluções}` });
+      else passos.push({ descricao: "Classificação:", latex: `0x = ${finalC} \\implies \\text{Equação impossível (sem solução)}` });
       return passos;
     }
 
     if (finalX === 1) {
-      passos.push({
-        descricao: "Solução encontrada:",
-        latex: `x = ${finalC}`
-      });
-      passos.push({
-        descricao: "Conjunto Solução:",
-        latex: `S = \\{${finalC}\\}`
-      });
+      passos.push({ descricao: "Solução:", latex: `x = ${finalC}` });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${finalC}\\}` });
       return passos;
     }
 
-    // 6. Divisão final com formatação rigorosa de sinais e frações
     const fracao = simplificarFracao(finalC, finalX);
-    const divisorTxt = finalX < 0 ? `(${finalX})` : `${finalX}`;
-
-    let intermediariaLatex = '';
-    if (finalX < 0 && finalC < 0) {
-      intermediariaLatex = `\\frac{${Math.abs(finalC)}}{${Math.abs(finalX)}}`;
-    } else if (finalX < 0 || finalC < 0) {
-      intermediariaLatex = `-\\frac{${Math.abs(finalC)}}{${Math.abs(finalX)}}`;
-    } else {
-      intermediariaLatex = `\\frac{${finalC}}{${finalX}}`;
-    }
+    const divTxt = finalX < 0 ? `(${finalX})` : `${finalX}`;
+    let interLatex = (finalX < 0 && finalC < 0) ? `\\frac{${Math.abs(finalC)}}{${Math.abs(finalX)}}` :
+                     (finalX < 0 || finalC < 0) ? `-\\frac{${Math.abs(finalC)}}{${Math.abs(finalX)}}` : `\\frac{${finalC}}{${finalX}}`;
 
     if (fracao.den === 1) {
-      passos.push({
-        descricao: `Dividindo ambos os membros por ${divisorTxt}:`,
-        latex: `x = ${intermediariaLatex} = ${fracao.num}`
-      });
-      passos.push({
-        descricao: "Conjunto Solução:",
-        latex: `S = \\{${fracao.num}\\}`
-      });
+      passos.push({ descricao: `Dividindo por ${divTxt}:`, latex: `x = ${interLatex} = ${fracao.num}` });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${fracao.num}\\}` });
     } else {
-      const sinalFracao = fracao.num < 0 ? '-' : '';
-      passos.push({
-        descricao: `Dividindo por ${divisorTxt} e simplificando a fração:`,
-        latex: `x = ${intermediariaLatex} = ${sinalFracao}\\frac{${Math.abs(fracao.num)}}{${fracao.den}}`
-      });
-      passos.push({
-        descricao: "Conjunto Solução:",
-        latex: `S = \\left\\{ ${sinalFracao}\\frac{${Math.abs(fracao.num)}}{${fracao.den}} \\right\\}`
-      });
+      const s = fracao.num < 0 ? '-' : '';
+      passos.push({ descricao: `Dividindo por ${divTxt} e simplificando:`, latex: `x = ${interLatex} = ${s}\\frac{${Math.abs(fracao.num)}}{${fracao.den}}` });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ ${s}\\frac{${Math.abs(fracao.num)}}{${fracao.den}} \\right\\}` });
     }
-
     return passos;
   }
 
-  // ==========================================
-  // TECLADO VIRTUAL E ENTRADA
-  // ==========================================
-  document.querySelectorAll('.key-btn[data-val]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const val = btn.getAttribute('data-val');
-      const start = eqInput.selectionStart;
-      const end = eqInput.selectionEnd;
-      const txt = eqInput.value;
-
-      eqInput.value = txt.substring(0, start) + val + txt.substring(end);
-      eqInput.focus();
-      eqInput.selectionStart = eqInput.selectionEnd = start + val.length;
-      atualizarPreview();
-    });
-  });
-
-  document.getElementById('key-backspace').addEventListener('click', () => {
-    const start = eqInput.selectionStart;
-    const end = eqInput.selectionEnd;
-    const txt = eqInput.value;
-
-    if (start === end && start > 0) {
-      eqInput.value = txt.substring(0, start - 1) + txt.substring(end);
-      eqInput.selectionStart = eqInput.selectionEnd = start - 1;
-    } else if (start !== end) {
-      eqInput.value = txt.substring(0, start) + txt.substring(end);
-      eqInput.selectionStart = eqInput.selectionEnd = start;
+  function executarResolucao1() {
+    const alertBox = document.getElementById('alert-grau1');
+    const cardRes = document.getElementById('card-result-grau1');
+    const lista = document.getElementById('passos-grau1');
+    alertBox.innerHTML = '';
+    
+    try {
+      const passos = resolver1Grau(inputGrau1.value.trim());
+      lista.innerHTML = '';
+      passos.forEach((p, i) => {
+        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+      });
+      cardRes.style.display = 'block';
+      renderizarKaTeX(lista);
+    } catch (err) {
+      alertBox.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+      cardRes.style.display = 'none';
     }
-    eqInput.focus();
-    atualizarPreview();
-  });
+  }
 
-  document.getElementById('key-clear').addEventListener('click', () => {
-    eqInput.value = '';
-    eqInput.focus();
-    atualizarPreview();
-  });
-
-  eqInput.addEventListener('input', atualizarPreview);
+  function limpar1() {
+    inputGrau1.value = '';
+    document.getElementById('prev-img-grau1').style.display = 'none';
+    document.getElementById('card-result-grau1').style.display = 'none';
+    document.getElementById('alert-grau1').innerHTML = '';
+    document.getElementById('ocr-status-grau1').innerHTML = '';
+    atualizarPreview1();
+  }
 
   // ==========================================
-  // EVENTOS DE TELA E FOTO / OCR
+  // MÓDULO 2: EQUAÇÃO DO 2º GRAU
   // ==========================================
-  const btnResolver = document.getElementById('btn-resolver');
-  const btnLimpar = document.getElementById('btn-limpar');
-  const cameraInput = document.getElementById('camera-input');
-  const previewImg = document.getElementById('preview-img');
-  const ocrStatus = document.getElementById('ocr-status');
-  const resultadoCard = document.getElementById('resultado-card');
-  const passosLista = document.getElementById('passos-lista');
-  const alertContainer = document.getElementById('alert-container');
+  const inputGrau2 = document.getElementById('input-grau2');
+  const prevMathGrau2 = document.getElementById('prev-math-grau2');
 
-  function renderPassos(passos) {
-    passosLista.innerHTML = '';
-    passos.forEach((p, idx) => {
-      const stepDiv = document.createElement('div');
-      stepDiv.className = 'step-box';
-      stepDiv.innerHTML = `
-        <div class="step-title">Passo ${idx + 1}: ${p.descricao}</div>
-        <div class="step-math">$$\\displaystyle ${p.latex}$$</div>
-      `;
-      passosLista.appendChild(stepDiv);
-    });
-    resultadoCard.style.display = 'block';
+  function atualizarPreview2() {
+    prevMathGrau2.innerHTML = `$$\\displaystyle ${converterParaLatex(inputGrau2.value)}$$`;
+    renderizarKaTeX(prevMathGrau2);
+  }
+  inputGrau2.addEventListener('input', atualizarPreview2);
 
-    if (window.renderMathInElement) {
-      renderMathInElement(passosLista, {
-        delimiters: [
-          { left: "$$", right: "$$", display: true },
-          { left: "$", right: "$", display: false }
-        ]
+  function parsePolinomio(exprStr) {
+    let s = exprStr.replace(/\s+/g, '').replace(/-/g, '+-');
+    const tokens = s.split('+').filter(t => t !== '');
+    let a = 0, b = 0, c = 0;
+    for (let t of tokens) {
+      if (t.includes('x^2') || t.includes('X^2')) {
+        let cs = t.replace(/x\^2/gi, '').replace('*', '');
+        a += (cs === '-' ? -1 : cs === '' || cs === '+' ? 1 : parseFloat(cs));
+      } else if (t.includes('x') || t.includes('X')) {
+        let cs = t.replace(/x/gi, '').replace('*', '');
+        b += (cs === '-' ? -1 : cs === '' || cs === '+' ? 1 : parseFloat(cs));
+      } else {
+        c += parseFloat(t) || 0;
+      }
+    }
+    return { a, b, c };
+  }
+
+  function resolver2Grau(equacaoStr) {
+    const passos = [];
+    if (!equacaoStr.includes('=')) throw new Error("A expressão precisa conter o sinal de igualdade (=).");
+    const membros = equacaoStr.split('=');
+    if (membros.length !== 2) throw new Error("Apenas um sinal '=' é permitido.");
+
+    const lhs = parsePolinomio(membros[0]);
+    const rhs = parsePolinomio(membros[1]);
+
+    passos.push({ descricao: "Equação informada:", latex: `${converterParaLatex(membros[0])} = ${converterParaLatex(membros[1])}` });
+
+    let a = lhs.a - rhs.a;
+    let b = lhs.b - rhs.b;
+    let c = lhs.c - rhs.c;
+
+    if (a === 0) {
+      passos.push({ descricao: "Como a = 0, recai em uma equação do 1º grau:", latex: `${b}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0` });
+      return resolver1Grau(`${b}x ${c >= 0 ? '+' + c : c} = 0`);
+    }
+
+    if (a < 0) {
+      a = -a; b = -b; c = -c;
+      passos.push({
+        descricao: "Multiplicando por (-1) para obter a > 0:",
+        latex: `${a === 1 ? '' : a}x^2 ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0`
+      });
+    } else {
+      passos.push({
+        descricao: "Forma geral ax² + bx + c = 0:",
+        latex: `${a === 1 ? '' : a}x^2 ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0`
       });
     }
-  }
 
-  function dispararResolucao() {
-    alertContainer.innerHTML = '';
-    const formula = eqInput.value.trim();
-    if (!formula) {
-      alertContainer.innerHTML = `<div class="alert alert-error">Digite ou fotografe uma equação primeiro.</div>`;
-      return;
+    passos.push({ descricao: "Identificando os coeficientes:", latex: `a = ${a}, \\quad b = ${b}, \\quad c = ${c}` });
+
+    const delta = (b * b) - (4 * a * c);
+    const bStr = b < 0 ? `(${b})` : `${b}`;
+    const cStr = c < 0 ? `(${c})` : `${c}`;
+
+    passos.push({
+      descricao: "Calculando o discriminante (Δ = b² - 4ac):",
+      latex: `\\Delta = ${bStr}^2 - 4 \\cdot (${a}) \\cdot ${cStr} = ${b * b} - (${4 * a * c}) = ${delta}`
+    });
+
+    if (delta < 0) {
+      passos.push({ descricao: "Análise do discriminante:", latex: `\\Delta < 0 \\implies \\text{Não possui raízes reais } (x \\notin \\mathbb{R})` });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\emptyset` });
+      return passos;
     }
 
+    const sqrtDelta = Math.sqrt(delta);
+    passos.push({
+      descricao: "Fórmula de Bhaskara:",
+      latex: `x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a} = \\frac{-(${b}) \\pm \\sqrt{${delta}}}{2 \\cdot (${a})}`
+    });
+
+    if (Number.isInteger(sqrtDelta)) {
+      passos.push({ descricao: `Substituindo \\sqrt{${delta}} = ${sqrtDelta}:`, latex: `x = \\frac{${-b} \\pm ${sqrtDelta}}{${2 * a}}` });
+      if (delta === 0) {
+        const x1 = simplificarFracao(-b, 2 * a);
+        const rStr = x1.den === 1 ? `${x1.num}` : `\\frac{${x1.num}}{${x1.den}}`;
+        passos.push({ descricao: "Como Δ = 0, há uma única raiz real:", latex: `x' = x'' = ${rStr}` });
+        passos.push({ descricao: "Conjunto Solução:", latex: `S = \\{${rStr}\\}` });
+      } else {
+        const f1 = simplificarFracao(-b + sqrtDelta, 2 * a);
+        const f2 = simplificarFracao(-b - sqrtDelta, 2 * a);
+        const r1 = f1.den === 1 ? `${f1.num}` : `\\frac{${f1.num}}{${f1.den}}`;
+        const r2 = f2.den === 1 ? `${f2.num}` : `\\frac{${f2.num}}{${f2.den}}`;
+        passos.push({ descricao: "Calculando x' e x'':", latex: `x' = ${r1}, \\qquad x'' = ${r2}` });
+        passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ ${r1}, \\; ${r2} \\right\\}` });
+      }
+    } else {
+      passos.push({
+        descricao: "Raízes na forma de radicais:",
+        latex: `x' = \\frac{${-b} + \\sqrt{${delta}}}{${2 * a}}, \\qquad x'' = \\frac{${-b} - \\sqrt{${delta}}}{${2 * a}}`
+      });
+      passos.push({ descricao: "Conjunto Solução:", latex: `S = \\left\\{ \\frac{${-b} - \\sqrt{${delta}}}{${2 * a}}, \\; \\frac{${-b} + \\sqrt{${delta}}}{${2 * a}} \\right\\}` });
+    }
+    return passos;
+  }
+
+  function executarResolucao2() {
+    const alertBox = document.getElementById('alert-grau2');
+    const cardRes = document.getElementById('card-result-grau2');
+    const lista = document.getElementById('passos-grau2');
+    alertBox.innerHTML = '';
+    
     try {
-      const passos = resolverEquacao(formula);
-      renderPassos(passos);
+      const passos = resolver2Grau(inputGrau2.value.trim());
+      lista.innerHTML = '';
+      passos.forEach((p, i) => {
+        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+      });
+      cardRes.style.display = 'block';
+      renderizarKaTeX(lista);
     } catch (err) {
-      alertContainer.innerHTML = `<div class="alert alert-error">Erro ao resolver: ${err.message}</div>`;
-      resultadoCard.style.display = 'none';
+      alertBox.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+      cardRes.style.display = 'none';
     }
   }
 
-  btnResolver.addEventListener('click', dispararResolucao);
+  function limpar2() {
+    inputGrau2.value = '';
+    document.getElementById('prev-img-grau2').style.display = 'none';
+    document.getElementById('card-result-grau2').style.display = 'none';
+    document.getElementById('alert-grau2').innerHTML = '';
+    document.getElementById('ocr-status-grau2').innerHTML = '';
+    atualizarPreview2();
+  }
 
-  btnLimpar.addEventListener('click', () => {
-    eqInput.value = '';
-    previewImg.style.display = 'none';
-    previewImg.src = '';
-    resultadoCard.style.display = 'none';
-    alertContainer.innerHTML = '';
-    ocrStatus.innerHTML = '';
-    atualizarPreview();
-  });
+  // ==========================================
+  // CONFIGURAÇÃO DOS TECLADOS VIRTUAIS
+  // ==========================================
+  function configurarTeclado(kbId, inputEl, updateFn) {
+    const kb = document.getElementById(kbId);
+    kb.querySelectorAll('button[data-val]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-val');
+        const start = inputEl.selectionStart;
+        const end = inputEl.selectionEnd;
+        inputEl.value = inputEl.value.substring(0, start) + val + inputEl.value.substring(end);
+        inputEl.focus();
+        inputEl.selectionStart = inputEl.selectionEnd = start + val.length;
+        updateFn();
+      });
+    });
 
-  // Redimensiona fotos grandes no cliente antes do envio para a Vercel
+    kb.querySelector('button[data-action="backspace"]').addEventListener('click', () => {
+      const start = inputEl.selectionStart;
+      const end = inputEl.selectionEnd;
+      if (start === end && start > 0) {
+        inputEl.value = inputEl.value.substring(0, start - 1) + inputEl.value.substring(end);
+        inputEl.selectionStart = inputEl.selectionEnd = start - 1;
+      } else if (start !== end) {
+        inputEl.value = inputEl.value.substring(0, start) + inputEl.value.substring(end);
+        inputEl.selectionStart = inputEl.selectionEnd = start;
+      }
+      inputEl.focus();
+      updateFn();
+    });
+
+    kb.querySelector('button[data-action="clear"]').addEventListener('click', () => {
+      inputEl.value = '';
+      inputEl.focus();
+      updateFn();
+    });
+  }
+
+  configurarTeclado('kb-grau1', inputGrau1, atualizarPreview1);
+  configurarTeclado('kb-grau2', inputGrau2, atualizarPreview2);
+
+  // ==========================================
+  // CÂMERA / OCR COMPARTILHADO
+  // ==========================================
   function comprimirImagem(file, maxWidth = 1200) {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -627,25 +828,17 @@
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-
+          let width = img.width, height = img.height;
           if (width > maxWidth) {
             height = Math.round((height * maxWidth) / width);
             width = maxWidth;
           }
-
           canvas.width = width;
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
-
           const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          resolve({
-            dataUrl: dataUrl,
-            base64Data: dataUrl.split(',')[1],
-            mimeType: 'image/jpeg'
-          });
+          resolve({ dataUrl, base64Data: dataUrl.split(',')[1], mimeType: 'image/jpeg' });
         };
         img.src = e.target.result;
       };
@@ -653,42 +846,51 @@
     });
   }
 
-  cameraInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  async function extrairEquacaoDaImagem(base64Data, mimeType) {
+    const response = await fetch(OCR_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base64Data, mimeType })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Erro ao processar imagem no servidor");
+    return data.equacao;
+  }
 
-    alertContainer.innerHTML = '';
-    ocrStatus.style.color = '#2563eb';
-    ocrStatus.innerHTML = "⏳ Comprimindo imagem...";
+  function configurarOCR(camInputId, prevImgId, statusId, inputEl, updateFn, execFn) {
+    const camInput = document.getElementById(camInputId);
+    const prevImg = document.getElementById(prevImgId);
+    const status = document.getElementById(statusId);
 
-    try {
-      const { dataUrl, base64Data, mimeType } = await comprimirImagem(file);
-      previewImg.src = dataUrl;
-      previewImg.style.display = 'block';
+    camInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      status.style.color = '#2563eb';
+      status.innerHTML = "⏳ Comprimindo imagem...";
 
-      ocrStatus.innerHTML = "⏳ Identificando a escrita a lápis via IA...";
+      try {
+        const { dataUrl, base64Data, mimeType } = await comprimirImagem(file);
+        prevImg.src = dataUrl;
+        prevImg.style.display = 'block';
+        status.innerHTML = "⏳ Identificando escrita à mão via IA...";
 
-      const equacaoLida = await extrairEquacaoDaImagem(base64Data, mimeType);
-      
-      if (!equacaoLida) {
-        throw new Error("Nenhum texto retornado pela IA.");
+        const eq = await extrairEquacaoDaImagem(base64Data, mimeType);
+        if (!eq) throw new Error("Nenhum texto retornado pela IA.");
+
+        status.style.color = '#16a34a';
+        status.innerHTML = `Equação reconhecida: <strong>${eq}</strong>`;
+        inputEl.value = eq;
+        updateFn();
+        execFn();
+      } catch (err) {
+        status.style.color = '#dc2626';
+        status.innerHTML = `❌ Falha ao processar: ${err.message}`;
       }
+    });
+  }
 
-      ocrStatus.style.color = '#16a34a';
-      ocrStatus.innerHTML = `Equação reconhecida: <strong>${equacaoLida}</strong>`;
-      eqInput.value = equacaoLida;
-      atualizarPreview();
-      dispararResolucao();
-    } catch (err) {
-      ocrStatus.style.color = '#dc2626';
-      ocrStatus.innerHTML = `❌ Falha ao processar: ${err.message}`;
-    }
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
-    atualizarPreview();
-    dispararResolucao();
-  });
+  configurarOCR('cam-grau1', 'prev-img-grau1', 'ocr-status-grau1', inputGrau1, atualizarPreview1, executarResolucao1);
+  configurarOCR('cam-grau2', 'prev-img-grau2', 'ocr-status-grau2', inputGrau2, atualizarPreview2, executarResolucao2);
 </script>
 
 </body>
