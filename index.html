@@ -42,7 +42,6 @@
     header h1 { font-size: 1.85rem; color: #0f172a; font-weight: 800; letter-spacing: -0.02em; }
     header p { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
 
-    /* Grid Moderno do Menu */
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -82,7 +81,6 @@
       flex-shrink: 0;
     }
 
-    /* Cores Temáticas */
     .c-blue .icon-box { background: #eff6ff; color: #2563eb; }
     .c-blue:hover { border-color: #93c5fd; }
 
@@ -97,6 +95,9 @@
 
     .c-rose .icon-box { background: #fff1f2; color: #e11d48; }
     .c-rose:hover { border-color: #fecdd3; }
+
+    .c-indigo .icon-box { background: #e0e7ff; color: #4338ca; }
+    .c-indigo:hover { border-color: #a5b4fc; }
 
     .topic-card h3 { font-size: 1.15rem; color: #1e293b; font-weight: 700; }
     .topic-card p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; line-height: 1.4; }
@@ -267,6 +268,18 @@
 
     .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem; }
     .alert-error { background: #fee2e2; color: #991b1b; }
+
+    /* Reta Numérica SVG */
+    .number-line-container {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 8px;
+      margin-top: 10px;
+      overflow-x: auto;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -350,11 +363,26 @@
           <div class="icon-box">➗</div>
           <div>
             <h3>Operações com Frações</h3>
-            <p>Adição, subtração com MMC, produto e divisão detalhada.</p>
+            <p>Adição, subtração com MMC detalhado, produto e divisão.</p>
           </div>
         </div>
         <div class="formula-tag">
-          <span>$$\frac{a}{b} \pm \frac{c}{d} \quad \frac{a}{b} \cdot \frac{c}{d} \quad \frac{a}{b} \div \frac{c}{d}$$</span>
+          <span>$$\frac{a}{b} \pm \frac{c}{d} \quad \frac{a}{b} \cdot \frac{c}{d}$$</span>
+          <span class="arrow-icon">Acessar →</span>
+        </div>
+      </div>
+
+      <!-- Operações com Inteiros (NOVO) -->
+      <div class="topic-card c-indigo" onclick="abrirModulo('inteiros')">
+        <div class="card-top">
+          <div class="icon-box">📏</div>
+          <div>
+            <h3>Operações com Inteiros</h3>
+            <p>Regra de sinais e suporte visual com reta numérica dinâmica.</p>
+          </div>
+        </div>
+        <div class="formula-tag">
+          <span>$$-3 + (+5) \quad (-2) \cdot (-4)$$</span>
           <span class="arrow-icon">Acessar →</span>
         </div>
       </div>
@@ -519,7 +547,7 @@
 
       <div class="form-group">
         <label for="input-notaveis">Expressão:</label>
-        <input type="text" id="input-notaveis" value="(x + 2)^3" placeholder="Ex: (x + 2)^3 ou (2x - 1)^3 ou (2x + 3)^2">
+        <input type="text" id="input-notaveis" value="(x + 2)^3">
         <label style="margin-top: 8px;">Visualização Matemática:</label>
         <div class="preview-math-box" id="prev-math-notaveis"></div>
       </div>
@@ -559,7 +587,7 @@
 
     <div id="alert-notaveis"></div>
     <div id="card-result-notaveis" class="card" style="display: none;">
-      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo do Desenvolvimento:</h3>
+      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo:</h3>
       <div id="passos-notaveis"></div>
     </div>
   </div>
@@ -585,7 +613,7 @@
 
       <div class="form-group">
         <label for="input-fatoracao">Polinômio a fatorar:</label>
-        <input type="text" id="input-fatoracao" value="x^3 - 8" placeholder="Ex: x^3 - 8, x^3 + 27, x^2 - 16, 4x^2 - 12x + 9, 3x^3 + 6x^2">
+        <input type="text" id="input-fatoracao" value="x^3 - 8">
         <label style="margin-top: 8px;">Visualização Matemática:</label>
         <div class="preview-math-box" id="prev-math-fatoracao"></div>
       </div>
@@ -624,7 +652,7 @@
 
     <div id="alert-fatoracao"></div>
     <div id="card-result-fatoracao" class="card" style="display: none;">
-      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo da Fatoração:</h3>
+      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo:</h3>
       <div id="passos-fatoracao"></div>
     </div>
   </div>
@@ -650,7 +678,7 @@
 
       <div class="form-group">
         <label for="input-fracoes">Operação com frações:</label>
-        <input type="text" id="input-fracoes" value="2/3 + 3/4" placeholder="Ex: 2/3 + 3/4,  5/6 - 1/4,  3/4 * 2/5,  7/2 / 3/4">
+        <input type="text" id="input-fracoes" value="2/3 + 3/4">
         <label style="margin-top: 8px;">Visualização Matemática:</label>
         <div class="preview-math-box" id="prev-math-fracoes"></div>
       </div>
@@ -693,6 +721,70 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- VIEW 7: OPERAÇÕES COM INTEIROS (NOVA)      -->
+  <!-- ========================================== -->
+  <div id="view-inteiros" class="view">
+    <div class="nav-bar">
+      <button class="btn-voltar" onclick="voltarMenu()">← Voltar ao Menu</button>
+      <h2>Operações com Inteiros (&Zeta;)</h2>
+    </div>
+
+    <div class="card">
+      <div class="camera-box">
+        <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 6px;">Fotografar operação com inteiros:</p>
+        <label class="btn-upload" for="cam-inteiros">📷 Tirar Foto / Imagem</label>
+        <input type="file" id="cam-inteiros" accept="image/*" capture="environment" style="display: none;">
+        <br>
+        <img id="prev-img-inteiros" class="preview-img" alt="Foto">
+        <div id="ocr-status-inteiros" style="margin-top: 8px; font-weight: 500; font-size: 0.85rem;"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="input-inteiros">Operação com inteiros:</label>
+        <input type="text" id="input-inteiros" value="(-3) + (+5)" placeholder="Ex: (-3) + (+5), 2 - 7, (-4) - (-6), (-3) * (-4), (-12) : (+3)">
+        <label style="margin-top: 8px;">Visualização Matemática:</label>
+        <div class="preview-math-box" id="prev-math-inteiros"></div>
+      </div>
+
+      <div class="keyboard-grid" id="kb-inteiros">
+        <button class="key-btn key-op" data-val="+">+</button>
+        <button class="key-btn key-op" data-val="-">−</button>
+        <button class="key-btn key-op" data-val="*">×</button>
+        <button class="key-btn key-op" data-val=":">÷</button>
+        <button class="key-btn key-op" data-val="(">(</button>
+        <button class="key-btn key-action" data-action="backspace">⌫</button>
+
+        <button class="key-btn" data-val="7">7</button>
+        <button class="key-btn" data-val="8">8</button>
+        <button class="key-btn" data-val="9">9</button>
+        <button class="key-btn key-op" data-val=")">)</button>
+        <button class="key-btn" data-val="(-">(-)</button>
+        <button class="key-btn key-action" data-action="clear">C</button>
+
+        <button class="key-btn" data-val="4">4</button>
+        <button class="key-btn" data-val="5">5</button>
+        <button class="key-btn" data-val="6">6</button>
+        <button class="key-btn" data-val="1">1</button>
+        <button class="key-btn" data-val="2">2</button>
+        <button class="key-btn" data-val="3">3</button>
+
+        <button class="key-btn" data-val="0" style="grid-column: span 6;">0</button>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="executarResolucaoInteiros()" style="flex: 1;">Calcular Passo a Passo</button>
+        <button class="btn-secondary" onclick="limparInteiros()">Limpar</button>
+      </div>
+    </div>
+
+    <div id="alert-inteiros"></div>
+    <div id="card-result-inteiros" class="card" style="display: none;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo com Apoio Visual:</h3>
+      <div id="passos-inteiros"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -732,6 +824,9 @@
     } else if (modulo === 'fracoes') {
       atualizarPreviewFracoes();
       executarResolucaoFracoes();
+    } else if (modulo === 'inteiros') {
+      atualizarPreviewInteiros();
+      executarResolucaoInteiros();
     }
   }
 
@@ -1582,9 +1677,6 @@
   // ==========================================
   // MÓDULO 5: OPERAÇÕES COM FRAÇÕES
   // ==========================================
-  // ==========================================
-  // MÓDULO 5: OPERAÇÕES COM FRAÇÕES (COM MMC DETALHADO)
-  // ==========================================
   const inputFracoes = document.getElementById('input-fracoes');
   const prevMathFracoes = document.getElementById('prev-math-fracoes');
 
@@ -1610,7 +1702,6 @@
     return `\\frac{${num}}{${den}}`;
   }
 
-  // Gera a tabela clássica de decomposição simultânea em fatores primos
   function gerarTabelaDecomposicaoMMC(n1, n2) {
     let a = Math.abs(n1);
     let b = Math.abs(n2);
@@ -1628,12 +1719,10 @@
         primo++;
       }
     }
-    // Linha final com 1, 1
     linhas.push({ a: 1, b: 1, primo: null });
 
     const totalMMC = fatores.reduce((acc, cur) => acc * cur, 1);
 
-    // Monta matriz KaTeX com traço vertical (array com cc|c)
     let latexArray = "\\begin{array}{cc|c}\n";
     for (let i = 0; i < linhas.length - 1; i++) {
       latexArray += `${linhas[i].a} & ${linhas[i].b} & ${linhas[i].primo} \\\\\n`;
@@ -1693,7 +1782,6 @@
       latex: `${formatarFracaoLatex(f1.num, f1.den)} ${opLatex} ${formatarFracaoLatex(f2.num, f2.den)}`
     });
 
-    // MULTIPLICAÇÃO
     if (op === '*') {
       passos.push({
         descricao: "Multiplicação de frações: multiplica-se numerador por numerador e denominador por denominador:",
@@ -1725,7 +1813,6 @@
       return passos;
     }
 
-    // DIVISÃO
     if (op === '÷') {
       if (f2.num === 0) throw new Error("Divisão por zero não é permitida.");
 
@@ -1759,7 +1846,6 @@
       return passos;
     }
 
-    // ADIÇÃO E SUBTRAÇÃO
     if (op === '+' || op === '-') {
       if (f1.den === f2.den) {
         passos.push({
@@ -1784,7 +1870,6 @@
         }
         return passos;
       } else {
-        // CÁLCULO DETALHADO DO MMC
         const decomp = gerarTabelaDecomposicaoMMC(f1.den, f2.den);
 
         passos.push({
@@ -1814,7 +1899,7 @@
 
         if (dMDC > 1) {
           passos.push({
-            descricao: `Simplificando pelo MDC (${dMDC}):`,
+            descricao: `Simplificando a fração resultante pelo MDC (${dMDC}):`,
             latex: `\\frac{${numFinal} \\div ${dMDC}}{${mmcDen} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
           });
         } else {
@@ -1860,6 +1945,236 @@
   }
 
   // ==========================================
+  // MÓDULO 6: OPERAÇÕES COM INTEIROS E RETA
+  // ==========================================
+  const inputInteiros = document.getElementById('input-inteiros');
+  const prevMathInteiros = document.getElementById('prev-math-inteiros');
+
+  function atualizarPreviewInteiros() {
+    prevMathInteiros.innerHTML = `$$\\displaystyle ${converterParaLatex(inputInteiros.value)}$$`;
+    renderizarKaTeX(prevMathInteiros);
+  }
+  inputInteiros.addEventListener('input', atualizarPreviewInteiros);
+
+  function parseInteiroComSinal(str) {
+    str = str.replace(/\s+/g, '').replace(/[()]/g, '');
+    return parseInt(str, 10);
+  }
+
+  // Gera o desenho dinâmico em SVG da Reta Numérica com setas de deslocamento
+  function desenharRetaNumericaSVG(inicio, deslocamento, fim) {
+    const minVal = Math.min(inicio, fim, 0) - 2;
+    const maxVal = Math.max(inicio, fim, 0) + 2;
+    const range = maxVal - minVal;
+
+    const width = 640;
+    const height = 130;
+    const yBaseline = 85;
+    const paddingX = 40;
+    const usableWidth = width - (2 * paddingX);
+
+    function getX(val) {
+      return paddingX + ((val - minVal) / range) * usableWidth;
+    }
+
+    let svg = `<svg viewBox="0 0 ${width} ${height}" style="width: 100%; max-width: 640px; font-family: sans-serif;">`;
+    svg += `<defs>
+      <marker id="arrowhead-r" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+        <polygon points="0 0, 6 3, 0 6" fill="#2563eb" />
+      </marker>
+      <marker id="arrowhead-l" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+        <polygon points="6 0, 0 3, 6 6" fill="#ea580c" />
+      </marker>
+    </defs>`;
+
+    // Eixo horizontal com setas nas extremidades
+    svg += `<line x1="15" y1="${yBaseline}" x2="${width - 15}" y2="${yBaseline}" stroke="#475569" stroke-width="2.5" />`;
+    svg += `<polygon points="15,${yBaseline-4} 5,${yBaseline} 15,${yBaseline+4}" fill="#475569" />`;
+    svg += `<polygon points="${width-15},${yBaseline-4} ${width-5},${yBaseline} ${width-15},${yBaseline+4}" fill="#475569" />`;
+
+    // Marcas de graduação inteira
+    for (let v = minVal; v <= maxVal; v++) {
+      const x = getX(v);
+      const isZero = (v === 0);
+      const tickH = isZero ? 14 : 8;
+      const strokeW = isZero ? 2.5 : 1.5;
+      const color = isZero ? "#0f172a" : "#94a3b8";
+
+      svg += `<line x1="${x}" y1="${yBaseline - tickH}" x2="${x}" y2="${yBaseline + tickH}" stroke="${color}" stroke-width="${strokeW}" />`;
+      svg += `<text x="${x}" y="${yBaseline + 24}" font-size="${isZero ? '13' : '11'}" font-weight="${isZero ? 'bold' : 'normal'}" fill="${isZero ? '#0f172a' : '#64748b'}" text-anchor="middle">${v}</text>`;
+    }
+
+    const xInicio = getX(inicio);
+    const xFim = getX(fim);
+
+    // Ponto de Partida
+    svg += `<circle cx="${xInicio}" cy="${yBaseline}" r="6" fill="#3b82f6" />`;
+    svg += `<text x="${xInicio}" y="${yBaseline + 42}" font-size="11" font-weight="bold" fill="#2563eb" text-anchor="middle">Início (${inicio})</text>`;
+
+    // Arco de deslocamento (se houver deslocamento)
+    if (deslocamento !== 0) {
+      const rRaio = Math.abs(xFim - xInicio) / 2;
+      const paraDireita = deslocamento > 0;
+      const corArco = paraDireita ? "#2563eb" : "#ea580c";
+      const markerId = paraDireita ? "url(#arrowhead-r)" : "url(#arrowhead-l)";
+      const yArcTop = Math.max(15, yBaseline - (rRaio * 0.45) - 15);
+
+      const pathD = `M ${xInicio} ${yBaseline - 8} Q ${(xInicio + xFim) / 2} ${yArcTop} ${xFim} ${yBaseline - 8}`;
+      svg += `<path d="${pathD}" fill="none" stroke="${corArco}" stroke-width="2.5" stroke-dasharray="4" marker-end="${markerId}" />`;
+
+      const txtSinal = deslocamento > 0 ? `+${deslocamento}` : `${deslocamento}`;
+      svg += `<rect x="${((xInicio + xFim) / 2) - 22}" y="${yArcTop - 12}" width="44" height="18" rx="4" fill="#ffffff" stroke="${corArco}" stroke-width="1.2"/>`;
+      svg += `<text x="${(xInicio + xFim) / 2}" y="${yArcTop + 2}" font-size="11" font-weight="bold" fill="${corArco}" text-anchor="middle">${txtSinal}</text>`;
+    }
+
+    // Ponto de Chegada
+    svg += `<circle cx="${xFim}" cy="${yBaseline}" r="6" fill="#16a34a" />`;
+    svg += `<text x="${xFim}" y="${yBaseline - 16}" font-size="11" font-weight="bold" fill="#15803d" text-anchor="middle">Fim (${fim})</text>`;
+
+    svg += `</svg>`;
+    return svg;
+  }
+
+  function resolverOperacoesInteiros(exprStr) {
+    const passos = [];
+    let s = exprStr.replace(/\s+/g, '').replace(/:/g, '÷');
+
+    // Detecta operação binária entre dois inteiros: A op B
+    // Suporta formatos: (-3) + (+5), -3 + 5, (-2) * (-4), (-12) ÷ (+3)
+    const regex = /^(\(?[+-]?\d+\)?)\s*([+\-*÷])\s*(\(?[+-]?\d+\)?)$/;
+    const match = s.match(regex);
+
+    if (!match) {
+      throw new Error("Digite uma operação elementar entre dois inteiros. Exemplos: (-3) + (+5), 2 - 7, (-4) * (-5) ou (-15) ÷ (+3).");
+    }
+
+    const strA = match[1];
+    const op = match[2];
+    const strB = match[3];
+
+    const a = parseInteiroComSinal(strA);
+    const b = parseInteiroComSinal(strB);
+
+    passos.push({
+      descricao: "Operação inicial com números inteiros identificada:",
+      latex: `${strA} ${op === '*' ? '\\cdot' : (op === '÷' ? '\\div' : op)} ${strB}`
+    });
+
+    // CASO 1: MULTIPLICAÇÃO OU DIVISÃO (JOGO DE SINAIS)
+    if (op === '*' || op === '÷') {
+      const mesmoSinal = (a >= 0 && b >= 0) || (a < 0 && b < 0);
+      const sinalResultado = mesmoSinal ? "+" : "-";
+      const regraSinalTexto = mesmoSinal ? "Sinais iguais (+ com + ou - com -) resultam em positivo (+)" : "Sinais diferentes (+ com - ou - com +) resultam em negativo (-)";
+
+      passos.push({
+        descricao: `Aplicando a regra de sinais (${regraSinalTexto}):`,
+        latex: `\\text{Sinal do resultado: } ${sinalResultado}`
+      });
+
+      if (op === '*') {
+        const prod = a * b;
+        passos.push({
+          descricao: `Multiplicando os valores absolutos (${Math.abs(a)} · ${Math.abs(b)}):`,
+          latex: `(${a}) \\cdot (${b}) = \\mathbf{${prod}}`
+        });
+      } else {
+        if (b === 0) throw new Error("Divisão por zero não é permitida no conjunto dos inteiros.");
+        if (a % b !== 0) {
+          const irred = simplificarFracao(a, b);
+          passos.push({
+            descricao: "Como a divisão não é exata em ℤ, expressamos em forma de fração irredutível:",
+            latex: `(${a}) \\div (${b}) = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+          });
+        } else {
+          const quot = a / b;
+          passos.push({
+            descricao: `Dividindo os valores absolutos (${Math.abs(a)} ÷ ${Math.abs(b)}):`,
+            latex: `(${a}) \\div (${b}) = \\mathbf{${quot}}`
+          });
+        }
+      }
+      return passos;
+    }
+
+    // CASO 2: ADIÇÃO E SUBTRAÇÃO COM APOIO DA RETA NUMÉRICA
+    if (op === '+' || op === '-') {
+      // Determina o deslocamento efetivo na reta
+      // Ex: a + (+b) -> desloca +b; a + (-b) -> desloca -b; a - (+b) -> desloca -b; a - (-b) -> desloca +b
+      let deslocamentoEfetivo = 0;
+      let explicacaoRegra = "";
+
+      if (op === '+') {
+        deslocamentoEfetivo = b;
+        explicacaoRegra = b >= 0 
+          ? `Somar um número positivo (+${b}) equivale a deslocar ${Math.abs(b)} unidades para a direita na reta numérica.`
+          : `Somar um número negativo (${b}) equivale a subtrair ${Math.abs(b)}, deslocando ${Math.abs(b)} unidades para a esquerda.`;
+      } else {
+        deslocamentoEfetivo = -b;
+        explicacaoRegra = b >= 0
+          ? `Subtrair um número positivo (+${b}) equivale a subtrair ${b}, deslocando ${Math.abs(b)} unidades para a esquerda.`
+          : `Subtrair um número negativo (- com - dá +) equivale a somar ${Math.abs(b)}, deslocando ${Math.abs(b)} unidades para a direita.`;
+      }
+
+      const resultadoFinal = a + deslocamentoEfetivo;
+
+      passos.push({
+        descricao: `Eliminando parênteses com as regras de sinais:`,
+        latex: `${a} ${deslocamentoEfetivo >= 0 ? '+ ' + deslocamentoEfetivo : '- ' + Math.abs(deslocamentoEfetivo)}`
+      });
+
+      passos.push({
+        descricao: `${explicacaoRegra}`,
+        latex: `\\text{Início em } ${a}, \\quad \\text{Deslocamento: } ${deslocamentoEfetivo > 0 ? '+' + deslocamentoEfetivo : deslocamentoEfetivo} \\implies \\text{Chegada em } ${resultadoFinal}`
+      });
+
+      // Insere o elemento interativo da Reta Numérica
+      const svgReta = desenharRetaNumericaSVG(a, deslocamentoEfetivo, resultadoFinal);
+      passos.push({
+        descricao: "Visualização na Reta Numérica:",
+        htmlExtra: `<div class="number-line-container">${svgReta}</div>`,
+        latex: `\\mathbf{${resultadoFinal}}`
+      });
+
+      return passos;
+    }
+
+    throw new Error("Operação com inteiros não reconhecida.");
+  }
+
+  function executarResolucaoInteiros() {
+    const alertBox = document.getElementById('alert-inteiros');
+    const cardRes = document.getElementById('card-result-inteiros');
+    const lista = document.getElementById('passos-inteiros');
+    alertBox.innerHTML = '';
+
+    try {
+      const passos = resolverOperacoesInteiros(inputInteiros.value.trim());
+      lista.innerHTML = '';
+      passos.forEach((p, i) => {
+        let conteudo = `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div>`;
+        if (p.latex) conteudo += `<div class="step-math">$$\\displaystyle ${p.latex}$$</div>`;
+        if (p.htmlExtra) conteudo += p.htmlExtra;
+        conteudo += `</div>`;
+        lista.innerHTML += conteudo;
+      });
+      cardRes.style.display = 'block';
+      renderizarKaTeX(lista);
+    } catch (err) {
+      alertBox.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+      cardRes.style.display = 'none';
+    }
+  }
+
+  function limparInteiros() {
+    inputInteiros.value = '';
+    document.getElementById('prev-img-inteiros').style.display = 'none';
+    document.getElementById('card-result-inteiros').style.display = 'none';
+    document.getElementById('alert-inteiros').innerHTML = '';
+    document.getElementById('ocr-status-inteiros').innerHTML = '';
+    atualizarPreviewInteiros();
+  }
+
+  // ==========================================
   // CONFIGURAÇÃO DOS TECLADOS VIRTUAIS
   // ==========================================
   function configurarTeclado(kbId, inputEl, updateFn) {
@@ -1902,6 +2217,7 @@
   configurarTeclado('kb-notaveis', inputNotaveis, atualizarPreviewNotaveis);
   configurarTeclado('kb-fatoracao', inputFatoracao, atualizarPreviewFatoracao);
   configurarTeclado('kb-fracoes', inputFracoes, atualizarPreviewFracoes);
+  configurarTeclado('kb-inteiros', inputInteiros, atualizarPreviewInteiros);
 
   // ==========================================
   // CÂMERA / OCR COMPARTILHADO
@@ -1979,6 +2295,7 @@
   configurarOCR('cam-notaveis', 'prev-img-notaveis', 'ocr-status-notaveis', inputNotaveis, atualizarPreviewNotaveis, executarResolucaoNotaveis);
   configurarOCR('cam-fatoracao', 'prev-img-fatoracao', 'ocr-status-fatoracao', inputFatoracao, atualizarPreviewFatoracao, executarResolucaoFatoracao);
   configurarOCR('cam-fracoes', 'prev-img-fracoes', 'ocr-status-fracoes', inputFracoes, atualizarPreviewFracoes, executarResolucaoFracoes);
+  configurarOCR('cam-inteiros', 'prev-img-inteiros', 'ocr-status-inteiros', inputInteiros, atualizarPreviewInteiros, executarResolucaoInteiros);
 </script>
 
 </body>
