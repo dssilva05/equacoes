@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
   try {
     // Usando gemini-2.5-flash estável
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
     const prompt = "Transcreva a equação de 1º grau escrita na imagem. " +
                    "Instruções estritas: " +
