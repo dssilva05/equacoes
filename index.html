@@ -19,32 +19,31 @@
       --card: #ffffff;
       --text: #1e293b;
       --border: #e2e8f0;
-      --success: #16a34a;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; display: flex; justify-content: center; }
     .container { width: 100%; max-width: 680px; }
 
-    header { text-align: center; margin-bottom: 24px; }
-    header h1 { font-size: 1.6rem; color: #0f172a; }
-    header p { color: #64748b; font-size: 0.95rem; margin-top: 4px; }
+    header { text-align: center; margin-bottom: 20px; }
+    header h1 { font-size: 1.5rem; color: #0f172a; }
+    header p { color: #64748b; font-size: 0.9rem; margin-top: 4px; }
 
     .card {
       background: var(--card);
       border-radius: 12px;
-      padding: 20px;
+      padding: 18px;
       box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07);
       border: 1px solid var(--border);
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 12px; }
     label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
     
     input[type="text"] {
       width: 100%;
-      padding: 12px;
+      padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 1.05rem;
@@ -52,16 +51,63 @@
     }
     input[type="text"]:focus { border-color: var(--primary); }
 
+    /* Área de pré-visualização em formato matemático */
+    .preview-math-box {
+      min-height: 52px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-top: 6px;
+      overflow-x: auto;
+    }
+
+    /* Teclado Virtual */
+    .keyboard-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+      user-select: none;
+    }
+
+    .key-btn {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      border-radius: 6px;
+      padding: 12px 6px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .key-btn:hover { background: #e2e8f0; }
+    .key-btn:active { background: #cbd5e1; }
+    .key-op { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
+    .key-op:hover { background: #c7d2fe; }
+    .key-var { background: #fef3c7; color: #92400e; border-color: #fde68a; font-weight: 700; }
+    .key-var:hover { background: #fde68a; }
+    .key-action { background: #fecdd3; color: #9f1239; border-color: #fca5a5; }
+    .key-action:hover { background: #fca5a5; }
+
     .camera-box {
       border: 2px dashed #94a3b8;
-      padding: 18px;
+      padding: 14px;
       border-radius: 8px;
       text-align: center;
       margin-bottom: 16px;
       background: #f8fafc;
     }
 
-    .btn-group { display: flex; gap: 10px; }
+    .btn-group { display: flex; gap: 10px; margin-top: 14px; }
     button, .btn-upload {
       cursor: pointer;
       background: var(--primary);
@@ -80,7 +126,7 @@
     .btn-secondary { background: #64748b; }
     .btn-secondary:hover { background: #475569; }
 
-    #preview-img { max-width: 100%; max-height: 200px; border-radius: 6px; margin-top: 12px; display: none; }
+    #preview-img { max-width: 100%; max-height: 180px; border-radius: 6px; margin-top: 10px; display: none; }
 
     .step-box {
       background: #f8fafc;
@@ -90,12 +136,10 @@
       border-radius: 0 8px 8px 0;
     }
     .step-title { font-weight: 600; font-size: 0.9rem; color: #475569; margin-bottom: 4px; }
-    .step-math { font-size: 1.15rem; }
+    .step-math { font-size: 1.15rem; overflow-x: auto; padding-top: 4px; }
 
     .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem; }
     .alert-error { background: #fee2e2; color: #991b1b; }
-    .alert-info { background: #e0f2fe; color: #075985; }
-    .alert-success { background: #dcfce7; color: #166534; }
   </style>
 </head>
 <body>
@@ -103,31 +147,61 @@
 <div class="container">
   <header>
     <h1>Resolvedor de Equações do 1º Grau</h1>
-    <p>Tire uma foto do caderno ou digite a equação para ver o passo a passo</p>
+    <p>Com teclado matemático, frações e reconhecimento por foto</p>
   </header>
 
   <div class="card">
-    <!-- Entrada por Foto / Câmera -->
+    <!-- Entrada por Foto -->
     <div class="camera-box">
-      <p style="font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Fotografar caderno ou carregar imagem:</p>
+      <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 6px;">Fotografar caderno ou carregar imagem:</p>
       <label class="btn-upload" for="camera-input">
         📷 Tirar Foto / Carregar Imagem
       </label>
       <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
       <br>
       <img id="preview-img" alt="Foto da Equação">
-      <div id="ocr-status" style="margin-top: 10px; font-weight: 500; font-size: 0.9rem;"></div>
+      <div id="ocr-status" style="margin-top: 8px; font-weight: 500; font-size: 0.85rem;"></div>
     </div>
 
-    <!-- Entrada de Texto -->
+    <!-- Entrada de Texto & Pré-visualização Matemática -->
     <div class="form-group">
-      <label for="eq-input">Equação:</label>
-      <input type="text" id="eq-input" placeholder="Ex: 3x - 5 = 2(x + 4) ou 4x + 8 = 24" value="3x - 5 = 2(x + 4)">
+      <label for="eq-input">Digite a equação ou use o teclado:</label>
+      <input type="text" id="eq-input" placeholder="Ex: x/5 + 2 = 7 ou (2x-1)/3 = 5" value="x/5 + 2 = 7">
+      
+      <label style="margin-top: 8px;">Visualização Matemática:</label>
+      <div class="preview-math-box" id="preview-math">$$\frac{x}{5} + 2 = 7$$</div>
+    </div>
+
+    <!-- Teclado Virtual Matemático -->
+    <div class="keyboard-grid">
+      <button class="key-btn key-var" data-val="x">x</button>
+      <button class="key-btn key-op" data-val="/">a/b</button>
+      <button class="key-btn key-op" data-val="(">(</button>
+      <button class="key-btn key-op" data-val=")">)</button>
+      <button class="key-btn key-action" id="key-backspace">⌫</button>
+
+      <button class="key-btn" data-val="7">7</button>
+      <button class="key-btn" data-val="8">8</button>
+      <button class="key-btn" data-val="9">9</button>
+      <button class="key-btn key-op" data-val="+">+</button>
+      <button class="key-btn key-op" data-val="-">−</button>
+
+      <button class="key-btn" data-val="4">4</button>
+      <button class="key-btn" data-val="5">5</button>
+      <button class="key-btn" data-val="6">6</button>
+      <button class="key-btn key-op" data-val="*">×</button>
+      <button class="key-btn key-op" data-val="=">=</button>
+
+      <button class="key-btn" data-val="1">1</button>
+      <button class="key-btn" data-val="2">2</button>
+      <button class="key-btn" data-val="3">3</button>
+      <button class="key-btn" data-val="0">0</button>
+      <button class="key-btn key-action" id="key-clear">C</button>
     </div>
 
     <div class="btn-group">
       <button id="btn-resolver" style="flex: 1;">Resolver Passo a Passo</button>
-      <button id="btn-limpar" class="btn-secondary">Limpar</button>
+      <button id="btn-limpar" class="btn-secondary">Limpar Tudo</button>
     </div>
   </div>
 
@@ -143,10 +217,7 @@
   // ==========================================
   // CONFIGURAÇÃO DO BACKEND SERVERLESS (OCR)
   // ==========================================
-  // Se o site e a API estiverem no mesmo domínio Vercel, deixe '/api/ocr'.
-  // Se o frontend estiver no GitHub Pages e a API na Vercel, coloque a URL completa:
-  // const OCR_ENDPOINT = 'https://equacoes.vercel.app/api/ocr';
-  const OCR_ENDPOINT = '/api/ocr';
+  const OCR_ENDPOINT = 'https://equacoes.vercel.app/api/ocr';
 
   async function extrairEquacaoDaImagem(base64Data, mimeType) {
     const response = await fetch(OCR_ENDPOINT, {
@@ -163,7 +234,82 @@
   }
 
   // ==========================================
-  // MOTOR ALGÉBRICO DO 1º GRAU PASSO A PASSO
+  // FORMATAÇÃO E PRÉ-VISUALIZAÇÃO EM LATEX
+  // ==========================================
+  const eqInput = document.getElementById('eq-input');
+  const previewMath = document.getElementById('preview-math');
+
+  function converterParaLatex(str) {
+    if (!str || !str.trim()) return "\\text{Nenhuma equação digitada}";
+
+    let latex = str.replace(/\s+/g, '');
+
+    // Converte frações com parênteses: (2x+1)/3 -> \frac{2x+1}{3}
+    latex = latex.replace(/\(([^)]+)\)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
+    
+    // Converte frações simples: x/5 ou 3x/4 ou 7/2 -> \frac{x}{5}
+    latex = latex.replace(/([a-zA-Z0-9]+)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
+    
+    // Converte multiplicação explícita
+    latex = latex.replace(/\*/g, ' \\cdot ');
+
+    return latex;
+  }
+
+  function atualizarPreview() {
+    const val = eqInput.value;
+    const latex = converterParaLatex(val);
+    previewMath.innerHTML = `$$${latex}$$`;
+    if (window.renderMathInElement) {
+      renderMathInElement(previewMath, {
+        delimiters: [{ left: "$$", right: "$$", display: true }]
+      });
+    }
+  }
+
+  // ==========================================
+  // TECLADO VIRTUAL
+  // ==========================================
+  document.querySelectorAll('.key-btn[data-val]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.getAttribute('data-val');
+      const start = eqInput.selectionStart;
+      const end = eqInput.selectionEnd;
+      const textoAtual = eqInput.value;
+
+      eqInput.value = textoAtual.substring(0, start) + val + textoAtual.substring(end);
+      eqInput.focus();
+      eqInput.selectionStart = eqInput.selectionEnd = start + val.length;
+      atualizarPreview();
+    });
+  });
+
+  document.getElementById('key-backspace').addEventListener('click', () => {
+    const start = eqInput.selectionStart;
+    const end = eqInput.selectionEnd;
+    const textoAtual = eqInput.value;
+
+    if (start === end && start > 0) {
+      eqInput.value = textoAtual.substring(0, start - 1) + textoAtual.substring(end);
+      eqInput.selectionStart = eqInput.selectionEnd = start - 1;
+    } else if (start !== end) {
+      eqInput.value = textoAtual.substring(0, start) + textoAtual.substring(end);
+      eqInput.selectionStart = eqInput.selectionEnd = start;
+    }
+    eqInput.focus();
+    atualizarPreview();
+  });
+
+  document.getElementById('key-clear').addEventListener('click', () => {
+    eqInput.value = '';
+    eqInput.focus();
+    atualizarPreview();
+  });
+
+  eqInput.addEventListener('input', atualizarPreview);
+
+  // ==========================================
+  // MOTOR ALGÉBRICO COM SUPORTE A FRAÇÕES E MMC
   // ==========================================
   function gcd(a, b) {
     a = Math.abs(a);
@@ -172,72 +318,85 @@
     return a;
   }
 
+  function lcm(a, b) {
+    return (Math.abs(a * b)) / gcd(a, b);
+  }
+
   function simplificarFracao(num, den) {
     if (den < 0) { num = -num; den = -den; }
     const divisor = gcd(num, den);
     return { num: num / divisor, den: den / divisor };
   }
 
-  function normalizarExpressao(expr) {
-    return expr
-      .replace(/\s+/g, '')
-      .replace(/(\d)([a-zA-Z(])/g, '$1*$2')
-      .replace(/([a-zA-Z])\(/g, '$1*(')
-      .replace(/\)([a-zA-Z0-9(])/g, ')*$1');
-  }
-
-  function decomporTermos(expr) {
-    expr = expr.replace(/-/g, '+-');
-    const partes = expr.split('+').filter(p => p !== '');
-    return partes.map(p => {
-      p = p.trim();
-      if (p.includes('x') || p.includes('X')) {
-        let valStr = p.replace(/x/gi, '').replace('*', '');
-        let val = 1;
-        if (valStr === '-') val = -1;
-        else if (valStr !== '') val = parseFloat(valStr);
-        return { isVar: true, coef: val };
-      } else {
-        return { isVar: false, coef: parseFloat(p) || 0 };
-      }
-    });
+  function extrairDenominadores(str) {
+    const regex = /\/([0-9]+)/g;
+    const dens = [];
+    let match;
+    while ((match = regex.exec(str)) !== null) {
+      dens.push(parseInt(match[1], 10));
+    }
+    return dens.filter(d => d > 1);
   }
 
   function avaliarMembroLinear(exprStr) {
-    exprStr = normalizarExpressao(exprStr);
-    let expandido = exprStr;
+    // Normalização básica
+    let expr = exprStr.replace(/\s+/g, '')
+                      .replace(/(\d)([a-zA-Z(])/g, '$1*$2')
+                      .replace(/\)([a-zA-Z0-9(])/g, ')*$1');
+
+    // Expansão de parênteses simples
     const regexParen = /([+-]?\d*)\*?\(([^)]+)\)/g;
-    
-    expandido = expandido.replace(regexParen, (match, fatorStr, conteudo) => {
+    expr = expr.replace(regexParen, (match, fatorStr, conteudo) => {
       let fator = 1;
       if (fatorStr === '-' || fatorStr === '-1') fator = -1;
       else if (fatorStr === '+' || fatorStr === '') fator = 1;
       else fator = parseFloat(fatorStr);
 
-      const termos = decomporTermos(conteudo);
+      conteudo = conteudo.replace(/-/g, '+-');
+      const partes = conteudo.split('+').filter(p => p !== '');
       let res = '';
-      termos.forEach(t => {
-        const coef = t.coef * fator;
-        const sinal = (coef >= 0 && res !== '') ? '+' : '';
-        if (t.isVar) {
-          res += `${sinal}${coef === 1 ? '' : coef === -1 ? '-' : coef}x`;
+      partes.forEach(p => {
+        let coef = 0, isVar = false;
+        if (p.includes('x') || p.includes('X')) {
+          isVar = true;
+          let v = p.replace(/x/gi, '').replace('*', '');
+          coef = (v === '-' ? -1 : v === '' ? 1 : parseFloat(v)) * fator;
+          res += `${coef >= 0 && res ? '+' : ''}${coef}x`;
         } else {
-          res += `${sinal}${coef}`;
+          coef = parseFloat(p) * fator;
+          res += `${coef >= 0 && res ? '+' : ''}${coef}`;
         }
       });
       return res.startsWith('+') ? res : '+' + res;
     });
 
-    const termos = decomporTermos(expandido);
+    // Decomposição dos termos aditivos
+    expr = expr.replace(/-/g, '+-');
+    const termos = expr.split('+').filter(p => p !== '');
     let totalX = 0;
     let totalConst = 0;
 
     termos.forEach(t => {
-      if (t.isVar) totalX += t.coef;
-      else totalConst += t.coef;
+      t = t.trim();
+      let div = 1;
+      let base = t;
+
+      if (t.includes('/')) {
+        const dPartes = t.split('/');
+        base = dPartes[0];
+        div = parseFloat(dPartes[1]) || 1;
+      }
+
+      if (base.includes('x') || base.includes('X')) {
+        let v = base.replace(/x/gi, '').replace('*', '');
+        let c = (v === '-' ? -1 : v === '' ? 1 : parseFloat(v)) / div;
+        totalX += c;
+      } else {
+        totalConst += (parseFloat(base) || 0) / div;
+      }
     });
 
-    return { coefX: totalX, constVal: totalConst, expandido: expandido };
+    return { coefX: totalX, constVal: totalConst };
   }
 
   function resolverEquacao(equacaoStr) {
@@ -251,44 +410,50 @@
       throw new Error("Apenas um sinal '=' é permitido.");
     }
 
-    const lhsRaw = membros[0].trim();
-    const rhsRaw = membros[1].trim();
+    let lhsRaw = membros[0].trim();
+    let rhsRaw = membros[1].trim();
 
     passos.push({
-      descricao: "Equação identificada:",
-      latex: `${lhsRaw} = ${rhsRaw}`
+      descricao: "Equação inicial identificada:",
+      latex: `${converterParaLatex(lhsRaw)} = ${converterParaLatex(rhsRaw)}`
     });
 
-    const lhsAvaliado = avaliarMembroLinear(lhsRaw);
-    const rhsAvaliado = avaliarMembroLinear(rhsRaw);
-
-    if (lhsRaw.includes('(') || rhsRaw.includes('(')) {
-      passos.push({
-        descricao: "Aplicando a distributiva para eliminar parênteses:",
-        latex: `${lhsAvaliado.expandido.replace(/^\+/, '')} = ${rhsAvaliado.expandido.replace(/^\+/, '')}`
-      });
+    // Tratamento de Frações e MMC
+    const denominadores = extrairDenominadores(equacaoStr);
+    if (denominadores.length > 0) {
+      let mmc = denominadores.reduce((acc, curr) => lcm(acc, curr), denominadores[0]);
+      if (mmc > 1) {
+        passos.push({
+          descricao: `Encontrando o MMC dos denominadores (${denominadores.join(', ')}): MMC = ${mmc}. Multiplicando ambos os membros por ${mmc} para eliminar as frações:`,
+          latex: `${mmc} \\cdot \\left(${converterParaLatex(lhsRaw)}\\right) = ${mmc} \\cdot \\left(${converterParaLatex(rhsRaw)}\\right)`
+        });
+      }
     }
 
-    const lhsX = lhsAvaliado.coefX;
-    const lhsC = lhsAvaliado.constVal;
-    const rhsX = rhsAvaliado.coefX;
-    const rhsC = rhsAvaliado.constVal;
+    // Avaliação dos membros
+    const lhs = avaliarMembroLinear(lhsRaw);
+    const rhs = avaliarMembroLinear(rhsRaw);
+
+    const lhsX = Math.round(lhs.coefX * 1000000) / 1000000;
+    const lhsC = Math.round(lhs.constVal * 1000000) / 1000000;
+    const rhsX = Math.round(rhs.coefX * 1000000) / 1000000;
+    const rhsC = Math.round(rhs.constVal * 1000000) / 1000000;
 
     passos.push({
-      descricao: "Reduzindo termos em cada membro:",
+      descricao: "Simplificando os termos de cada membro:",
       latex: `${lhsX !== 0 ? lhsX + 'x' : ''} ${lhsC >= 0 ? '+ ' + lhsC : '- ' + Math.abs(lhsC)} = ${rhsX !== 0 ? rhsX + 'x' : ''} ${rhsC >= 0 ? '+ ' + rhsC : '- ' + Math.abs(rhsC)}`
     });
 
-    const finalX = lhsX - rhsX;
-    const finalC = rhsC - lhsC;
+    const finalX = Math.round((lhsX - rhsX) * 1000000) / 1000000;
+    const finalC = Math.round((rhsC - lhsC) * 1000000) / 1000000;
 
     passos.push({
-      descricao: "Isolando os termos com x à esquerda e constantes à direita:",
+      descricao: "Isolando os termos com x no 1º membro e os termos numéricos no 2º membro:",
       latex: `${lhsX}x ${rhsX >= 0 ? '- ' + rhsX : '+ ' + Math.abs(rhsX)}x = ${rhsC} ${lhsC >= 0 ? '- ' + lhsC : '+ ' + Math.abs(lhsC)}`
     });
 
     passos.push({
-      descricao: "Simplificando ambos os membros:",
+      descricao: "Reduzindo os termos semelhantes:",
       latex: `${finalX}x = ${finalC}`
     });
 
@@ -307,11 +472,22 @@
       return passos;
     }
 
-    const fracao = simplificarFracao(finalC, finalX);
+    // Conversão de números decimais para inteiros para simplificar fração
+    let numerador = finalC;
+    let denominador = finalX;
+    let precisao = 1;
+    while (!Number.isInteger(numerador) || !Number.isInteger(denominador)) {
+      numerador *= 10;
+      denominador *= 10;
+      precisao *= 10;
+    }
+
+    const fracao = simplificarFracao(Math.round(numerador), Math.round(denominador));
+
     if (fracao.den === 1) {
       passos.push({
-        descricao: "Dividindo pelo coeficiente de x:",
-        latex: `x = \\frac{${finalC}}{${finalX}} = ${fracao.num}`
+        descricao: "Dividindo ambos os lados pelo coeficiente de x:",
+        latex: `x = ${fracao.num}`
       });
       passos.push({
         descricao: "Conjunto Solução:",
@@ -319,8 +495,8 @@
       });
     } else {
       passos.push({
-        descricao: "Isolando a incógnita x e simplificando a fração:",
-        latex: `x = \\frac{${finalC}}{${finalX}} = \\frac{${fracao.num}}{${fracao.den}}`
+        descricao: "Dividindo pelo coeficiente de x e simplificando a fração:",
+        latex: `x = \\frac{${fracao.num}}{${fracao.den}}`
       });
       passos.push({
         descricao: "Conjunto Solução:",
@@ -336,7 +512,6 @@
   // ==========================================
   const btnResolver = document.getElementById('btn-resolver');
   const btnLimpar = document.getElementById('btn-limpar');
-  const eqInput = document.getElementById('eq-input');
   const cameraInput = document.getElementById('camera-input');
   const previewImg = document.getElementById('preview-img');
   const ocrStatus = document.getElementById('ocr-status');
@@ -393,6 +568,7 @@
     resultadoCard.style.display = 'none';
     alertContainer.innerHTML = '';
     ocrStatus.innerHTML = '';
+    atualizarPreview();
   });
 
   cameraInput.addEventListener('change', async (e) => {
@@ -418,6 +594,7 @@
         ocrStatus.style.color = '#16a34a';
         ocrStatus.innerHTML = `Equação reconhecida: <strong>${equacaoLida}</strong>`;
         eqInput.value = equacaoLida;
+        atualizarPreview();
         dispararResolucao();
       } catch (err) {
         ocrStatus.style.color = '#dc2626';
@@ -427,7 +604,11 @@
     reader.readAsDataURL(file);
   });
 
-  window.addEventListener('DOMContentLoaded', dispararResolucao);
+  // Inicialização com exemplo de fração
+  window.addEventListener('DOMContentLoaded', () => {
+    atualizarPreview();
+    dispararResolucao();
+  });
 </script>
 
 </body>
