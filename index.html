@@ -363,42 +363,20 @@
   // ==========================================
   // OCR VIA GEMINI VISION API
   // ==========================================
-  async function extrairEquacaoDaImagem(base64Data, mimeType, apiKey) {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  // Substitua a chamada antiga por esta:
+async function extrairEquacaoDaImagem(base64Data, mimeType) {
+  const endpoint = "https://equacoes.vercel.app/api/ocr"; // URL da sua Vercel
 
-    const prompt = "Você é um leitor de expressões matemáticas. Identifique a equação do primeiro grau escrita na imagem (mesmo que a lápis ou manuscrita). " +
-                   "Responda ESTRITAMENTE e APENAS a equação em formato de texto legível (exemplo: 2x + 5 = 15 ou 3(x-2)=9). " +
-                   "Não use markdown, não use LaTeX delimitado por $, não use explicações, apenas a equação.";
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64Data, mimeType })
+  });
 
-    const body = {
-      contents: [{
-        parts: [
-          { text: prompt },
-          {
-            inline_data: {
-              mime_type: mimeType,
-              data: base64Data
-            }
-          }
-        ]
-      }]
-    };
-
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
-
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.error?.message || "Erro de comunicação com a API");
-    }
-
-    const data = await response.json();
-    let texto = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    return texto.trim().replace(/`/g, '').replace(/\$/g, '');
-  }
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Erro no servidor");
+  return data.equacao;
+}
 
   // ==========================================
   // ELEMENTOS E EVENTOS DA TELA
