@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Laboratório de Matemática - Passo a Passo</title>
+  <title>Laboratório de Matemática - Prof. Daniel Silva</title>
   
   <!-- KaTeX para renderização de fórmulas matemáticas -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -14,7 +14,7 @@
     :root {
       --primary: #2563eb;
       --primary-hover: #1d4ed8;
-      --bg: #f8fafc;
+      --bg: #f1f5f9;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -23,59 +23,118 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 16px; display: flex; justify-content: center; }
-    .container { width: 100%; max-width: 720px; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px 16px 40px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 760px; }
 
-    header { text-align: center; margin-bottom: 24px; }
-    header h1 { font-size: 1.65rem; color: #0f172a; }
-    header p { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+    header { text-align: center; margin-bottom: 28px; }
+    .badge-lab {
+      display: inline-block;
+      background: #dbeafe;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+    header h1 { font-size: 1.85rem; color: #0f172a; font-weight: 800; letter-spacing: -0.02em; }
+    header p { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
 
+    /* Grid Moderno do Menu */
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 16px;
-      margin-top: 10px;
+      margin-top: 14px;
     }
 
     .topic-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
+      border-radius: 14px;
+      padding: 22px;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 140px;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
     }
     .topic-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 14px -2px rgba(0, 0, 0, 0.08);
-      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+      border-color: #cbd5e1;
     }
-    .topic-card .icon { font-size: 2rem; margin-bottom: 8px; }
-    .topic-card h3 { font-size: 1.1rem; color: #1e293b; margin-bottom: 4px; }
-    .topic-card p { font-size: 0.8rem; color: var(--muted); }
-    .topic-card.disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      background: #f1f5f9;
+
+    .card-top { display: flex; align-items: flex-start; gap: 14px; }
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
     }
-    .topic-card.disabled:hover { transform: none; box-shadow: none; border-color: var(--border); }
-    .badge {
-      display: inline-block;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: #e2e8f0;
-      color: #475569;
-      margin-top: 6px;
+
+    /* Cores Temáticas */
+    .c-blue .icon-box { background: #eff6ff; color: #2563eb; }
+    .c-blue:hover { border-color: #93c5fd; }
+
+    .c-purple .icon-box { background: #faf5ff; color: #7c3aed; }
+    .c-purple:hover { border-color: #c4b5fd; }
+
+    .c-amber .icon-box { background: #fffbeb; color: #d97706; }
+    .c-amber:hover { border-color: #fde68a; }
+
+    .c-emerald .icon-box { background: #ecfdf5; color: #059669; }
+    .c-emerald:hover { border-color: #a7f3d0; }
+
+    .c-rose .icon-box { background: #fff1f2; color: #e11d48; }
+    .c-rose:hover { border-color: #fecdd3; }
+
+    .topic-card h3 { font-size: 1.15rem; color: #1e293b; font-weight: 700; }
+    .topic-card p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+
+    .formula-tag {
+      margin-top: 14px;
+      padding: 6px 10px;
+      background: #f8fafc;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px dashed var(--border);
+    }
+    .arrow-icon { color: var(--muted); font-size: 0.9rem; font-weight: bold; }
+    .topic-card:hover .arrow-icon { color: var(--primary); transform: translateX(3px); transition: transform 0.15s; }
+
+    footer {
+      text-align: center;
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .author-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      font-weight: 600;
+      color: #334155;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
     .view { display: none; }
@@ -88,17 +147,18 @@
       margin-bottom: 16px;
     }
     .btn-voltar {
-      background: transparent;
+      background: #ffffff;
       border: 1px solid var(--border);
       color: #334155;
       padding: 8px 14px;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-size: 0.9rem;
+      transition: background 0.15s;
     }
     .btn-voltar:hover { background: #e2e8f0; }
 
@@ -106,7 +166,7 @@
       background: var(--card);
       border-radius: 12px;
       padding: 18px;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
       border: 1px solid var(--border);
       margin-bottom: 16px;
     }
@@ -126,7 +186,7 @@
 
     .preview-math-box {
       min-height: 56px;
-      background: #f1f5f9;
+      background: #f8fafc;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 10px;
@@ -218,43 +278,94 @@
   <!-- ========================================== -->
   <div id="view-menu" class="view active">
     <header>
-      <h1>Laboratório de Álgebra</h1>
-      <p>Selecione um tópico para resolver exercícios passo a passo</p>
+      <span class="badge-lab">Laboratório Interativo</span>
+      <h1>Prática de Álgebra Passo a Passo</h1>
+      <p>Resolva exercícios detalhadamente por digitação ou foto manuscrita</p>
     </header>
 
     <div class="menu-grid">
-      <div class="topic-card" onclick="abrirModulo('grau1')">
-        <div class="icon">📐</div>
-        <h3>Equações do 1º Grau</h3>
-        <p>Frações, distributivas e equações lineares</p>
+      <!-- 1º Grau -->
+      <div class="topic-card c-blue" onclick="abrirModulo('grau1')">
+        <div class="card-top">
+          <div class="icon-box">📐</div>
+          <div>
+            <h3>Equações do 1º Grau</h3>
+            <p>Frações com MMC, distributivas e resolução linear exata.</p>
+          </div>
+        </div>
+        <div class="formula-tag">
+          <span>$$ax + b = 0$$</span>
+          <span class="arrow-icon">Acessar →</span>
+        </div>
       </div>
 
-      <div class="topic-card" onclick="abrirModulo('grau2')">
-        <div class="icon">📈</div>
-        <h3>Equações do 2º Grau</h3>
-        <p>Fórmula de Bhaskara, discriminante (Δ) e raízes</p>
+      <!-- 2º Grau -->
+      <div class="topic-card c-purple" onclick="abrirModulo('grau2')">
+        <div class="card-top">
+          <div class="icon-box">📈</div>
+          <div>
+            <h3>Equações do 2º Grau</h3>
+            <p>Forma geral, cálculo de $\Delta$ e fórmula de Bhaskara.</p>
+          </div>
+        </div>
+        <div class="formula-tag">
+          <span>$$ax^2 + bx + c = 0$$</span>
+          <span class="arrow-icon">Acessar →</span>
+        </div>
       </div>
 
-      <div class="topic-card" onclick="abrirModulo('notaveis')">
-        <div class="icon">✨</div>
-        <h3>Produtos Notáveis</h3>
-        <p>Quadrados e cubos da soma e da diferença, produto notável</p>
+      <!-- Produtos Notáveis -->
+      <div class="topic-card c-amber" onclick="abrirModulo('notaveis')">
+        <div class="card-top">
+          <div class="icon-box">✨</div>
+          <div>
+            <h3>Produtos Notáveis</h3>
+            <p>Quadrados e cubos da soma, diferença e produto conjugado.</p>
+          </div>
+        </div>
+        <div class="formula-tag">
+          <span>$$(a \pm b)^2 \quad (a \pm b)^3$$</span>
+          <span class="arrow-icon">Acessar →</span>
+        </div>
       </div>
 
-      <div class="topic-card disabled">
-        <div class="icon">🧩</div>
-        <h3>Fatoração</h3>
-        <p>Fator comum, agrupamento e trinômios</p>
-        <span class="badge">Em breve</span>
+      <!-- Fatoração -->
+      <div class="topic-card c-emerald" onclick="abrirModulo('fatoracao')">
+        <div class="card-top">
+          <div class="icon-box">🧩</div>
+          <div>
+            <h3>Fatoração Polinomial</h3>
+            <p>Fator comum, TQP, diferença de quadrados e cubos.</p>
+          </div>
+        </div>
+        <div class="formula-tag">
+          <span>$$A^3 \pm B^3 \quad A^2 - B^2$$</span>
+          <span class="arrow-icon">Acessar →</span>
+        </div>
       </div>
 
-      <div class="topic-card disabled">
-        <div class="icon">➗</div>
-        <h3>Operações com Frações</h3>
-        <p>Soma, subtração, multiplicação e MMC</p>
-        <span class="badge">Em breve</span>
+      <!-- Operações com Frações -->
+      <div class="topic-card c-rose" onclick="abrirModulo('fracoes')">
+        <div class="card-top">
+          <div class="icon-box">➗</div>
+          <div>
+            <h3>Operações com Frações</h3>
+            <p>Adição, subtração com MMC, produto e divisão detalhada.</p>
+          </div>
+        </div>
+        <div class="formula-tag">
+          <span>$$\frac{a}{b} \pm \frac{c}{d} \quad \frac{a}{b} \cdot \frac{c}{d} \quad \frac{a}{b} \div \frac{c}{d}$$</span>
+          <span class="arrow-icon">Acessar →</span>
+        </div>
       </div>
     </div>
+
+    <!-- Assinatura -->
+    <footer>
+      <div class="author-badge">
+        <span>👨‍🏫 Desenvolvido por <strong>Prof. Daniel Silva</strong></span>
+      </div>
+    </footer>
   </div>
 
   <!-- ========================================== -->
@@ -413,7 +524,6 @@
         <div class="preview-math-box" id="prev-math-notaveis"></div>
       </div>
 
-      <!-- Teclado com botões de expoente 2 e 3 -->
       <div class="keyboard-grid" id="kb-notaveis">
         <button class="key-btn key-var" data-val="x">x</button>
         <button class="key-btn key-var" data-val="^2">²</button>
@@ -454,10 +564,150 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- VIEW 5: FATORAÇÃO POLINOMIAL               -->
+  <!-- ========================================== -->
+  <div id="view-fatoracao" class="view">
+    <div class="nav-bar">
+      <button class="btn-voltar" onclick="voltarMenu()">← Voltar ao Menu</button>
+      <h2>Fatoração Polinomial</h2>
+    </div>
+
+    <div class="card">
+      <div class="camera-box">
+        <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 6px;">Fotografar polinômio manuscrito:</p>
+        <label class="btn-upload" for="cam-fatoracao">📷 Tirar Foto / Imagem</label>
+        <input type="file" id="cam-fatoracao" accept="image/*" capture="environment" style="display: none;">
+        <br>
+        <img id="prev-img-fatoracao" class="preview-img" alt="Foto">
+        <div id="ocr-status-fatoracao" style="margin-top: 8px; font-weight: 500; font-size: 0.85rem;"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="input-fatoracao">Polinômio a fatorar:</label>
+        <input type="text" id="input-fatoracao" value="x^3 - 8" placeholder="Ex: x^3 - 8, x^3 + 27, x^2 - 16, 4x^2 - 12x + 9, 3x^3 + 6x^2">
+        <label style="margin-top: 8px;">Visualização Matemática:</label>
+        <div class="preview-math-box" id="prev-math-fatoracao"></div>
+      </div>
+
+      <div class="keyboard-grid" id="kb-fatoracao">
+        <button class="key-btn key-var" data-val="x">x</button>
+        <button class="key-btn key-var" data-val="x^2">x²</button>
+        <button class="key-btn key-var" data-val="x^3" style="background: #fef08a; border-color: #facc15; font-weight: 800;">x³</button>
+        <button class="key-btn key-op" data-val="+">+</button>
+        <button class="key-btn key-op" data-val="-">−</button>
+        <button class="key-btn key-action" data-action="backspace">⌫</button>
+
+        <button class="key-btn" data-val="7">7</button>
+        <button class="key-btn" data-val="8">8</button>
+        <button class="key-btn" data-val="9">9</button>
+        <button class="key-btn key-op" data-val="(">(</button>
+        <button class="key-btn key-op" data-val=")">)</button>
+        <button class="key-btn key-action" data-action="clear">C</button>
+
+        <button class="key-btn" data-val="4">4</button>
+        <button class="key-btn" data-val="5">5</button>
+        <button class="key-btn" data-val="6">6</button>
+        <button class="key-btn" data-val="1">1</button>
+        <button class="key-btn" data-val="2">2</button>
+        <button class="key-btn" data-val="3">3</button>
+
+        <button class="key-btn" data-val="0" style="grid-column: span 3;">0</button>
+        <button class="key-btn key-op" data-val="^" style="grid-column: span 3;">aⁿ</button>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="executarResolucaoFatoracao()" style="flex: 1;">Fatorar Passo a Passo</button>
+        <button class="btn-secondary" onclick="limparFatoracao()">Limpar</button>
+      </div>
+    </div>
+
+    <div id="alert-fatoracao"></div>
+    <div id="card-result-fatoracao" class="card" style="display: none;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo da Fatoração:</h3>
+      <div id="passos-fatoracao"></div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- VIEW 6: OPERAÇÕES COM FRAÇÕES              -->
+  <!-- ========================================== -->
+  <div id="view-fracoes" class="view">
+    <div class="nav-bar">
+      <button class="btn-voltar" onclick="voltarMenu()">← Voltar ao Menu</button>
+      <h2>Operações com Frações</h2>
+    </div>
+
+    <div class="card">
+      <div class="camera-box">
+        <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 6px;">Fotografar operação com frações:</p>
+        <label class="btn-upload" for="cam-fracoes">📷 Tirar Foto / Imagem</label>
+        <input type="file" id="cam-fracoes" accept="image/*" capture="environment" style="display: none;">
+        <br>
+        <img id="prev-img-fracoes" class="preview-img" alt="Foto">
+        <div id="ocr-status-fracoes" style="margin-top: 8px; font-weight: 500; font-size: 0.85rem;"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="input-fracoes">Operação com frações:</label>
+        <input type="text" id="input-fracoes" value="2/3 + 3/4" placeholder="Ex: 2/3 + 3/4,  5/6 - 1/4,  3/4 * 2/5,  7/2 / 3/4">
+        <label style="margin-top: 8px;">Visualização Matemática:</label>
+        <div class="preview-math-box" id="prev-math-fracoes"></div>
+      </div>
+
+      <div class="keyboard-grid" id="kb-fracoes">
+        <button class="key-btn key-op" data-val="/" style="background: #e0f2fe; color: #0369a1; font-weight: 700;">a/b</button>
+        <button class="key-btn key-op" data-val="+">+</button>
+        <button class="key-btn key-op" data-val="-">−</button>
+        <button class="key-btn key-op" data-val="*">×</button>
+        <button class="key-btn key-op" data-val=":">÷</button>
+        <button class="key-btn key-action" data-action="backspace">⌫</button>
+
+        <button class="key-btn" data-val="7">7</button>
+        <button class="key-btn" data-val="8">8</button>
+        <button class="key-btn" data-val="9">9</button>
+        <button class="key-btn key-op" data-val="(">(</button>
+        <button class="key-btn key-op" data-val=")">)</button>
+        <button class="key-btn key-action" data-action="clear">C</button>
+
+        <button class="key-btn" data-val="4">4</button>
+        <button class="key-btn" data-val="5">5</button>
+        <button class="key-btn" data-val="6">6</button>
+        <button class="key-btn" data-val="1">1</button>
+        <button class="key-btn" data-val="2">2</button>
+        <button class="key-btn" data-val="3">3</button>
+
+        <button class="key-btn" data-val="0" style="grid-column: span 6;">0</button>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="executarResolucaoFracoes()" style="flex: 1;">Calcular Passo a Passo</button>
+        <button class="btn-secondary" onclick="limparFracoes()">Limpar</button>
+      </div>
+    </div>
+
+    <div id="alert-fracoes"></div>
+    <div id="card-result-fracoes" class="card" style="display: none;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo do Cálculo:</h3>
+      <div id="passos-fracoes"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
   const OCR_ENDPOINT = 'https://equacoes.vercel.app/api/ocr';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ]
+      });
+    }
+  });
 
   // ==========================================
   // NAVEGAÇÃO ENTRE TELAS / VIEWS
@@ -465,6 +715,7 @@
   function abrirModulo(modulo) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(`view-${modulo}`).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     if (modulo === 'grau1') {
       atualizarPreview1();
@@ -475,12 +726,19 @@
     } else if (modulo === 'notaveis') {
       atualizarPreviewNotaveis();
       executarResolucaoNotaveis();
+    } else if (modulo === 'fatoracao') {
+      atualizarPreviewFatoracao();
+      executarResolucaoFatoracao();
+    } else if (modulo === 'fracoes') {
+      atualizarPreviewFracoes();
+      executarResolucaoFracoes();
     }
   }
 
   function voltarMenu() {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('view-menu').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // ==========================================
@@ -508,6 +766,7 @@
     let latex = str.replace(/\s+/g, '');
     latex = latex.replace(/x\^3/g, 'x^3');
     latex = latex.replace(/x\^2/g, 'x^2');
+    latex = latex.replace(/:/g, ' \\div ');
     latex = latex.replace(/\(([^)]+)\)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
     latex = latex.replace(/([a-zA-Z0-9^]+)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
     latex = latex.replace(/\*/g, ' \\cdot ');
@@ -716,7 +975,7 @@
   }
   inputGrau2.addEventListener('input', atualizarPreview2);
 
-  function parsePolinomio(exprStr) {
+  function parsePolinomio2G(exprStr) {
     let s = exprStr.replace(/\s+/g, '').replace(/-/g, '+-');
     const tokens = s.split('+').filter(t => t !== '');
     let a = 0, b = 0, c = 0;
@@ -740,8 +999,8 @@
     const membros = equacaoStr.split('=');
     if (membros.length !== 2) throw new Error("Apenas um sinal '=' é permitido.");
 
-    const lhs = parsePolinomio(membros[0]);
-    const rhs = parsePolinomio(membros[1]);
+    const lhs = parsePolinomio2G(membros[0]);
+    const rhs = parsePolinomio2G(membros[1]);
 
     passos.push({ descricao: "Equação informada:", latex: `${converterParaLatex(membros[0])} = ${converterParaLatex(membros[1])}` });
 
@@ -845,7 +1104,7 @@
   }
 
   // ==========================================
-  // MÓDULO 3: PRODUTOS NOTÁVEIS (COM CUBO)
+  // MÓDULO 3: PRODUTOS NOTÁVEIS
   // ==========================================
   const inputNotaveis = document.getElementById('input-notaveis');
   const prevMathNotaveis = document.getElementById('prev-math-notaveis');
@@ -876,7 +1135,6 @@
     const passos = [];
     let s = exprStr.replace(/\s+/g, '');
 
-    // Caso 1: Cubo da Soma ou Cubo da Diferença -> (ax ± b)^3
     const regexCubo = /^\(([^)]+)\)\^3$/;
     const matchCubo = s.match(regexCubo);
 
@@ -886,35 +1144,21 @@
       const a = binomio.coefX;
       const b = binomio.constant;
 
-      if (a === 0 || b === 0) {
-        throw new Error("Informe um binômio completo, por exemplo: (x + 2)^3 ou (2x - 1)^3.");
-      }
+      if (a === 0 || b === 0) throw new Error("Informe um binômio completo, por exemplo: (x + 2)^3 ou (2x - 1)^3.");
 
       const termoA = a === 1 ? "x" : (a === -1 ? "-x" : `${a}x`);
       const absB = Math.abs(b);
       const ehSoma = b > 0;
 
-      passos.push({
-        descricao: "Expressão inicial identificada:",
-        latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^3`
-      });
+      passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^3` });
 
       if (ehSoma) {
-        passos.push({
-          descricao: "Identificamos o Cubo da Soma de dois termos:",
-          latex: `(A + B)^3 = A^3 + 3 \\cdot A^2 \\cdot B + 3 \\cdot A \\cdot B^2 + B^3`
-        });
+        passos.push({ descricao: "Identificamos o Cubo da Soma de dois termos:", latex: `(A + B)^3 = A^3 + 3 \\cdot A^2 \\cdot B + 3 \\cdot A \\cdot B^2 + B^3` });
       } else {
-        passos.push({
-          descricao: "Identificamos o Cubo da Diferença de dois termos:",
-          latex: `(A - B)^3 = A^3 - 3 \\cdot A^2 \\cdot B + 3 \\cdot A \\cdot B^2 - B^3`
-        });
+        passos.push({ descricao: "Identificamos o Cubo da Diferença de dois termos:", latex: `(A - B)^3 = A^3 - 3 \\cdot A^2 \\cdot B + 3 \\cdot A \\cdot B^2 - B^3` });
       }
 
-      passos.push({
-        descricao: "Identificando os termos A e B:",
-        latex: `A = ${termoA}, \\quad B = ${absB}`
-      });
+      passos.push({ descricao: "Identificando os termos A e B:", latex: `A = ${termoA}, \\quad B = ${absB}` });
 
       const aCuboStr = (a === 1) ? `x^3` : `(${termoA})^3`;
       const aQuadStr = (a === 1) ? `x^2` : `(${termoA})^2`;
@@ -927,11 +1171,10 @@
         latex: `${aCuboStr} ${sinal1} 3 \\cdot ${aQuadStr} \\cdot (${absB}) ${sinal2} 3 \\cdot (${termoA}) \\cdot (${absB})^2 ${sinal3} (${absB})^3`
       });
 
-      // Cálculos dos coeficientes
-      const t1 = a * a * a; // termo x^3
-      const t2 = 3 * (a * a) * absB; // termo x^2
-      const t3 = 3 * Math.abs(a) * (absB * absB); // termo x
-      const t4 = absB * absB * absB; // constante
+      const t1 = a * a * a;
+      const t2 = 3 * (a * a) * absB;
+      const t3 = 3 * Math.abs(a) * (absB * absB);
+      const t4 = absB * absB * absB;
 
       const t1Str = t1 === 1 ? "x^3" : (t1 === -1 ? "-x^3" : `${t1}x^3`);
       const t2Str = `${t2}x^2`;
@@ -950,7 +1193,6 @@
       return passos;
     }
 
-    // Caso 2: Quadrado da Soma ou Quadrado da Diferença -> (ax ± b)^2
     const regexQuadrado = /^\(([^)]+)\)\^2$/;
     const matchQuad = s.match(regexQuadrado);
 
@@ -960,69 +1202,42 @@
       const a = binomio.coefX;
       const b = binomio.constant;
 
-      if (a === 0 || b === 0) {
-        throw new Error("Informe um binômio completo, por exemplo: (x + 3)^2 ou (2x - 5)^2.");
-      }
+      if (a === 0 || b === 0) throw new Error("Informe um binômio completo, por exemplo: (x + 3)^2 ou (2x - 5)^2.");
 
       const termoA = a === 1 ? "x" : (a === -1 ? "-x" : `${a}x`);
       const absB = Math.abs(b);
       const ehSoma = b > 0;
 
-      passos.push({
-        descricao: "Expressão inicial identificada:",
-        latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^2`
-      });
+      passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^2` });
 
       if (ehSoma) {
-        passos.push({
-          descricao: "Identificamos o Quadrado da Soma de dois termos:",
-          latex: `(A + B)^2 = A^2 + 2 \\cdot A \\cdot B + B^2`
-        });
+        passos.push({ descricao: "Identificamos o Quadrado da Soma de dois termos:", latex: `(A + B)^2 = A^2 + 2 \\cdot A \\cdot B + B^2` });
       } else {
-        passos.push({
-          descricao: "Identificamos o Quadrado da Diferença de dois termos:",
-          latex: `(A - B)^2 = A^2 - 2 \\cdot A \\cdot B + B^2`
-        });
+        passos.push({ descricao: "Identificamos o Quadrado da Diferença de dois termos:", latex: `(A - B)^2 = A^2 - 2 \\cdot A \\cdot B + B^2` });
       }
 
-      passos.push({
-        descricao: "Identificando o primeiro termo (A) e o segundo termo (B):",
-        latex: `A = ${termoA}, \\quad B = ${absB}`
-      });
+      passos.push({ descricao: "Identificando o primeiro termo (A) e o segundo termo (B):", latex: `A = ${termoA}, \\quad B = ${absB}` });
 
       const aParenteses = (a === 1) ? `x^2` : `(${termoA})^2`;
       const sinalMeio = ehSoma ? '+' : '-';
-      passos.push({
-        descricao: "Substituindo os termos na fórmula:",
-        latex: `${aParenteses} ${sinalMeio} 2 \\cdot (${termoA}) \\cdot (${absB}) + (${absB})^2`
-      });
+      passos.push({ descricao: "Substituindo os termos na fórmula:", latex: `${aParenteses} ${sinalMeio} 2 \\cdot (${termoA}) \\cdot (${absB}) + (${absB})^2` });
 
       const a2 = a * a;
       const meio = 2 * Math.abs(a) * absB;
       const b2 = absB * absB;
       const a2Str = a2 === 1 ? "x^2" : `${a2}x^2`;
 
-      passos.push({
-        descricao: "Efetuando as potências e multiplicações:",
-        latex: `${a2Str} ${sinalMeio} ${meio}x + ${b2}`
-      });
-
-      passos.push({
-        descricao: "Trinômio Quadrado Perfeito final:",
-        latex: `\\mathbf{${a2Str} ${sinalMeio} ${meio}x + ${b2}}`
-      });
-
+      passos.push({ descricao: "Efetuando as potências e multiplicações:", latex: `${a2Str} ${sinalMeio} ${meio}x + ${b2}` });
+      passos.push({ descricao: "Trinômio Quadrado Perfeito final:", latex: `\\mathbf{${a2Str} ${sinalMeio} ${meio}x + ${b2}}` });
       return passos;
     }
 
-    // Caso 3: Produto da Soma pela Diferença -> (ax + b)(ax - b)
     const regexProduto = /^\(([^)]+)\)\*?\(([^)]+)\)$/;
     const matchProd = s.match(regexProduto);
 
     if (matchProd) {
       const bin1 = parseBinomio(matchProd[1]);
       const bin2 = parseBinomio(matchProd[2]);
-
       const a1 = bin1.coefX, b1 = bin1.constant;
       const a2 = bin2.coefX, b2 = bin2.constant;
 
@@ -1031,47 +1246,24 @@
         const absB = Math.abs(b1);
         const termoA = a === 1 ? "x" : (a === -1 ? "-x" : `${a}x`);
 
-        passos.push({
-          descricao: "Expressão inicial identificada:",
-          latex: `(${termoA} + ${absB})(${termoA} - ${absB})`
-        });
-
-        passos.push({
-          descricao: "Identificamos o Produto da Soma pela Diferença de dois termos:",
-          latex: `(A + B)(A - B) = A^2 - B^2`
-        });
-
-        passos.push({
-          descricao: "Identificando o primeiro termo (A) e o segundo termo (B):",
-          latex: `A = ${termoA}, \\quad B = ${absB}`
-        });
+        passos.push({ descricao: "Expressão inicial identificada:", latex: `(${termoA} + ${absB})(${termoA} - ${absB})` });
+        passos.push({ descricao: "Identificamos o Produto da Soma pela Diferença de dois termos:", latex: `(A + B)(A - B) = A^2 - B^2` });
+        passos.push({ descricao: "Identificando os termos A e B:", latex: `A = ${termoA}, \\quad B = ${absB}` });
 
         const aParenteses = (a === 1) ? `x^2` : `(${termoA})^2`;
-        passos.push({
-          descricao: "Aplicando a regra do quadrado do primeiro menos o quadrado do segundo:",
-          latex: `${aParenteses} - (${absB})^2`
-        });
+        passos.push({ descricao: "Aplicando a regra A² - B²:", latex: `${aParenteses} - (${absB})^2` });
 
         const a2Final = a * a;
         const b2Final = absB * absB;
         const a2Str = a2Final === 1 ? "x^2" : `${a2Final}x^2`;
-
-        passos.push({
-          descricao: "Diferença de Dois Quadrados final:",
-          latex: `\\mathbf{${a2Str} - ${b2Final}}`
-        });
-
+        passos.push({ descricao: "Diferença de Dois Quadrados final:", latex: `\\mathbf{${a2Str} - ${b2Final}}` });
         return passos;
       } else {
         const termoA = a1 * a2;
         const termoB = (a1 * b2) + (a2 * b1);
         const termoC = b1 * b2;
 
-        passos.push({
-          descricao: "Expressão inicial informada (produto de binômios):",
-          latex: `(${converterParaLatex(matchProd[1])}) \\cdot (${converterParaLatex(matchProd[2])})`
-        });
-
+        passos.push({ descricao: "Expressão inicial informada (produto de binômios):", latex: `(${converterParaLatex(matchProd[1])}) \\cdot (${converterParaLatex(matchProd[2])})` });
         passos.push({
           descricao: "Aplicando a propriedade distributiva:",
           latex: `(${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${b2}) + (${b1}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${b1}) \\cdot (${b2})`
@@ -1079,7 +1271,7 @@
 
         const aStr = termoA === 1 ? "x^2" : (termoA === -1 ? "-x^2" : `${termoA}x^2`);
         passos.push({
-          descricao: "Multiplicando os termos individuais:",
+          descricao: "Multiplicando os termos:",
           latex: `${aStr} ${a1*b2 >= 0 ? '+ ' + a1*b2 : '- ' + Math.abs(a1*b2)}x ${a2*b1 >= 0 ? '+ ' + a2*b1 : '- ' + Math.abs(a2*b1)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}`
         });
 
@@ -1087,12 +1279,11 @@
           descricao: "Reduzindo termos semelhantes:",
           latex: `\\mathbf{${aStr} ${termoB >= 0 ? '+ ' + termoB : '- ' + Math.abs(termoB)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}}`
         });
-
         return passos;
       }
     }
 
-    throw new Error("Formato não reconhecido. Exemplos válidos: (x + 2)^3, (2x - 1)^3, (x + 3)^2 ou (x + 4)(x - 4).");
+    throw new Error("Formato não reconhecido. Exemplos: (x + 2)^3, (2x - 1)^3, (x + 3)^2 ou (x + 4)(x - 4).");
   }
 
   function executarResolucaoNotaveis() {
@@ -1122,6 +1313,508 @@
     document.getElementById('alert-notaveis').innerHTML = '';
     document.getElementById('ocr-status-notaveis').innerHTML = '';
     atualizarPreviewNotaveis();
+  }
+
+  // ==========================================
+  // MÓDULO 4: FATORAÇÃO POLINOMIAL
+  // ==========================================
+  const inputFatoracao = document.getElementById('input-fatoracao');
+  const prevMathFatoracao = document.getElementById('prev-math-fatoracao');
+
+  function atualizarPreviewFatoracao() {
+    prevMathFatoracao.innerHTML = `$$\\displaystyle ${converterParaLatex(inputFatoracao.value)}$$`;
+    renderizarKaTeX(prevMathFatoracao);
+  }
+  inputFatoracao.addEventListener('input', atualizarPreviewFatoracao);
+
+  function parsePolinomioCompleto(exprStr) {
+    let s = exprStr.replace(/\s+/g, '').replace(/-/g, '+-');
+    const tokens = s.split('+').filter(t => t !== '');
+    let c3 = 0, c2 = 0, c1 = 0, c0 = 0;
+
+    for (let t of tokens) {
+      if (t.includes('x^3') || t.includes('X^3')) {
+        let v = t.replace(/x\^3/gi, '').replace('*', '');
+        c3 += (v === '-' ? -1 : v === '' || v === '+' ? 1 : parseFloat(v));
+      } else if (t.includes('x^2') || t.includes('X^2')) {
+        let v = t.replace(/x\^2/gi, '').replace('*', '');
+        c2 += (v === '-' ? -1 : v === '' || v === '+' ? 1 : parseFloat(v));
+      } else if (t.includes('x') || t.includes('X')) {
+        let v = t.replace(/x/gi, '').replace('*', '');
+        c1 += (v === '-' ? -1 : v === '' || v === '+' ? 1 : parseFloat(v));
+      } else {
+        c0 += parseFloat(t) || 0;
+      }
+    }
+    return { c3, c2, c1, c0 };
+  }
+
+  function formatarPolinomio(c3, c2, c1, c0) {
+    let partes = [];
+    if (c3 !== 0) partes.push(c3 === 1 ? "x^3" : (c3 === -1 ? "-x^3" : `${c3}x^3`));
+    if (c2 !== 0) {
+      const s = c2 > 0 && partes.length > 0 ? "+" : "";
+      partes.push(`${s}${c2 === 1 ? '' : (c2 === -1 ? '-' : c2)}x^2`);
+    }
+    if (c1 !== 0) {
+      const s = c1 > 0 && partes.length > 0 ? "+" : "";
+      partes.push(`${s}${c1 === 1 ? '' : (c1 === -1 ? '-' : c1)}x`);
+    }
+    if (c0 !== 0) {
+      const s = c0 > 0 && partes.length > 0 ? "+" : "";
+      partes.push(`${s}${c0}`);
+    }
+    return partes.length > 0 ? partes.join(' ') : "0";
+  }
+
+  function raizCubicaInteira(n) {
+    const r = Math.round(Math.cbrt(n));
+    return (r * r * r === n) ? r : null;
+  }
+
+  function raizQuadradaInteira(n) {
+    if (n < 0) return null;
+    const r = Math.round(Math.sqrt(n));
+    return (r * r === n) ? r : null;
+  }
+
+  function resolverFatoracao(exprStr) {
+    const passos = [];
+    const { c3, c2, c1, c0 } = parsePolinomioCompleto(exprStr);
+
+    passos.push({
+      descricao: "Polinômio inicial identificado:",
+      latex: formatarPolinomio(c3, c2, c1, c0)
+    });
+
+    if (c3 !== 0 && c2 === 0 && c1 === 0 && c0 !== 0) {
+      const raizA = raizCubicaInteira(c3);
+      const raizB = raizCubicaInteira(Math.abs(c0));
+
+      if (raizA !== null && raizB !== null) {
+        const ehSoma = c0 > 0;
+        const A_str = raizA === 1 ? "x" : `${raizA}x`;
+        const B_val = raizB;
+
+        passos.push({
+          descricao: `Identificamos ${ehSoma ? 'uma Soma de dois Cubos' : 'uma Diferença de dois Cubos'} da forma A³ ${ehSoma ? '+' : '-'} B³:`,
+          latex: ehSoma ? `A^3 + B^3 = (A + B)(A^2 - A \\cdot B + B^2)` : `A^3 - B^3 = (A - B)(A^2 + A \\cdot B + B^2)`
+        });
+
+        passos.push({
+          descricao: "Extraindo as raízes cúbicas dos termos A³ e B³:",
+          latex: `A = \\sqrt[3]{${c3 !== 1 ? c3 : ''}x^3} = ${A_str}, \\qquad B = \\sqrt[3]{${Math.abs(c0)}} = ${B_val}`
+        });
+
+        const A2_coef = raizA * raizA;
+        const A2_str = A2_coef === 1 ? "x^2" : `${A2_coef}x^2`;
+        const AB_coef = raizA * B_val;
+        const AB_str = AB_coef === 1 ? "x" : `${AB_coef}x`;
+        const B2_val = B_val * B_val;
+
+        const sinal1 = ehSoma ? '+' : '-';
+        const sinal2 = ehSoma ? '-' : '+';
+
+        passos.push({
+          descricao: "Substituindo os valores de A e B na fórmula fatorada:",
+          latex: `(${A_str} ${sinal1} ${B_val}) \\left( (${A_str})^2 ${sinal2} (${A_str}) \\cdot (${B_val}) + (${B_val})^2 \\right)`
+        });
+
+        passos.push({
+          descricao: "Forma Fatorada Final:",
+          latex: `\\mathbf{(${A_str} ${sinal1} ${B_val})(${A2_str} ${sinal2} ${AB_str} + ${B2_val})}`
+        });
+
+        return passos;
+      }
+    }
+
+    if (c3 === 0 && c2 > 0 && c1 === 0 && c0 < 0) {
+      const raizA = raizQuadradaInteira(c2);
+      const raizC = raizQuadradaInteira(Math.abs(c0));
+
+      if (raizA !== null && raizC !== null) {
+        const A_str = raizA === 1 ? "x" : `${raizA}x`;
+        passos.push({
+          descricao: "Identificamos uma Diferença de Dois Quadrados da forma A² - B²:",
+          latex: `A^2 - B^2 = (A + B)(A - B)`
+        });
+        passos.push({
+          descricao: "Extraindo as raízes quadradas dos dois termos:",
+          latex: `A = \\sqrt{${c2 !== 1 ? c2 : ''}x^2} = ${A_str}, \\qquad B = \\sqrt{${Math.abs(c0)}} = ${raizC}`
+        });
+        passos.push({
+          descricao: "Forma Fatorada Final:",
+          latex: `\\mathbf{(${A_str} + ${raizC})(${A_str} - ${raizC})}`
+        });
+        return passos;
+      }
+    }
+
+    if (c3 === 0 && c2 > 0 && c1 !== 0 && c0 > 0) {
+      const raizA = raizQuadradaInteira(c2);
+      const raizC = raizQuadradaInteira(c0);
+
+      if (raizA !== null && raizC !== null) {
+        const termoCentralEsperado = 2 * raizA * raizC;
+        if (Math.abs(c1) === termoCentralEsperado) {
+          const ehSoma = c1 > 0;
+          const A_str = raizA === 1 ? "x" : `${raizA}x`;
+          passos.push({
+            descricao: `Identificamos um Trinômio Quadrado Perfeito (${ehSoma ? 'Quadrado da Soma' : 'Quadrado da Diferença'}):`,
+            latex: ehSoma ? `A^2 + 2AB + B^2 = (A + B)^2` : `A^2 - 2AB + B^2 = (A - B)^2`
+          });
+          passos.push({
+            descricao: "Verificando as extremidades e o termo central 2·A·B:",
+            latex: `A = \\sqrt{${c2 !== 1 ? c2 : ''}x^2} = ${A_str}, \\quad B = \\sqrt{${c0}} = ${raizC} \\implies 2 \\cdot (${A_str}) \\cdot (${raizC}) = ${termoCentralEsperado}x`
+          });
+          passos.push({
+            descricao: "Forma Fatorada Final:",
+            latex: `\\mathbf{(${A_str} ${ehSoma ? '+' : '-'} ${raizC})^2}`
+          });
+          return passos;
+        }
+      }
+    }
+
+    if (c3 === 0 && c2 === 1 && c1 !== 0 && c0 !== 0) {
+      const delta = (c1 * c1) - (4 * c0);
+      if (delta >= 0) {
+        const sqrtDelta = Math.sqrt(delta);
+        if (Number.isInteger(sqrtDelta)) {
+          const x1 = (-c1 + sqrtDelta) / 2;
+          const x2 = (-c1 - sqrtDelta) / 2;
+
+          passos.push({
+            descricao: "Fatoração do trinômio da forma x² + Sx + P por raízes / Soma e Produto:",
+            latex: `x^2 + (${c1})x + (${c0}) = (x - x_1)(x - x_2)`
+          });
+
+          passos.push({
+            descricao: `Procuramos dois números cuja soma seja ${-c1} e cujo produto seja ${c0}:`,
+            latex: `x_1 = ${x1}, \\qquad x_2 = ${x2}`
+          });
+
+          const f1Str = x1 >= 0 ? `(x - ${x1})` : `(x + ${Math.abs(x1)})`;
+          const f2Str = x2 >= 0 ? `(x - ${x2})` : `(x + ${Math.abs(x2)})`;
+
+          passos.push({
+            descricao: "Forma Fatorada Final:",
+            latex: `\\mathbf{${f1Str}${f2Str}}`
+          });
+          return passos;
+        }
+      }
+    }
+
+    const coefs = [c3, c2, c1, c0].filter(c => c !== 0);
+    if (c0 === 0 && (c3 !== 0 || c2 !== 0 || c1 !== 0)) {
+      let menorPotX = 1;
+      if (c1 === 0 && c2 === 0) menorPotX = 3;
+      else if (c1 === 0) menorPotX = 2;
+
+      let mdcCoef = coefs.reduce((acc, cur) => gcd(acc, cur), coefs[0]);
+
+      let fatorEvid = "";
+      if (mdcCoef > 1) fatorEvid += mdcCoef;
+      fatorEvid += menorPotX === 1 ? "x" : `x^${menorPotX}`;
+
+      const q3 = c3 / mdcCoef;
+      const q2 = c2 / mdcCoef;
+      const q1 = c1 / mdcCoef;
+
+      let dentroLatex = "";
+      if (menorPotX === 1) {
+        dentroLatex = formatarPolinomio(0, q3, q2, q1);
+      } else if (menorPotX === 2) {
+        dentroLatex = formatarPolinomio(0, 0, q3, q2);
+      }
+
+      passos.push({
+        descricao: `Identificamos um Fator Comum em Evidência (${fatorEvid}):`,
+        latex: `\\text{MDC dos coeficientes: } ${mdcCoef}, \\quad \\text{Menor potência de } x: x^{${menorPotX}}`
+      });
+
+      passos.push({
+        descricao: "Dividindo cada termo do polinômio pelo fator comum:",
+        latex: `${converterParaLatex(fatorEvid)} \\cdot \\left( ${converterParaLatex(dentroLatex)} \\right)`
+      });
+
+      passos.push({
+        descricao: "Forma Fatorada:",
+        latex: `\\mathbf{${converterParaLatex(fatorEvid)}(${converterParaLatex(dentroLatex)})}`
+      });
+      return passos;
+    }
+
+    throw new Error("Não foi possível identificar um caso elementar de fatoração com números inteiros (Fator Comum, TQP, Diferença de Quadrados ou Cubos). Verifique a expressão.");
+  }
+
+  function executarResolucaoFatoracao() {
+    const alertBox = document.getElementById('alert-fatoracao');
+    const cardRes = document.getElementById('card-result-fatoracao');
+    const lista = document.getElementById('passos-fatoracao');
+    alertBox.innerHTML = '';
+    
+    try {
+      const passos = resolverFatoracao(inputFatoracao.value.trim());
+      lista.innerHTML = '';
+      passos.forEach((p, i) => {
+        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+      });
+      cardRes.style.display = 'block';
+      renderizarKaTeX(lista);
+    } catch (err) {
+      alertBox.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+      cardRes.style.display = 'none';
+    }
+  }
+
+  function limparFatoracao() {
+    inputFatoracao.value = '';
+    document.getElementById('prev-img-fatoracao').style.display = 'none';
+    document.getElementById('card-result-fatoracao').style.display = 'none';
+    document.getElementById('alert-fatoracao').innerHTML = '';
+    document.getElementById('ocr-status-fatoracao').innerHTML = '';
+    atualizarPreviewFatoracao();
+  }
+
+  // ==========================================
+  // MÓDULO 5: OPERAÇÕES COM FRAÇÕES
+  // ==========================================
+  const inputFracoes = document.getElementById('input-fracoes');
+  const prevMathFracoes = document.getElementById('prev-math-fracoes');
+
+  function atualizarPreviewFracoes() {
+    prevMathFracoes.innerHTML = `$$\\displaystyle ${converterParaLatex(inputFracoes.value)}$$`;
+    renderizarKaTeX(prevMathFracoes);
+  }
+  inputFracoes.addEventListener('input', atualizarPreviewFracoes);
+
+  function parseFracaoSimples(str) {
+    str = str.replace(/\s+/g, '');
+    if (str.includes('/')) {
+      const partes = str.split('/');
+      return { num: parseInt(partes[0], 10), den: parseInt(partes[1], 10) };
+    }
+    return { num: parseInt(str, 10), den: 1 };
+  }
+
+  function formatarFracaoLatex(num, den) {
+    if (den === 1) return `${num}`;
+    if (den < 0) { num = -num; den = -den; }
+    if (num < 0) return `-\\frac{${Math.abs(num)}}{${den}}`;
+    return `\\frac{${num}}{${den}}`;
+  }
+
+  function resolverOperacoesFracoes(exprStr) {
+    const passos = [];
+    let s = exprStr.replace(/\s+/g, '').replace(/:/g, '÷');
+
+    // Detecta o operador principal entre as duas frações (+, -, *, ÷ ou /)
+    let op = null;
+    let indexOp = -1;
+
+    // Procura operadores fora de barras de fração
+    const regexOp = /([+*÷])|(?<=\d)\-(?=\d)|(?<=\/\d+)\/(?=\d)/;
+    const match = s.match(regexOp);
+
+    if (!match) {
+      // Tenta detectar divisão escrita como / entre duas frações (ex: 2/3 / 4/5)
+      const partesBarra = s.split('/');
+      if (partesBarra.length === 4) {
+        op = '÷';
+        const f1 = { num: parseInt(partesBarra[0]), den: parseInt(partesBarra[1]) };
+        const f2 = { num: parseInt(partesBarra[2]), den: parseInt(partesBarra[3]) };
+        return processarOperacaoFracao(f1, f2, '÷', passos);
+      }
+      throw new Error("Informe uma operação válida entre frações (ex: 2/3 + 3/4, 5/6 - 1/4, 3/4 * 2/5 ou 7/2 ÷ 3/4).");
+    }
+
+    op = match[0];
+    indexOp = match.index;
+
+    const parte1 = s.substring(0, indexOp);
+    const parte2 = s.substring(indexOp + op.length);
+
+    const f1 = parseFracaoSimples(parte1);
+    const f2 = parseFracaoSimples(parte2);
+
+    if (isNaN(f1.num) || isNaN(f1.den) || isNaN(f2.num) || isNaN(f2.den) || f1.den === 0 || f2.den === 0) {
+      throw new Error("Valores numéricos inválidos ou denominador igual a zero.");
+    }
+
+    return processarOperacaoFracao(f1, f2, op, passos);
+  }
+
+  function processarOperacaoFracao(f1, f2, op, passos) {
+    let opLatex = op === '*' ? '\\cdot' : (op === '÷' ? '\\div' : op);
+    passos.push({
+      descricao: "Expressão inicial identificada:",
+      latex: `${formatarFracaoLatex(f1.num, f1.den)} ${opLatex} ${formatarFracaoLatex(f2.num, f2.den)}`
+    });
+
+    // MULTIPLICAÇÃO
+    if (op === '*') {
+      passos.push({
+        descricao: "Multiplicação de frações: multiplica-se numerador por numerador e denominador por denominador:",
+        latex: `\\frac{${f1.num} \\cdot ${f2.num}}{${f1.den} \\cdot ${f2.den}}`
+      });
+
+      const numFinal = f1.num * f2.num;
+      const denFinal = f1.den * f2.den;
+
+      passos.push({
+        descricao: "Resultado do produto:",
+        latex: `\\frac{${numFinal}}{${denFinal}}`
+      });
+
+      const irred = simplificarFracao(numFinal, denFinal);
+      const dMDC = gcd(numFinal, denFinal);
+
+      if (dMDC > 1) {
+        passos.push({
+          descricao: `Simplificando pelo MDC (${dMDC}):`,
+          latex: `\\frac{${numFinal} \\div ${dMDC}}{${denFinal} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+        });
+      } else {
+        passos.push({
+          descricao: "A fração já se encontra na forma irredutível:",
+          latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+        });
+      }
+      return passos;
+    }
+
+    // DIVISÃO
+    if (op === '÷') {
+      if (f2.num === 0) throw new Error("Divisão por zero não é permitida.");
+
+      passos.push({
+        descricao: "Divisão de frações: conserva-se a primeira fração e multiplica-se pelo inverso da segunda:",
+        latex: `${formatarFracaoLatex(f1.num, f1.den)} \\cdot ${formatarFracaoLatex(f2.den, f2.num)}`
+      });
+
+      const numFinal = f1.num * f2.den;
+      const denFinal = f1.den * f2.num;
+
+      passos.push({
+        descricao: "Multiplicando os termos resultantes:",
+        latex: `\\frac{${f1.num} \\cdot ${f2.den}}{${f1.den} \\cdot ${f2.num}} = \\frac{${numFinal}}{${denFinal}}`
+      });
+
+      const irred = simplificarFracao(numFinal, denFinal);
+      const dMDC = gcd(numFinal, denFinal);
+
+      if (dMDC > 1) {
+        passos.push({
+          descricao: `Simplificando pelo MDC (${dMDC}):`,
+          latex: `\\frac{${numFinal} \\div ${dMDC}}{${denFinal} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+        });
+      } else {
+        passos.push({
+          descricao: "Forma irredutível final:",
+          latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+        });
+      }
+      return passos;
+    }
+
+    // ADIÇÃO E SUBTRAÇÃO
+    if (op === '+' || op === '-') {
+      if (f1.den === f2.den) {
+        passos.push({
+          descricao: "Denominadores iguais: conservamos o denominador comum e operamos os numeradores:",
+          latex: `\\frac{${f1.num} ${op} ${f2.num}}{${f1.den}}`
+        });
+
+        const numFinal = op === '+' ? (f1.num + f2.num) : (f1.num - f2.num);
+        passos.push({
+          descricao: "Resultado da soma/subtração no numerador:",
+          latex: `\\frac{${numFinal}}{${f1.den}}`
+        });
+
+        const irred = simplificarFracao(numFinal, f1.den);
+        const dMDC = gcd(numFinal, f1.den);
+
+        if (dMDC > 1) {
+          passos.push({
+            descricao: `Simplificando pelo MDC (${dMDC}):`,
+            latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+          });
+        }
+        return passos;
+      } else {
+        const mmcDen = lcm(f1.den, f2.den);
+        passos.push({
+          descricao: `Denominadores diferentes (${f1.den} e ${f2.den}): calculamos o MMC para encontrar o denominador comum:`,
+          latex: `\\text{MMC}(${f1.den}, ${f2.den}) = ${mmcDen}`
+        });
+
+        const mult1 = mmcDen / f1.den;
+        const mult2 = mmcDen / f2.den;
+        const novoNum1 = f1.num * mult1;
+        const novoNum2 = f2.num * mult2;
+
+        passos.push({
+          descricao: "Obtendo as frações equivalentes (divide pelo denominador anterior e multiplica pelo numerador):",
+          latex: `\\frac{${f1.num} \\cdot ${mult1}}{${mmcDen}} ${op} \\frac{${f2.num} \\cdot ${mult2}}{${mmcDen}} = \\frac{${novoNum1}}{${mmcDen}} ${op} \\frac{${novoNum2}}{${mmcDen}}`
+        });
+
+        const numFinal = op === '+' ? (novoNum1 + novoNum2) : (novoNum1 - novoNum2);
+        passos.push({
+          descricao: "Operando os numeradores sobre o denominador comum:",
+          latex: `\\frac{${novoNum1} ${op} ${novoNum2}}{${mmcDen}} = \\frac{${numFinal}}{${mmcDen}}`
+        });
+
+        const irred = simplificarFracao(numFinal, mmcDen);
+        const dMDC = gcd(numFinal, mmcDen);
+
+        if (dMDC > 1) {
+          passos.push({
+            descricao: `Simplificando a fração resultante pelo MDC (${dMDC}):`,
+            latex: `\\frac{${numFinal} \\div ${dMDC}}{${mmcDen} \\div ${dMDC}} = \\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+          });
+        } else {
+          passos.push({
+            descricao: "Forma irredutível final:",
+            latex: `\\mathbf{${formatarFracaoLatex(irred.num, irred.den)}}`
+          });
+        }
+        return passos;
+      }
+    }
+
+    throw new Error("Operação não suportada.");
+  }
+
+  function executarResolucaoFracoes() {
+    const alertBox = document.getElementById('alert-fracoes');
+    const cardRes = document.getElementById('card-result-fracoes');
+    const lista = document.getElementById('passos-fracoes');
+    alertBox.innerHTML = '';
+    
+    try {
+      const passos = resolverOperacoesFracoes(inputFracoes.value.trim());
+      lista.innerHTML = '';
+      passos.forEach((p, i) => {
+        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+      });
+      cardRes.style.display = 'block';
+      renderizarKaTeX(lista);
+    } catch (err) {
+      alertBox.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+      cardRes.style.display = 'none';
+    }
+  }
+
+  function limparFracoes() {
+    inputFracoes.value = '';
+    document.getElementById('prev-img-fracoes').style.display = 'none';
+    document.getElementById('card-result-fracoes').style.display = 'none';
+    document.getElementById('alert-fracoes').innerHTML = '';
+    document.getElementById('ocr-status-fracoes').innerHTML = '';
+    atualizarPreviewFracoes();
   }
 
   // ==========================================
@@ -1165,6 +1858,8 @@
   configurarTeclado('kb-grau1', inputGrau1, atualizarPreview1);
   configurarTeclado('kb-grau2', inputGrau2, atualizarPreview2);
   configurarTeclado('kb-notaveis', inputNotaveis, atualizarPreviewNotaveis);
+  configurarTeclado('kb-fatoracao', inputFatoracao, atualizarPreviewFatoracao);
+  configurarTeclado('kb-fracoes', inputFracoes, atualizarPreviewFracoes);
 
   // ==========================================
   // CÂMERA / OCR COMPARTILHADO
@@ -1240,6 +1935,8 @@
   configurarOCR('cam-grau1', 'prev-img-grau1', 'ocr-status-grau1', inputGrau1, atualizarPreview1, executarResolucao1);
   configurarOCR('cam-grau2', 'prev-img-grau2', 'ocr-status-grau2', inputGrau2, atualizarPreview2, executarResolucao2);
   configurarOCR('cam-notaveis', 'prev-img-notaveis', 'ocr-status-notaveis', inputNotaveis, atualizarPreviewNotaveis, executarResolucaoNotaveis);
+  configurarOCR('cam-fatoracao', 'prev-img-fatoracao', 'ocr-status-fatoracao', inputFatoracao, atualizarPreviewFatoracao, executarResolucaoFatoracao);
+  configurarOCR('cam-fracoes', 'prev-img-fracoes', 'ocr-status-fracoes', inputFracoes, atualizarPreviewFracoes, executarResolucaoFracoes);
 </script>
 
 </body>
