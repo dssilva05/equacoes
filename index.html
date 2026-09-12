@@ -94,6 +94,8 @@
 
     .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem; }
     .alert-error { background: #fee2e2; color: #991b1b; }
+    .alert-info { background: #e0f2fe; color: #075985; }
+    .alert-success { background: #dcfce7; color: #166534; }
   </style>
 </head>
 <body>
@@ -101,15 +103,15 @@
 <div class="container">
   <header>
     <h1>Resolvedor de Equações do 1º Grau</h1>
-    <p>Tire uma foto da equação à mão ou digite para ver o passo a passo</p>
+    <p>Tire uma foto do caderno ou digite a equação para ver o passo a passo</p>
   </header>
 
   <div class="card">
     <!-- Entrada por Foto / Câmera -->
     <div class="camera-box">
-      <p style="font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Fotografar caderno ou enviar imagem:</p>
+      <p style="font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Fotografar caderno ou carregar imagem:</p>
       <label class="btn-upload" for="camera-input">
-        📷 Tirar Foto / Escolher Arquivo
+        📷 Tirar Foto / Carregar Imagem
       </label>
       <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
       <br>
@@ -138,6 +140,28 @@
 </div>
 
 <script>
+  // ==========================================
+  // CONFIGURAÇÃO DO BACKEND SERVERLESS (OCR)
+  // ==========================================
+  // Se o site e a API estiverem no mesmo domínio Vercel, deixe '/api/ocr'.
+  // Se o frontend estiver no GitHub Pages e a API na Vercel, coloque a URL completa:
+  // const OCR_ENDPOINT = 'https://equacoes.vercel.app/api/ocr';
+  const OCR_ENDPOINT = '/api/ocr';
+
+  async function extrairEquacaoDaImagem(base64Data, mimeType) {
+    const response = await fetch(OCR_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base64Data, mimeType })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "Erro ao processar imagem no servidor");
+    }
+    return data.equacao;
+  }
+
   // ==========================================
   // MOTOR ALGÉBRICO DO 1º GRAU PASSO A PASSO
   // ==========================================
@@ -231,7 +255,7 @@
     const rhsRaw = membros[1].trim();
 
     passos.push({
-      descricao: "Equação inicial identificada:",
+      descricao: "Equação identificada:",
       latex: `${lhsRaw} = ${rhsRaw}`
     });
 
@@ -308,27 +332,7 @@
   }
 
   // ==========================================
-  // COMUNICAÇÃO COM O SERVIÇO DE OCR
-  // ==========================================
-  async function extrairEquacaoDaImagem(base64Data, mimeType) {
-    // Substitua pela URL da sua função serverless (ex: Vercel)
-    const endpoint = "https://equacoes.vercel.app/api/ocr";
-
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ base64Data, mimeType })
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || "Erro ao processar imagem no servidor");
-    }
-    return data.equacao;
-  }
-
-  // ==========================================
-  // ELEMENTOS E EVENTOS DA TELA
+  // ELEMENTOS E EVENTOS DA INTERFACE
   // ==========================================
   const btnResolver = document.getElementById('btn-resolver');
   const btnLimpar = document.getElementById('btn-limpar');
@@ -391,7 +395,6 @@
     ocrStatus.innerHTML = '';
   });
 
-  // Handler de Imagem (Foto / Upload)
   cameraInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -408,24 +411,22 @@
       const base64Data = base64Url.split(',')[1];
 
       ocrStatus.style.color = '#2563eb';
-      ocrStatus.innerHTML = "⏳ Lendo a escrita a lápis via IA...";
+      ocrStatus.innerHTML = "⏳ Identificando a equação manuscrita...";
 
       try {
         const equacaoLida = await extrairEquacaoDaImagem(base64Data, mimeType);
         ocrStatus.style.color = '#16a34a';
-        ocrStatus.innerHTML = ` Equação reconhecida: <strong>${equacaoLida}</strong>`;
+        ocrStatus.innerHTML = `Equação reconhecida: <strong>${equacaoLida}</strong>`;
         eqInput.value = equacaoLida;
-        
         dispararResolucao();
       } catch (err) {
         ocrStatus.style.color = '#dc2626';
-        ocrStatus.innerHTML = `❌ Falha ao ler imagem: ${err.message}`;
+        ocrStatus.innerHTML = `❌ Falha ao processar: ${err.message}`;
       }
     };
     reader.readAsDataURL(file);
   });
 
-  // Resolve o exemplo inicial ao carregar a página
   window.addEventListener('DOMContentLoaded', dispararResolucao);
 </script>
 
