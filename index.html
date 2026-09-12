@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resolvedor de Equações do 1º Grau com Foto</title>
+  <title>Resolvedor de Equações do 1º Grau</title>
   
   <!-- KaTeX para renderização de fórmulas matemáticas -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -42,7 +42,7 @@
     .form-group { margin-bottom: 16px; }
     label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
     
-    input[type="text"], input[type="password"] {
+    input[type="text"] {
       width: 100%;
       padding: 12px;
       border: 1px solid var(--border);
@@ -50,7 +50,7 @@
       font-size: 1.05rem;
       outline: none;
     }
-    input[type="text"]:focus, input[type="password"]:focus { border-color: var(--primary); }
+    input[type="text"]:focus { border-color: var(--primary); }
 
     .camera-box {
       border: 2px dashed #94a3b8;
@@ -94,16 +94,6 @@
 
     .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem; }
     .alert-error { background: #fee2e2; color: #991b1b; }
-    .alert-info { background: #e0f2fe; color: #075985; }
-    .alert-success { background: #dcfce7; color: #166534; }
-
-    details summary {
-      cursor: pointer;
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-bottom: 12px;
-    }
-    details[open] summary { margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -113,23 +103,6 @@
     <h1>Resolvedor de Equações do 1º Grau</h1>
     <p>Tire uma foto da equação à mão ou digite para ver o passo a passo</p>
   </header>
-
-  <!-- Configuração da Chave da API (Armazenada localmente no navegador) -->
-  <div class="card" style="padding: 14px 20px;">
-    <details id="api-details">
-      <summary>🔑 Configurar Chave de OCR / IA (Necessária para ler fotos)</summary>
-      <div style="margin-top: 10px;">
-        <label for="api-key-input">Chave Gemini API (Google AI Studio):</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="password" id="api-key-input" placeholder="Cole sua chave AIzaSy..." style="flex: 1; padding: 8px;">
-          <button id="btn-salvar-chave" style="padding: 8px 14px;">Salvar</button>
-        </div>
-        <p style="font-size: 0.75rem; color: #64748b; margin-top: 6px;">
-          Obtenha gratuitamente em <a href="https://aistudio.google.com/" target="_blank" rel="noopener">aistudio.google.com</a>. A chave fica salva apenas no seu dispositivo (LocalStorage).
-        </p>
-      </div>
-    </details>
-  </div>
 
   <div class="card">
     <!-- Entrada por Foto / Câmera -->
@@ -165,32 +138,6 @@
 </div>
 
 <script>
-  // ==========================================
-  // CONFIGURAÇÃO DA CHAVE LOCAL
-  // ==========================================
-  const apiKeyInput = document.getElementById('api-key-input');
-  const btnSalvarChave = document.getElementById('btn-salvar-chave');
-  const apiDetails = document.getElementById('api-details');
-
-  let savedKey = localStorage.getItem('gemini_api_key') || '';
-  if (savedKey) {
-    apiKeyInput.value = savedKey;
-  } else {
-    apiDetails.open = true; // Abre automaticamente se não houver chave
-  }
-
-  btnSalvarChave.addEventListener('click', () => {
-    const key = apiKeyInput.value.trim();
-    if (key) {
-      localStorage.setItem('gemini_api_key', key);
-      alert('Chave salva com sucesso no navegador!');
-      apiDetails.open = false;
-    } else {
-      localStorage.removeItem('gemini_api_key');
-      alert('Chave removida.');
-    }
-  });
-
   // ==========================================
   // MOTOR ALGÉBRICO DO 1º GRAU PASSO A PASSO
   // ==========================================
@@ -361,22 +308,24 @@
   }
 
   // ==========================================
-  // OCR VIA GEMINI VISION API
+  // COMUNICAÇÃO COM O SERVIÇO DE OCR
   // ==========================================
-  // Substitua a chamada antiga por esta:
-async function extrairEquacaoDaImagem(base64Data, mimeType) {
-  const endpoint = "https://equacoes.vercel.app/api/ocr"; // URL da sua Vercel
+  async function extrairEquacaoDaImagem(base64Data, mimeType) {
+    // Substitua pela URL da sua função serverless (ex: Vercel)
+    const endpoint = "https://equacoes.vercel.app/api/ocr";
 
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ base64Data, mimeType })
-  });
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base64Data, mimeType })
+    });
 
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || "Erro no servidor");
-  return data.equacao;
-}
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "Erro ao processar imagem no servidor");
+    }
+    return data.equacao;
+  }
 
   // ==========================================
   // ELEMENTOS E EVENTOS DA TELA
@@ -442,50 +391,41 @@ async function extrairEquacaoDaImagem(base64Data, mimeType) {
     ocrStatus.innerHTML = '';
   });
 
-  // Handler de Imagem com Leitura Real
+  // Handler de Imagem (Foto / Upload)
   cameraInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     alertContainer.innerHTML = '';
-    const currentKey = localStorage.getItem('gemini_api_key');
-    if (!currentKey) {
-      alertContainer.innerHTML = `<div class="alert alert-error">Por favor, configure sua chave de API na aba superior para permitir a leitura da imagem.</div>`;
-      apiDetails.open = true;
-      return;
-    }
 
-    // Exibe preview da foto
     const reader = new FileReader();
     reader.onload = async (ev) => {
       const base64Url = ev.target.result;
       previewImg.src = base64Url;
       previewImg.style.display = 'block';
 
-      // Separa o MIME e os dados puros em Base64
       const mimeType = file.type || "image/jpeg";
       const base64Data = base64Url.split(',')[1];
 
       ocrStatus.style.color = '#2563eb';
-      ocrStatus.innerHTML = "⏳ Lendo a escrita a lápis via Inteligência Artificial...";
+      ocrStatus.innerHTML = "⏳ Lendo a escrita a lápis via IA...";
 
       try {
-        const equacaoLida = await extrairEquacaoDaImagem(base64Data, mimeType, currentKey);
+        const equacaoLida = await extrairEquacaoDaImagem(base64Data, mimeType);
         ocrStatus.style.color = '#16a34a';
         ocrStatus.innerHTML = ` Equação reconhecida: <strong>${equacaoLida}</strong>`;
         eqInput.value = equacaoLida;
         
-        // Dispara o cálculo passo a passo automaticamente
         dispararResolucao();
       } catch (err) {
         ocrStatus.style.color = '#dc2626';
-        ocrStatus.innerHTML = `❌ Falha ao ler a imagem: ${err.message}`;
+        ocrStatus.innerHTML = `❌ Falha ao ler imagem: ${err.message}`;
       }
     };
     reader.readAsDataURL(file);
   });
 
-  // Resolve o exemplo inicial
+  // Resolve o exemplo inicial ao carregar a página
   window.addEventListener('DOMContentLoaded', dispararResolucao);
 </script>
 
