@@ -238,11 +238,10 @@
         <p>Fórmula de Bhaskara, discriminante (Δ) e raízes</p>
       </div>
 
-      <div class="topic-card disabled">
+      <div class="topic-card" onclick="abrirModulo('notaveis')">
         <div class="icon">✨</div>
         <h3>Produtos Notáveis</h3>
-        <p>Quadrado da soma, diferença e produto</p>
-        <span class="badge">Em breve</span>
+        <p>Quadrado da soma, diferença e produto da soma pela diferença</p>
       </div>
 
       <div class="topic-card disabled">
@@ -391,6 +390,71 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- VIEW 4: PRODUTOS NOTÁVEIS                  -->
+  <!-- ========================================== -->
+  <div id="view-notaveis" class="view">
+    <div class="nav-bar">
+      <button class="btn-voltar" onclick="voltarMenu()">← Voltar ao Menu</button>
+      <h2>Produtos Notáveis</h2>
+    </div>
+
+    <div class="card">
+      <div class="camera-box">
+        <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 6px;">Fotografar expressão manuscrita:</p>
+        <label class="btn-upload" for="cam-notaveis">📷 Tirar Foto / Imagem</label>
+        <input type="file" id="cam-notaveis" accept="image/*" capture="environment" style="display: none;">
+        <br>
+        <img id="prev-img-notaveis" class="preview-img" alt="Foto">
+        <div id="ocr-status-notaveis" style="margin-top: 8px; font-weight: 500; font-size: 0.85rem;"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="input-notaveis">Expressão:</label>
+        <input type="text" id="input-notaveis" value="(2x + 3)^2" placeholder="Ex: (x + 5)^2 ou (2x - 3)^2 ou (x + 4)(x - 4)">
+        <label style="margin-top: 8px;">Visualização Matemática:</label>
+        <div class="preview-math-box" id="prev-math-notaveis"></div>
+      </div>
+
+      <div class="keyboard-grid" id="kb-notaveis">
+        <button class="key-btn key-var" data-val="x">x</button>
+        <button class="key-btn key-var" data-val="^2">²</button>
+        <button class="key-btn key-op" data-val="(">(</button>
+        <button class="key-btn key-op" data-val=")">)</button>
+        <button class="key-btn key-op" data-val="*">×</button>
+        <button class="key-btn key-action" data-action="backspace">⌫</button>
+
+        <button class="key-btn" data-val="7">7</button>
+        <button class="key-btn" data-val="8">8</button>
+        <button class="key-btn" data-val="9">9</button>
+        <button class="key-btn key-op" data-val="+">+</button>
+        <button class="key-btn key-op" data-val="-">−</button>
+        <button class="key-btn key-action" data-action="clear">C</button>
+
+        <button class="key-btn" data-val="4">4</button>
+        <button class="key-btn" data-val="5">5</button>
+        <button class="key-btn" data-val="6">6</button>
+        <button class="key-btn" data-val="1">1</button>
+        <button class="key-btn" data-val="2">2</button>
+        <button class="key-btn" data-val="3">3</button>
+
+        <button class="key-btn" data-val="0" style="grid-column: span 3;">0</button>
+        <button class="key-btn key-op" data-val="x^2" style="grid-column: span 3;">x²</button>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="executarResolucaoNotaveis()" style="flex: 1;">Desenvolver Passo a Passo</button>
+        <button class="btn-secondary" onclick="limparNotaveis()">Limpar</button>
+      </div>
+    </div>
+
+    <div id="alert-notaveis"></div>
+    <div id="card-result-notaveis" class="card" style="display: none;">
+      <h3 style="font-size: 1.1rem; margin-bottom: 14px;">Passo a Passo do Desenvolvimento:</h3>
+      <div id="passos-notaveis"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -409,6 +473,9 @@
     } else if (modulo === 'grau2') {
       atualizarPreview2();
       executarResolucao2();
+    } else if (modulo === 'notaveis') {
+      atualizarPreviewNotaveis();
+      executarResolucaoNotaveis();
     }
   }
 
@@ -438,7 +505,7 @@
   }
 
   function converterParaLatex(str) {
-    if (!str || !str.trim()) return "\\text{Nenhuma equação digitada}";
+    if (!str || !str.trim()) return "\\text{Nenhuma expressão digitada}";
     let latex = str.replace(/\s+/g, '');
     latex = latex.replace(/x\^2/g, 'x^2');
     latex = latex.replace(/\(([^)]+)\)\/(\d+|[a-zA-Z])/g, '\\frac{$1}{$2}');
@@ -470,7 +537,7 @@
   }
   inputGrau1.addEventListener('input', atualizarPreview1);
 
-  function expandirParenteses(exprStr) {
+  function expandirParenteses1G(exprStr) {
     let expr = exprStr.replace(/\s+/g, '').replace(/(\d)\(/g, '$1*(').replace(/\)([a-zA-Z0-9(])/g, ')*$1');
     const regexParen = /([+-]?\d*)\*?\(([^)]+)\)/g;
     return expr.replace(regexParen, (match, fatorStr, conteudo) => {
@@ -497,7 +564,7 @@
   }
 
   function parseMembro1Grau(membroStr) {
-    let s = expandirParenteses(membroStr);
+    let s = expandirParenteses1G(membroStr);
     s = s.replace(/-/g, '+-');
     const tokens = s.split('+').filter(t => t !== '');
     const termos = [];
@@ -778,6 +845,217 @@
   }
 
   // ==========================================
+  // MÓDULO 3: PRODUTOS NOTÁVEIS
+  // ==========================================
+  const inputNotaveis = document.getElementById('input-notaveis');
+  const prevMathNotaveis = document.getElementById('prev-math-notaveis');
+
+  function atualizarPreviewNotaveis() {
+    prevMathNotaveis.innerHTML = `$$\\displaystyle ${converterParaLatex(inputNotaveis.value)}$$`;
+    renderizarKaTeX(prevMathNotaveis);
+  }
+  inputNotaveis.addEventListener('input', atualizarPreviewNotaveis);
+
+  // Parser para binômios na forma ax + b ou ax - b
+  function parseBinomio(str) {
+    let s = str.replace(/\s+/g, '').replace(/-/g, '+-');
+    const tokens = s.split('+').filter(t => t !== '');
+    let coefX = 0, constant = 0;
+    
+    for (let t of tokens) {
+      if (t.includes('x') || t.includes('X')) {
+        let v = t.replace(/x/gi, '').replace('*', '');
+        coefX += (v === '-' ? -1 : v === '' || v === '+' ? 1 : parseFloat(v));
+      } else {
+        constant += parseFloat(t) || 0;
+      }
+    }
+    return { coefX, constant };
+  }
+
+  function resolverProdutosNotaveis(exprStr) {
+    const passos = [];
+    let s = exprStr.replace(/\s+/g, '');
+
+    // Caso 1 e 2: Quadrado da Soma ou Quadrado da Diferença -> (ax ± b)^2
+    const regexQuadrado = /^\(([^)]+)\)\^2$/;
+    const matchQuad = s.match(regexQuadrado);
+
+    if (matchQuad) {
+      const conteudo = matchQuad[1];
+      const binomio = parseBinomio(conteudo);
+      const a = binomio.coefX;
+      const b = binomio.constant;
+
+      if (a === 0 || b === 0) {
+        throw new Error("Informe um binômio com variável e termo constante, por exemplo: (x + 3)^2 ou (2x - 5)^2.");
+      }
+
+      const termoA = a === 1 ? "x" : (a === -1 ? "-x" : `${a}x`);
+      const absB = Math.abs(b);
+      const ehSoma = b > 0;
+
+      passos.push({
+        descricao: "Expressão inicial identificada:",
+        latex: `(${termoA} ${ehSoma ? '+' : '-'} ${absB})^2`
+      });
+
+      if (ehSoma) {
+        passos.push({
+          descricao: "Identificamos o Quadrado da Soma de dois termos:",
+          latex: `(A + B)^2 = A^2 + 2 \\cdot A \\cdot B + B^2`
+        });
+      } else {
+        passos.push({
+          descricao: "Identificamos o Quadrado da Diferença de dois termos:",
+          latex: `(A - B)^2 = A^2 - 2 \\cdot A \\cdot B + B^2`
+        });
+      }
+
+      passos.push({
+        descricao: "Identificando o primeiro termo (A) e o segundo termo (B):",
+        latex: `A = ${termoA}, \\quad B = ${absB}`
+      });
+
+      // Aplicação
+      const aParenteses = (a === 1) ? `x^2` : `(${termoA})^2`;
+      const sinalMeio = ehSoma ? '+' : '-';
+      passos.push({
+        descricao: "Substituindo os termos na fórmula:",
+        latex: `${aParenteses} ${sinalMeio} 2 \\cdot (${termoA}) \\cdot (${absB}) + (${absB})^2`
+      });
+
+      // Cálculos
+      const a2 = a * a;
+      const meio = 2 * Math.abs(a) * absB;
+      const b2 = absB * absB;
+
+      const a2Str = a2 === 1 ? "x^2" : `${a2}x^2`;
+      passos.push({
+        descricao: "Efetuando as potências e multiplicações:",
+        latex: `${a2Str} ${sinalMeio} ${meio}x + ${b2}`
+      });
+
+      passos.push({
+        descricao: "Trinômio Quadrado Perfeito final:",
+        latex: `\\mathbf{${a2Str} ${sinalMeio} ${meio}x + ${b2}}`
+      });
+
+      return passos;
+    }
+
+    // Caso 3: Produto da Soma pela Diferença -> (ax + b)(ax - b) ou com * no meio
+    const regexProduto = /^\(([^)]+)\)\*?\(([^)]+)\)$/;
+    const matchProd = s.match(regexProduto);
+
+    if (matchProd) {
+      const bin1 = parseBinomio(matchProd[1]);
+      const bin2 = parseBinomio(matchProd[2]);
+
+      // Verifica se é da forma (A + B)(A - B)
+      const a1 = bin1.coefX, b1 = bin1.constant;
+      const a2 = bin2.coefX, b2 = bin2.constant;
+
+      if (a1 === a2 && a1 !== 0 && Math.abs(b1) === Math.abs(b2) && b1 !== 0 && ((b1 > 0 && b2 < 0) || (b1 < 0 && b2 > 0))) {
+        const a = a1;
+        const absB = Math.abs(b1);
+        const termoA = a === 1 ? "x" : (a === -1 ? "-x" : `${a}x`);
+
+        passos.push({
+          descricao: "Expressão inicial identificada:",
+          latex: `(${termoA} + ${absB})(${termoA} - ${absB})`
+        });
+
+        passos.push({
+          descricao: "Identificamos o Produto da Soma pela Diferença de dois termos:",
+          latex: `(A + B)(A - B) = A^2 - B^2`
+        });
+
+        passos.push({
+          descricao: "Identificando o primeiro termo (A) e o segundo termo (B):",
+          latex: `A = ${termoA}, \\quad B = ${absB}`
+        });
+
+        const aParenteses = (a === 1) ? `x^2` : `(${termoA})^2`;
+        passos.push({
+          descricao: "Aplicando a regra do quadrado do primeiro menos o quadrado do segundo:",
+          latex: `${aParenteses} - (${absB})^2`
+        });
+
+        const a2Final = a * a;
+        const b2Final = absB * absB;
+        const a2Str = a2Final === 1 ? "x^2" : `${a2Final}x^2`;
+
+        passos.push({
+          descricao: "Diferença de Dois Quadrados final:",
+          latex: `\\mathbf{${a2Str} - ${b2Final}}`
+        });
+
+        return passos;
+      } else {
+        // Produto de binômios genéricos via distributiva (ex: (x+2)(x+3))
+        const termoA = a1 * a2;
+        const termoB = (a1 * b2) + (a2 * b1);
+        const termoC = b1 * b2;
+
+        passos.push({
+          descricao: "Expressão inicial informada (produto de dois binômios):",
+          latex: `(${converterParaLatex(matchProd[1])}) \\cdot (${converterParaLatex(matchProd[2])})`
+        });
+
+        passos.push({
+          descricao: "Aplicando a propriedade distributiva termo a termo:",
+          latex: `(${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${a1 === 1 ? 'x' : a1 + 'x'}) \\cdot (${b2}) + (${b1}) \\cdot (${a2 === 1 ? 'x' : a2 + 'x'}) + (${b1}) \\cdot (${b2})`
+        });
+
+        const aStr = termoA === 1 ? "x^2" : (termoA === -1 ? "-x^2" : `${termoA}x^2`);
+        passos.push({
+          descricao: "Multiplicando os termos individuais:",
+          latex: `${aStr} ${a1*b2 >= 0 ? '+ ' + a1*b2 : '- ' + Math.abs(a1*b2)}x ${a2*b1 >= 0 ? '+ ' + a2*b1 : '- ' + Math.abs(a2*b1)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}`
+        });
+
+        passos.push({
+          descricao: "Reduzindo os termos semelhantes centrais:",
+          latex: `\\mathbf{${aStr} ${termoB >= 0 ? '+ ' + termoB : '- ' + Math.abs(termoB)}x ${termoC >= 0 ? '+ ' + termoC : '- ' + Math.abs(termoC)}}`
+        });
+
+        return passos;
+      }
+    }
+
+    throw new Error("Formato não reconhecido. Exemplos válidos: (x + 3)^2, (2x - 5)^2 ou (x + 4)(x - 4).");
+  }
+
+  function executarResolucaoNotaveis() {
+    const alertBox = document.getElementById('alert-notaveis');
+    const cardRes = document.getElementById('card-result-notaveis');
+    const lista = document.getElementById('passos-notaveis');
+    alertBox.innerHTML = '';
+    
+    try {
+      const passos = resolverProdutosNotaveis(inputNotaveis.value.trim());
+      lista.innerHTML = '';
+      passos.forEach((p, i) => {
+        lista.innerHTML += `<div class="step-box"><div class="step-title">Passo ${i+1}: ${p.descricao}</div><div class="step-math">$$\\displaystyle ${p.latex}$$</div></div>`;
+      });
+      cardRes.style.display = 'block';
+      renderizarKaTeX(lista);
+    } catch (err) {
+      alertBox.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+      cardRes.style.display = 'none';
+    }
+  }
+
+  function limparNotaveis() {
+    inputNotaveis.value = '';
+    document.getElementById('prev-img-notaveis').style.display = 'none';
+    document.getElementById('card-result-notaveis').style.display = 'none';
+    document.getElementById('alert-notaveis').innerHTML = '';
+    document.getElementById('ocr-status-notaveis').innerHTML = '';
+    atualizarPreviewNotaveis();
+  }
+
+  // ==========================================
   // CONFIGURAÇÃO DOS TECLADOS VIRTUAIS
   // ==========================================
   function configurarTeclado(kbId, inputEl, updateFn) {
@@ -817,6 +1095,7 @@
 
   configurarTeclado('kb-grau1', inputGrau1, atualizarPreview1);
   configurarTeclado('kb-grau2', inputGrau2, atualizarPreview2);
+  configurarTeclado('kb-notaveis', inputNotaveis, atualizarPreviewNotaveis);
 
   // ==========================================
   // CÂMERA / OCR COMPARTILHADO
@@ -878,7 +1157,7 @@
         if (!eq) throw new Error("Nenhum texto retornado pela IA.");
 
         status.style.color = '#16a34a';
-        status.innerHTML = `Equação reconhecida: <strong>${eq}</strong>`;
+        status.innerHTML = `Expressão reconhecida: <strong>${eq}</strong>`;
         inputEl.value = eq;
         updateFn();
         execFn();
@@ -891,6 +1170,7 @@
 
   configurarOCR('cam-grau1', 'prev-img-grau1', 'ocr-status-grau1', inputGrau1, atualizarPreview1, executarResolucao1);
   configurarOCR('cam-grau2', 'prev-img-grau2', 'ocr-status-grau2', inputGrau2, atualizarPreview2, executarResolucao2);
+  configurarOCR('cam-notaveis', 'prev-img-notaveis', 'ocr-status-notaveis', inputNotaveis, atualizarPreviewNotaveis, executarResolucaoNotaveis);
 </script>
 
 </body>
