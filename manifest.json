@@ -2,20 +2,21 @@
   "name": "Laboratório de Álgebra - Prof. Daniel Silva",
   "short_name": "Lab Álgebra",
   "description": "Resolvedor passo a passo de equações, produtos notáveis, frações e exercícios com IA.",
-  "start_url": "/",
+  "start_url": "/equacoes/",
+  "scope": "/equacoes/",
   "display": "standalone",
   "background_color": "#f1f5f9",
   "theme_color": "#2563eb",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/equacoes/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/equacoes/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
