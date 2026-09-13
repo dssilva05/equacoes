@@ -2718,8 +2718,9 @@
       return;
     }
 
-    const radQtd = document.querySelector('input[name="rad-qtd"]:checked');
-    const quantidade = parseInt(radQtd ? radQtd.value : "5", 10);
+    const formatoSelecionado = document.querySelector('input[name="rad-formato"]:checked').value;
+    const [modalidade, qtdStr] = formatoSelecionado.split('-');
+    const quantidade = parseInt(qtdStr, 10);
 
     const btn = document.getElementById('btn-gerar-lista');
     const status = document.getElementById('status-geracao');
@@ -2727,14 +2728,16 @@
 
     btn.disabled = true;
     status.style.color = '#2563eb';
-    status.innerHTML = "⏳ A Inteligência Artificial está elaborando exercícios pedagógicos para você...";
+    status.innerHTML = modalidade === 'problema' 
+      ? "⏳ Elaborando problemas contextualizados no padrão CEFET/COLTEC..." 
+      : "⏳ Elaborando exercícios de fixação com IA...";
     container.innerHTML = "";
 
     try {
       const response = await fetch(EXERCICIOS_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ temas, quantidade })
+        body: JSON.stringify({ temas, quantidade, modalidade })
       });
 
       const data = await response.json();
@@ -2742,30 +2745,40 @@
 
       const exercicios = data.exercicios;
       if (!Array.isArray(exercicios) || exercicios.length === 0) {
-        throw new Error("A IA não retornou exercícios válidos. Tente novamente.");
+        throw new Error("A IA não retornou questões válidas. Tente novamente.");
       }
 
       status.style.color = '#16a34a';
-      status.innerHTML = ` ${exercicios.length} exercícios gerados com sucesso! Bons estudos!`;
+      status.innerHTML = ` ${exercicios.length} ${modalidade === 'problema' ? 'problemas contextualizados' : 'exercícios'} prontos para treino!`;
 
       let htmlLista = "";
       exercicios.forEach((ex, idx) => {
         const idAns = `ans-ex-${idx}`;
-        const exprEscapada = ex.expressao.replace(/"/g, '&quot;');
+        const exprEscapada = (ex.expressao || "").replace(/"/g, '&quot;');
+        const origemBadge = ex.origem ? `<span style="font-size: 0.72rem; background: #fef3c7; color: #92400e; padding: 2px 7px; border-radius: 4px; font-weight: 700;">${ex.origem}</span>` : '';
+
         htmlLista += `
           <div class="exercise-item">
             <div class="exercise-header">
-              <span style="font-weight: 700; color: #0f172a;">Exercício ${idx + 1}</span>
-              <span class="exercise-tag">${ex.tema}</span>
+              <span style="font-weight: 700; color: #0f172a;">Questão ${idx + 1}</span>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                ${origemBadge}
+                <span class="exercise-tag">${ex.tema}</span>
+              </div>
             </div>
-            <p style="font-size: 0.95rem; color: #334155;">${ex.enunciado}</p>
-            <div class="exercise-math">$$\\displaystyle ${converterParaLatex(ex.expressao)}$$</div>
+            <p style="font-size: 0.95rem; color: #334155; line-height: 1.5; margin-bottom: 8px;">${ex.enunciado}</p>
+            ${ex.expressao ? `
+              <div style="font-size: 0.8rem; font-weight: 600; color: #64748b; margin-top: 6px;">Equação / Expressão da questão:</div>
+              <div class="exercise-math">$$\\displaystyle ${converterParaLatex(ex.expressao)}$$</div>
+            ` : ''}
             <div class="exercise-actions">
-              <button class="btn-solve-app" onclick="resolverExercicioNoApp('${ex.tema}', '${exprEscapada}')">
-                🚀 Resolver neste App Passo a Passo
-              </button>
+              ${ex.expressao ? `
+                <button class="btn-solve-app" onclick="resolverExercicioNoApp('${ex.tema}', '${exprEscapada}')">
+                  🚀 Resolver Passo a Passo no App
+                </button>
+              ` : ''}
               <button class="btn-show-ans" onclick="document.getElementById('${idAns}').classList.toggle('active')">
-                👁️ Ver Resposta Final
+                👁️ Ver Resposta / Gabarito
               </button>
             </div>
             <div class="ans-box" id="${idAns}">
