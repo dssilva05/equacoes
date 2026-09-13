@@ -20,47 +20,28 @@ export default async function handler(req, res) {
   }
 
   const qtd = parseInt(quantidade, 10) || 5;
-  const estiloProblema = modalidade === 'problema';
+  const ehProblema = modalidade === 'problema';
 
-  let diretrizEstilo = "";
-  if (estiloProblema) {
-    diretrizEstilo = `
-MODALIDADE: SITUAÇÕES-PROBLEMA / CONTEXTUALIZADAS (Estilo CEFET, COLTEC, Institutos Federais e Vestibulares).
-- Crie enunciados contextualizados realistas, cotidianos ou interdisciplinares (geometria, física básica, finanças, lógica).
-- O enunciado deve contar uma história ou problema que exija modelagem matemática.
-- O campo "enunciado" deve conter o problema completo com a pergunta final.
-- O campo "expressao" deve ser a equação ou expressão matemática exata que resolve o problema (ex: "2x + 15 = 45" ou "(x + 4)^2 = 100").
-- No campo "origem", indique uma referência fictícia ou adaptada inspiradora (ex: "Adaptada - CEFET", "Estilo COLTEC", "Contexto Geometria", "Problema Prático").
-`;
-  } else {
-    diretrizEstilo = `
-MODALIDADE: EXERCÍCIOS DIRETOS DE FIXAÇÃO.
-- Crie enunciados diretos e claros (ex: "Resolva a equação:", "Desenvolva o produto notável:", "Calcule a operação:").
-- O campo "expressao" deve conter a expressão direta a ser calculada.
-- No campo "origem", coloque "Fixação Algébrica".
-`;
-  }
-
-  const prompt = `Você é um professor de matemática especialista em elaboração de questões para processos seletivos de Ensino Médio/Técnico e Fundamental II.
+  const prompt = `Você é um professor de matemática especialista em provas do Ensino Fundamental II, Médio e processos seletivos (CEFET-MG, COLTEC-UFMG, IFs).
 Gere exatamente ${qtd} questões abordando os seguintes temas: ${temas && temas.length ? temas.join(', ') : 'Equações do 1º Grau'}.
 
-${diretrizEstilo}
+${ehProblema ? `
+MODALIDADE: SITUAÇÕES-PROBLEMA CONTEXTUALIZADAS (Estilo CEFET/COLTEC/IFs).
+- Crie enunciados contextualizados com aplicações reais, cotidianas, geometria ou finanças.
+- O campo "origem" deve indicar a inspiração (ex: "Adaptada - CEFET-MG", "Estilo COLTEC", "Problema Prático").
+- O campo "enunciado" deve conter o texto completo do problema com a pergunta.
+- O campo "expressao" deve ser a equação ou expressão que modela e resolve o problema (ex: "2x + 15 = 45", "x^2 - 7x + 10 = 0" ou "(x + 3)^2 = 49").
+` : `
+MODALIDADE: EXERCÍCIOS DIRETOS DE FIXAÇÃO.
+- Crie enunciados diretos (ex: "Resolva a equação:", "Desenvolva o produto notável:", "Calcule a operação:").
+- No campo "origem", coloque "Fixação Algébrica".
+- O campo "expressao" deve conter a expressão matemática direta.
+`}
 
-Critérios Gerais:
-1. Trabalhe com números inteiros e frações amigáveis (evite dízimas infinitas ou soluções irracionais complexas).
-2. Para equações/frações, utilize notação simples com barra (ex: x/2 + 3 = 7 ou 3/4 + 1/2).
-3. Para potências, utilize circunflexo (ex: x^2 - 5x + 6 = 0 ou (x + 3)^2).
-4. Retorne EXCLUSIVAMENTE um array JSON de objetos:
-[
-  {
-    "id": 1,
-    "tema": "Nome do Tema",
-    "origem": "Adaptada - CEFET-MG",
-    "enunciado": "Texto contextualizado do problema...",
-    "expressao": "equação ou expressão a ser resolvida",
-    "gabarito": "resposta final clara"
-  }
-]`;
+Regras matemáticas:
+- Use números inteiros e frações amigáveis (sem dízimas periódicas infinitas).
+- Use barras simples para frações (ex: 2/3 + 3/4) e circunflexo para potências (ex: x^2, (x+2)^3).
+- O campo "gabarito" deve ser curto e objetivo (ex: "x = 15", "x' = 2, x'' = 5", "17/12").`;
 
   try {
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
@@ -72,7 +53,22 @@ Critérios Gerais:
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           response_mime_type: "application/json",
-          temperature: 0.4
+          response_schema: {
+            type: "ARRAY",
+            items: {
+              type: "OBJECT",
+              properties: {
+                id: { type: "INTEGER" },
+                tema: { type: "STRING" },
+                origem: { type: "STRING" },
+                enunciado: { type: "STRING" },
+                expressao: { type: "STRING" },
+                gabarito: { type: "STRING" }
+              },
+              required: ["id", "tema", "origem", "enunciado", "expressao", "gabarito"]
+            }
+          },
+          temperature: 0.3
         }
       })
     });
