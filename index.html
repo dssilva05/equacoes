@@ -2688,6 +2688,20 @@
   // ==========================================
   // MÓDULO 7: GERADOR DE EXERCÍCIOS
   // ==========================================
+  // Função auxiliar para sanitizar textos de enunciados antes do KaTeX
+  function formatarTextoEnunciado(texto) {
+    if (!texto) return "";
+    let t = texto;
+    // Substitui R$ por reais ou R$ seguro sem ativar delimitador KaTeX
+    t = t.replace(/R\$\s*(\d+([.,]\d+)?)/gi, 'R&dollar; $1');
+    // Converte m^2 e cm^2 para m² e cm² caso o modelo envie com circunflexo
+    t = t.replace(/m\^2/g, 'm²')
+         .replace(/cm\^2/g, 'cm²')
+         .replace(/m\^3/g, 'm³')
+         .replace(/cm\^3/g, 'cm³');
+    return t;
+  }
+
   async function gerarListaExerciciosIA() {
     const chks = document.querySelectorAll('input[name="chk-tema"]:checked');
     const temas = Array.from(chks).map(c => c.value);
@@ -2709,8 +2723,8 @@
     btn.disabled = true;
     status.style.color = '#2563eb';
     status.innerHTML = modalidade === 'problema' 
-      ? "⏳ Elaborando situações-problema contextualizadas..." 
-      : "⏳ Elaborando exercícios diretos de fixação...";
+      ? "⏳ A IA está elaborando situações-problema contextualizadas..." 
+      : "⏳ A IA está elaborando exercícios diretos de fixação...";
     container.innerHTML = "";
 
     try {
@@ -2725,17 +2739,18 @@
 
       const exercicios = data.exercicios;
       if (!Array.isArray(exercicios) || exercicios.length === 0) {
-        throw new Error("Não retornou questões válidas. Tente novamente.");
+        throw new Error("A IA não retornou questões válidas. Tente novamente.");
       }
 
       status.style.color = '#16a34a';
-      status.innerHTML = ` ${exercicios.length} ${modalidade === 'problema' ? 'problemas contextualizados' : 'exercícios'} gerados com sucesso!`;
+      status.innerHTML = `✔ ${exercicios.length} ${modalidade === 'problema' ? 'problemas contextualizados' : 'exercícios'} gerados com sucesso!`;
 
       let htmlLista = "";
       exercicios.forEach((ex, idx) => {
         const idAns = `ans-ex-${idx}`;
         const exprEscapada = (ex.expressao || "").replace(/"/g, '&quot;');
         const origemBadge = ex.origem ? `<span style="font-size: 0.72rem; background: #fef3c7; color: #92400e; padding: 2px 7px; border-radius: 4px; font-weight: 700;">${ex.origem}</span>` : '';
+        const enunciadoFormatado = formatarTextoEnunciado(ex.enunciado);
 
         htmlLista += `
           <div class="exercise-item">
@@ -2746,7 +2761,7 @@
                 <span class="exercise-tag">${ex.tema}</span>
               </div>
             </div>
-            <p style="font-size: 0.95rem; color: #334155; line-height: 1.5; margin-bottom: 8px;">${ex.enunciado}</p>
+            <p style="font-size: 0.95rem; color: #334155; line-height: 1.5; margin-bottom: 8px;">${enunciadoFormatado}</p>
             ${ex.expressao ? `
               <div style="font-size: 0.8rem; font-weight: 600; color: #64748b; margin-top: 6px;">Equação / Expressão da questão:</div>
               <div class="exercise-math">$$\\displaystyle ${converterParaLatex(ex.expressao)}$$</div>
