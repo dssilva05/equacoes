@@ -1,6 +1,6 @@
 {
-  "name": "Laboratório de Álgebra - Prof. Daniel Silva",
-  "short_name": "Lab Álgebra",
+  "name": "Laboratório de Matemática - Prof. Daniel Silva",
+  "short_name": "Laboratório de Matemática",
   "description": "Resolvedor passo a passo de equações, produtos notáveis, frações e exercícios com IA.",
   "start_url": "/equacoes/",
   "scope": "/equacoes/",
