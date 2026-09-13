@@ -6,10 +6,10 @@
   <title>Laboratório de Matemática - Prof. Daniel Silva</title>
 
   <!-- Metatags para compartilhamento -->
-  <meta name="description" content="Laboratório de Álgebra e Matemática passo a passo com apoio visual e IA. Desenvolvido por Prof. Daniel Silva.">
+  <meta name="description" content="Laboratório de Álgebra e Matemática. Desenvolvido por Prof. Daniel Silva.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Laboratório de Matemática - Prof. Daniel Silva">
-  <meta property="og:description" content="Resolva Equações de 1º e 2º Grau, Produtos Notáveis, Fatoração, Frações, Inteiros e gere listas de exercícios via IA.">
+  <meta property="og:description" content="Resolva Equações de 1º e 2º Grau, Produtos Notáveis, Fatoração, Frações, Inteiros e gere listas de exercícios.">
   <meta property="og:url" content="https://equacoes.vercel.app/">
   
   <!-- KaTeX para renderização de fórmulas matemáticas -->
@@ -550,7 +550,7 @@
         </div>
       </div>
 
-      <!-- Seção de Exercícios com IA -->
+      <!-- Seção de Exercícios com -->
       <div class="topic-card c-gold" onclick="abrirModulo('exercicios')" style="grid-column: 1 / -1;">
         <div class="card-top">
           <div class="icon-box">🎯</div>
@@ -964,7 +964,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- VIEW 8: EXERCÍCIOS GERADOS POR IA          -->
+  <!-- VIEW 8: EXERCÍCIOS GERADOS                 -->
   <!-- ========================================== -->
   <div id="view-exercicios" class="view">
     <div class="nav-bar">
@@ -2709,8 +2709,8 @@
     btn.disabled = true;
     status.style.color = '#2563eb';
     status.innerHTML = modalidade === 'problema' 
-      ? "⏳ A IA está elaborando situações-problema contextualizadas..." 
-      : "⏳ A IA está elaborando exercícios diretos de fixação...";
+      ? "⏳ Elaborando situações-problema contextualizadas..." 
+      : "⏳ Elaborando exercícios diretos de fixação...";
     container.innerHTML = "";
 
     try {
@@ -2725,7 +2725,7 @@
 
       const exercicios = data.exercicios;
       if (!Array.isArray(exercicios) || exercicios.length === 0) {
-        throw new Error("A IA não retornou questões válidas. Tente novamente.");
+        throw new Error("Não retornou questões válidas. Tente novamente.");
       }
 
       status.style.color = '#16a34a';
@@ -2907,10 +2907,10 @@
         const { dataUrl, base64Data, mimeType } = await comprimirImagem(file);
         prevImg.src = dataUrl;
         prevImg.style.display = 'block';
-        status.innerHTML = "⏳ Identificando escrita à mão via IA...";
+        status.innerHTML = "⏳ Identificando escrita à mão...";
 
         const eq = await extrairEquacaoDaImagem(base64Data, mimeType);
-        if (!eq) throw new Error("Nenhum texto retornado pela IA.");
+        if (!eq) throw new Error("Nenhum texto retornado.");
 
         status.style.color = '#16a34a';
         status.innerHTML = `Expressão reconhecida: <strong>${eq}</strong>`;
