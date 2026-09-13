@@ -3,12 +3,13 @@
 <head>
 
     <!-- Configurações PWA -->
-  <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#2563eb">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Lab Álgebra">
-  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2960,13 +2961,14 @@
   configurarOCR('cam-fracoes', 'prev-img-fracoes', 'ocr-status-fracoes', inputFracoes, atualizarPreviewFracoes, executarResolucaoFracoes);
   configurarOCR('cam-inteiros', 'prev-img-inteiros', 'ocr-status-inteiros', inputInteiros, atualizarPreviewInteiros, executarResolucaoInteiros);
 
-  if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
+      navigator.serviceWorker.register('./sw.js')
         .then((reg) => console.log('Service Worker registrado:', reg.scope))
-        .catch((err) => console.error('Erro ao registrar Service Worker:', err));
+        .catch((err) => console.error('Erro no Service Worker:', err));
     });
   }
+
 
 </script>
 
