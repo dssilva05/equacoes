@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laboratório de Matemática - Prof. Daniel Silva</title>
+
+  <!-- Metatags para compartilhamento (WhatsApp, Telegram, etc.) -->
+  <meta name="description" content="Laboratório de Álgebra e Matemática passo a passo com apoio visual e IA. Desenvolvido por Prof. Daniel Silva.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Laboratório de Matemática - Prof. Daniel Silva">
+  <meta property="og:description" content="Resolva Equações de 1º e 2º Grau, Produtos Notáveis, Fatoração, Frações, Inteiros e gere listas de exercícios via IA.">
+  <meta property="og:url" content="https://equacoes.vercel.app/">
   
   <!-- KaTeX para renderização de fórmulas matemáticas -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -98,6 +105,9 @@
 
     .c-indigo .icon-box { background: #e0e7ff; color: #4338ca; }
     .c-indigo:hover { border-color: #a5b4fc; }
+
+    .c-gold .icon-box { background: #fef9c3; color: #854d0e; }
+    .c-gold:hover { border-color: #facc15; }
 
     .topic-card h3 { font-size: 1.15rem; color: #1e293b; font-weight: 700; }
     .topic-card p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; line-height: 1.4; }
@@ -339,6 +349,100 @@
       transition: background 0.15s;
     }
     .yt-link-btn:hover { background: #fecdd3; }
+
+    /* Estilos da Seção de Exercícios */
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      user-select: none;
+    }
+    .check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .exercise-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .exercise-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .exercise-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .exercise-math {
+      font-size: 1.25rem;
+      margin: 12px 0;
+      padding: 10px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .exercise-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .btn-solve-app {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-show-ans {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: #334155;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .ans-box {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .ans-box.active { display: block; }
   </style>
 </head>
 <body>
@@ -443,6 +547,21 @@
         <div class="formula-tag">
           <span>$$-3 + (+5) \quad (-2) \cdot (-4)$$</span>
           <span class="arrow-icon">Acessar →</span>
+        </div>
+      </div>
+
+      <!-- Seção de Exercícios com IA (NOVO) -->
+      <div class="topic-card c-gold" onclick="abrirModulo('exercicios')" style="grid-column: 1 / -1;">
+        <div class="card-top">
+          <div class="icon-box">🎯</div>
+          <div>
+            <h3>Praticar com Exercícios (IA)</h3>
+            <p>Gere listas personalizadas de 5 ou 10 exercícios sobre os temas que escolher e confira a resolução passo a passo.</p>
+          </div>
+        </div>
+        <div class="formula-tag">
+          <span>Lista de Exercícios Sob Medida</span>
+          <span class="arrow-icon">Gerar Treino →</span>
         </div>
       </div>
     </div>
@@ -844,10 +963,69 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- VIEW 8: EXERCÍCIOS GERADOS POR IA (NOVA)   -->
+  <!-- ========================================== -->
+  <div id="view-exercicios" class="view">
+    <div class="nav-bar">
+      <button class="btn-voltar" onclick="voltarMenu()">← Voltar ao Menu</button>
+      <h2>Praticar com Exercícios (IA)</h2>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size: 1.05rem; margin-bottom: 8px;">1. Selecione os temas que deseja treinar:</h3>
+      <div class="checklist-grid">
+        <label class="check-item">
+          <input type="checkbox" name="chk-tema" value="Equações do 1º Grau" checked>
+          <span>Equações do 1º Grau</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="chk-tema" value="Equações do 2º Grau">
+          <span>Equações do 2º Grau</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="chk-tema" value="Produtos Notáveis">
+          <span>Produtos Notáveis</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="chk-tema" value="Fatoração Polinomial">
+          <span>Fatoração Polinomial</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="chk-tema" value="Operações com Frações">
+          <span>Operações com Frações</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" name="chk-tema" value="Operações com Inteiros">
+          <span>Operações com Inteiros</span>
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 16px; align-items: center; margin: 16px 0 10px;">
+        <label style="margin: 0; font-weight: 600;">Quantidade:</label>
+        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+          <input type="radio" name="rad-qtd" value="5" checked> 5 Exercícios
+        </label>
+        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+          <input type="radio" name="rad-qtd" value="10"> 10 Exercícios
+        </label>
+      </div>
+
+      <button id="btn-gerar-lista" onclick="gerarListaExerciciosIA()" style="width: 100%; padding: 12px; font-size: 1rem; margin-top: 8px;">
+        ✨ Gerar Lista de Exercícios com IA
+      </button>
+      <div id="status-geracao" style="margin-top: 10px; font-size: 0.9rem; font-weight: 500; text-align: center;"></div>
+    </div>
+
+    <div id="lista-exercicios-container"></div>
+  </div>
+
 </div>
 
 <script>
-  const OCR_ENDPOINT = 'https://equacoes.vercel.app/api/ocr';
+  const API_BASE = 'https://equacoes.vercel.app/api';
+  const OCR_ENDPOINT = `${API_BASE}/ocr`;
+  const EXERCICIOS_ENDPOINT = `${API_BASE}/gerar-exercicios`;
 
   window.addEventListener('DOMContentLoaded', () => {
     if (window.renderMathInElement) {
@@ -1051,7 +1229,6 @@
       ytBusca: "como eliminar parenteses com regra de sinais"
     },
 
-    // Padrão
     "padrao": {
       conceito: "Esta etapa organiza os termos semelhantes e aplica as operações fundamentais da aritmética e da álgebra.",
       dica: "Revise com calma cada sinal antes de avançar para a próxima etapa.",
@@ -1813,7 +1990,6 @@
       tipoAjuda: "padrao"
     });
 
-    // CASO A: SOMA OU DIFERENÇA DE CUBOS
     if (c3 !== 0 && c2 === 0 && c1 === 0 && c0 !== 0) {
       const raizA = raizCubicaInteira(c3);
       const raizB = raizCubicaInteira(Math.abs(c0));
@@ -1860,7 +2036,6 @@
       }
     }
 
-    // CASO B: DIFERENÇA DE DOIS QUADRADOS
     if (c3 === 0 && c2 > 0 && c1 === 0 && c0 < 0) {
       const raizA = raizQuadradaInteira(c2);
       const raizC = raizQuadradaInteira(Math.abs(c0));
@@ -1886,7 +2061,6 @@
       }
     }
 
-    // CASO C: TRINÔMIO QUADRADO PERFEITO
     if (c3 === 0 && c2 > 0 && c1 !== 0 && c0 > 0) {
       const raizA = raizQuadradaInteira(c2);
       const raizC = raizQuadradaInteira(c0);
@@ -1916,7 +2090,6 @@
       }
     }
 
-    // CASO D: SOMA E PRODUTO
     if (c3 === 0 && c2 === 1 && c1 !== 0 && c0 !== 0) {
       const delta = (c1 * c1) - (4 * c0);
       if (delta >= 0) {
@@ -1950,7 +2123,6 @@
       }
     }
 
-    // CASO E: FATOR COMUM EM EVIDÊNCIA
     const coefs = [c3, c2, c1, c0].filter(c => c !== 0);
     if (c0 === 0 && (c3 !== 0 || c2 !== 0 || c1 !== 0)) {
       let menorPotX = 1;
@@ -2472,7 +2644,7 @@
           : `Somar um número negativo (${b}) equivale a subtrair ${Math.abs(b)}, deslocando ${Math.abs(b)} unidades para a esquerda.`;
       } else {
         deslocamentoEfetivo = -b;
-        explicacaoRegra = b >= 0
+        explicacaoRegra = b >= 0 
           ? `Subtrair um número positivo (+${b}) equivale a subtrair ${b}, deslocando ${Math.abs(b)} unidades para a esquerda.`
           : `Subtrair um número negativo (- com - dá +) equivale a somar ${Math.abs(b)}, deslocando ${Math.abs(b)} unidades para a direita.`;
       }
@@ -2532,6 +2704,119 @@
     document.getElementById('alert-inteiros').innerHTML = '';
     document.getElementById('ocr-status-inteiros').innerHTML = '';
     atualizarPreviewInteiros();
+  }
+
+  // ==========================================
+  // MÓDULO 7: GERADOR DE EXERCÍCIOS COM IA
+  // ==========================================
+  async function gerarListaExerciciosIA() {
+    const chks = document.querySelectorAll('input[name="chk-tema"]:checked');
+    const temas = Array.from(chks).map(c => c.value);
+
+    if (temas.length === 0) {
+      alert("Por favor, selecione pelo menos um tema para gerar a lista.");
+      return;
+    }
+
+    const radQtd = document.querySelector('input[name="rad-qtd"]:checked');
+    const quantidade = parseInt(radQtd ? radQtd.value : "5", 10);
+
+    const btn = document.getElementById('btn-gerar-lista');
+    const status = document.getElementById('status-geracao');
+    const container = document.getElementById('lista-exercicios-container');
+
+    btn.disabled = true;
+    status.style.color = '#2563eb';
+    status.innerHTML = "⏳ A Inteligência Artificial está elaborando exercícios pedagógicos para você...";
+    container.innerHTML = "";
+
+    try {
+      const response = await fetch(EXERCICIOS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ temas, quantidade })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erro ao conectar com o gerador de exercícios");
+
+      const exercicios = data.exercicios;
+      if (!Array.isArray(exercicios) || exercicios.length === 0) {
+        throw new Error("A IA não retornou exercícios válidos. Tente novamente.");
+      }
+
+      status.style.color = '#16a34a';
+      status.innerHTML = ` ${exercicios.length} exercícios gerados com sucesso! Bons estudos!`;
+
+      let htmlLista = "";
+      exercicios.forEach((ex, idx) => {
+        const idAns = `ans-ex-${idx}`;
+        const exprEscapada = ex.expressao.replace(/"/g, '&quot;');
+        htmlLista += `
+          <div class="exercise-item">
+            <div class="exercise-header">
+              <span style="font-weight: 700; color: #0f172a;">Exercício ${idx + 1}</span>
+              <span class="exercise-tag">${ex.tema}</span>
+            </div>
+            <p style="font-size: 0.95rem; color: #334155;">${ex.enunciado}</p>
+            <div class="exercise-math">$$\\displaystyle ${converterParaLatex(ex.expressao)}$$</div>
+            <div class="exercise-actions">
+              <button class="btn-solve-app" onclick="resolverExercicioNoApp('${ex.tema}', '${exprEscapada}')">
+                🚀 Resolver neste App Passo a Passo
+              </button>
+              <button class="btn-show-ans" onclick="document.getElementById('${idAns}').classList.toggle('active')">
+                👁️ Ver Resposta Final
+              </button>
+            </div>
+            <div class="ans-box" id="${idAns}">
+              <strong>Gabarito:</strong> $$\\displaystyle ${converterParaLatex(ex.gabarito)}$$
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = htmlLista;
+      renderizarKaTeX(container);
+    } catch (err) {
+      status.style.color = '#dc2626';
+      status.innerHTML = `❌ Falha: ${err.message}`;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function resolverExercicioNoApp(tema, expressao) {
+    if (tema.includes("1º")) {
+      abrirModulo('grau1');
+      inputGrau1.value = expressao;
+      atualizarPreview1();
+      executarResolucao1();
+    } else if (tema.includes("2º")) {
+      abrirModulo('grau2');
+      inputGrau2.value = expressao;
+      atualizarPreview2();
+      executarResolucao2();
+    } else if (tema.includes("Notáveis")) {
+      abrirModulo('notaveis');
+      inputNotaveis.value = expressao;
+      atualizarPreviewNotaveis();
+      executarResolucaoNotaveis();
+    } else if (tema.includes("Fatoração")) {
+      abrirModulo('fatoracao');
+      inputFatoracao.value = expressao;
+      atualizarPreviewFatoracao();
+      executarResolucaoFatoracao();
+    } else if (tema.includes("Frações")) {
+      abrirModulo('fracoes');
+      inputFracoes.value = expressao;
+      atualizarPreviewFracoes();
+      executarResolucaoFracoes();
+    } else if (tema.includes("Inteiros")) {
+      abrirModulo('inteiros');
+      inputInteiros.value = expressao;
+      atualizarPreviewInteiros();
+      executarResolucaoInteiros();
+    }
   }
 
   // ==========================================
